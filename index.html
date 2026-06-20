@@ -76,14 +76,44 @@
       </div>
       <div class="story-art" aria-hidden="true">
         <svg viewBox="0 0 400 500" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <clipPath id="potClip">
+              <path d="M118 214 H282 L270 430 Q269 446 253 446 H147 Q131 446 130 430 Z"/>
+            </clipPath>
+            <linearGradient id="potCream" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#FFFDF8"/>
+              <stop offset="1" stop-color="#F1E3CB"/>
+            </linearGradient>
+          </defs>
+
           <rect width="400" height="500" fill="#F0E2CB"/>
-          <circle cx="200" cy="230" r="120" fill="#fff" opacity="0.6"/>
-          <rect x="120" y="300" width="160" height="120" rx="10" fill="#5A3A24"/>
-          <rect x="120" y="300" width="160" height="30" rx="10" fill="#3A271B"/>
-          <rect x="134" y="338" width="132" height="14" rx="4" fill="#F4E9D8"/>
-          <rect x="134" y="360" width="132" height="14" rx="4" fill="#D8B074"/>
-          <rect x="134" y="382" width="132" height="14" rx="4" fill="#F4E9D8"/>
-          <text x="200" y="160" text-anchor="middle" font-family="Fraunces, serif" font-size="38" fill="#5A3A24" font-style="italic">made fresh</text>
+
+          <!-- caption -->
+          <text x="200" y="150" text-anchor="middle" font-family="Fraunces, serif" font-size="44" fill="#5A3A24" font-style="italic">made fresh</text>
+
+          <!-- layered tiramisu inside the pot -->
+          <g clip-path="url(#potClip)">
+            <rect x="110" y="214" width="180" height="40" fill="#3A271B"/>
+            <rect x="110" y="254" width="180" height="62" fill="url(#potCream)"/>
+            <rect x="110" y="316" width="180" height="40" fill="#D8B074"/>
+            <rect x="110" y="356" width="180" height="100" fill="url(#potCream)"/>
+            <!-- soft glass highlight -->
+            <path d="M140 230 q-10 90 4 200 l16 0 q-14 -110 -2 -200 Z" fill="#ffffff" opacity="0.18"/>
+          </g>
+
+          <!-- pot rim (the opening) -->
+          <ellipse cx="200" cy="214" rx="82" ry="15" fill="#4A3019"/>
+          <ellipse cx="200" cy="211" rx="82" ry="15" fill="#5A3A24" stroke="#B89B72" stroke-width="2.5"/>
+
+          <!-- cocoa dusting -->
+          <circle cx="172" cy="208" r="3" fill="#2A1505" opacity="0.6"/>
+          <circle cx="200" cy="213" r="2.4" fill="#2A1505" opacity="0.6"/>
+          <circle cx="226" cy="207" r="3" fill="#2A1505" opacity="0.6"/>
+          <circle cx="212" cy="205" r="1.8" fill="#2A1505" opacity="0.5"/>
+          <circle cx="186" cy="216" r="1.8" fill="#2A1505" opacity="0.5"/>
+
+          <!-- pot outline -->
+          <path d="M118 214 H282 L270 430 Q269 446 253 446 H147 Q131 446 130 430 Z" fill="none" stroke="#B89B72" stroke-width="3"/>
         </svg>
       </div>
     </div>
