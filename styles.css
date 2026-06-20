@@ -560,7 +560,7 @@ textarea { resize: vertical; min-height: 90px; }
   .order-layout,
   .footer-grid { grid-template-columns: 1fr; }
   .story-split.reverse .story-art { order: 0; }
-  .hero-art { max-width: 420px; margin: 0 auto; width: 100%; }
+  .hero-logo { display: none; } /* hide the large logo on mobile (header logo stays) */
   .summary { position: static; }
 }
 @media (max-width: 480px) {
