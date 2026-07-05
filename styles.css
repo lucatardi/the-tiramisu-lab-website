@@ -321,7 +321,11 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
   border-radius: var(--radius);
   padding: 2.2rem;
   box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
 }
+.feature-card p { margin-bottom: 0; }
 .section-cocoa .feature-card {
   background: rgba(255,255,255,0.05);
   border-color: rgba(255,255,255,0.14);
@@ -332,9 +336,10 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
   border-radius: 14px;
   background: var(--mascarpone);
   color: var(--caramel-dk);
-  margin-bottom: 1.1rem;
+  flex: 0 0 auto;
 }
 .section-cocoa .feature-card .ico { background: rgba(201,138,75,0.22); color: var(--caramel); }
+.feature-card--wide { grid-column: 1 / -1; }
 
 /* ---------- Flavours ---------- */
 .flavour-grid {
