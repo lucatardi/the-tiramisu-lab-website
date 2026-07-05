@@ -336,6 +336,37 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
 }
 .section-cocoa .feature-card .ico { background: rgba(201,138,75,0.22); color: var(--caramel); }
 
+/* ---------- Flavours ---------- */
+.flavour-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.6rem;
+}
+.flavour-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 2rem 2.1rem;
+  box-shadow: var(--shadow-sm);
+}
+.flavour-card h3 {
+  position: relative;
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.7rem;
+  color: var(--espresso);
+}
+.flavour-card h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 34px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--caramel);
+}
+.flavour-card p { margin: 0; color: var(--muted); }
+
 /* ---------- Steps / values ---------- */
 .steps {
   display: grid;
@@ -564,6 +595,7 @@ textarea { resize: vertical; min-height: 90px; }
   .hero-grid,
   .story-split,
   .feature-grid,
+  .flavour-grid,
   .steps,
   .order-layout,
   .footer-grid { grid-template-columns: 1fr; }
