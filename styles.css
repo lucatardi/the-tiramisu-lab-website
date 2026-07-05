@@ -158,6 +158,9 @@ a { color: var(--caramel-dk); }
 .nav-links li { display: flex; align-items: center; }
 .nav-ig { display: inline-flex; align-items: center; }
 .nav-ig svg { display: block; }
+/* Standalone header Instagram icon — mobile only */
+.nav-ig-mobile { display: none; color: var(--cocoa); }
+.nav-ig-mobile:hover { color: var(--caramel-dk); }
 .nav-cta { margin-left: 0.5rem; }
 .nav-toggle {
   display: none;
@@ -556,6 +559,8 @@ textarea { resize: vertical; min-height: 90px; }
   }
   .nav-links.open { display: flex; }
   .nav-toggle { display: block; }
+  .nav-ig-mobile { display: inline-flex; margin-left: auto; margin-right: 1rem; }
+  .nav-links li.nav-ig-item { display: none; } /* hide the in-menu icon; the header one shows instead */
   .hero-grid,
   .story-split,
   .feature-grid,
