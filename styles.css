@@ -155,6 +155,7 @@ a { color: var(--caramel-dk); }
 }
 .nav-links a:hover { color: var(--caramel-dk); }
 .nav-links a.active { color: var(--caramel-dk); }
+.nav-links li { display: flex; align-items: center; }
 .nav-ig { display: inline-flex; align-items: center; }
 .nav-ig svg { display: block; }
 .nav-cta { margin-left: 0.5rem; }
