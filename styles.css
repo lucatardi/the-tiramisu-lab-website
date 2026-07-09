@@ -364,22 +364,10 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
   object-fit: cover;
   display: block;
 }
-.flavour-body { padding: 1.6rem 2.1rem 2rem; }
+.flavour-body { padding: 1.1rem 2.1rem; }
 .flavour-card h3 {
-  position: relative;
-  padding-bottom: 0.6rem;
-  margin-bottom: 0.7rem;
+  margin: 0;
   color: var(--espresso);
-}
-.flavour-card h3::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 34px;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--caramel);
 }
 .flavour-card p { margin: 0; color: var(--muted); }
 .section-cta { text-align: center; margin-top: 2.6rem; }
