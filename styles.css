@@ -370,7 +370,6 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
   color: var(--espresso);
 }
 .flavour-card p { margin: 0; color: var(--muted); }
-.section-cta { text-align: center; margin-top: 2.6rem; }
 .avail-note {
   margin: 0.9rem 0 0;
   font-size: 0.9rem;
