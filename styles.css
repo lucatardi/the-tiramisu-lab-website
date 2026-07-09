@@ -389,26 +389,6 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
   color: var(--muted);
   letter-spacing: 0.02em;
 }
-.flavour-meta {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 1.1rem;
-  padding-top: 0.9rem;
-  border-top: 1px solid var(--line);
-}
-.flavour-size {
-  font-size: 0.85rem;
-  color: var(--muted);
-  letter-spacing: 0.02em;
-}
-.flavour-price {
-  font-family: var(--serif);
-  font-weight: 600;
-  font-size: 1.4rem;
-  color: var(--caramel-dk);
-}
 
 /* ---------- Steps / values ---------- */
 .steps {
