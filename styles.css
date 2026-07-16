@@ -559,7 +559,7 @@ textarea { resize: vertical; min-height: 90px; }
 /* Product / flavor rows */
 .product {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 1rem;
   padding: 0.9rem 1rem;
@@ -567,6 +567,14 @@ textarea { resize: vertical; min-height: 90px; }
   border-radius: 12px;
   margin-bottom: 0.8rem;
   background: var(--cream);
+}
+.p-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  object-fit: cover;
+  display: block;
+  background: var(--mascarpone);
 }
 .product .p-name { font-weight: 800; color: var(--espresso); }
 .product .p-desc { font-size: 0.85rem; color: var(--muted); }
