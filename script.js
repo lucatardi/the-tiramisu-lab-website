@@ -2,11 +2,10 @@
    The Tiramisu Lab — shared scripts
    =========================================================== */
 
-/* ---- Config: where order requests go ----
-   Replace these with your real details. */
-const ORDER_EMAIL = "hello@thetiramisulab.com";   // TODO: your inbox
-const WHATSAPP_NUMBER = "10000000000";            // TODO: digits only, incl. country code (no +)
+/* ---- Config ---- */
+const WHATSAPP_NUMBER = "353833311181"; // digits only, incl. country code (no +)
 const CURRENCY = "€";
+const LEAD_DAYS = 2;                    // minimum days' notice for collection
 
 /* ---- Footer year (all pages) ---- */
 const yearEl = document.getElementById("year");
@@ -29,7 +28,7 @@ if (navToggle && navLinks) {
 }
 
 /* ===========================================================
-   Order page logic
+   Order & collect page
    =========================================================== */
 const orderForm = document.getElementById("orderForm");
 
@@ -37,7 +36,6 @@ if (orderForm) {
   const money = (n) => CURRENCY + n.toFixed(2);
 
   const products = Array.from(document.querySelectorAll(".product")).map((el) => ({
-    el,
     name: el.dataset.name,
     price: parseFloat(el.dataset.price),
     input: el.querySelector('input[type="number"]'),
@@ -45,14 +43,13 @@ if (orderForm) {
 
   const summaryLines = document.getElementById("summaryLines");
   const summaryTotal = document.getElementById("summaryTotal");
-  const waLink = document.getElementById("waLink");
 
-  /* Set the date picker minimum to tomorrow (24h ahead) */
+  /* Collection date must be at least LEAD_DAYS away */
   const dateInput = document.getElementById("date");
   if (dateInput) {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    dateInput.min = tomorrow.toISOString().split("T")[0];
+    const earliest = new Date();
+    earliest.setDate(earliest.getDate() + LEAD_DAYS);
+    dateInput.min = earliest.toISOString().split("T")[0];
   }
 
   /* Quantity steppers */
@@ -61,8 +58,7 @@ if (orderForm) {
     qty.querySelectorAll("button").forEach((btn) => {
       btn.addEventListener("click", () => {
         const step = parseInt(btn.dataset.step, 10);
-        const next = Math.max(0, Math.min(99, (parseInt(input.value, 10) || 0) + step));
-        input.value = next;
+        input.value = Math.max(0, Math.min(99, (parseInt(input.value, 10) || 0) + step));
         recalc();
       });
     });
@@ -75,12 +71,11 @@ if (orderForm) {
     });
   });
 
-  /* Build the current order as a list of {name, qty, price, line} */
   function currentItems() {
     return products
       .map((p) => {
         const qty = parseInt(p.input.value, 10) || 0;
-        return { name: p.name, qty, price: p.price, line: qty * p.price };
+        return { name: p.name, qty, line: qty * p.price };
       })
       .filter((i) => i.qty > 0);
   }
@@ -112,44 +107,41 @@ if (orderForm) {
     return { items, total };
   }
 
-  /* Compose a human-readable order message */
+  /* Format a yyyy-mm-dd date as something readable */
+  function prettyDate(value) {
+    if (!value) return "—";
+    const d = new Date(value + "T00:00:00");
+    if (isNaN(d)) return value;
+    return d.toLocaleDateString("en-IE", { weekday: "long", day: "numeric", month: "long" });
+  }
+
+  /* Compose the WhatsApp order message */
   function buildMessage() {
     const { items, total } = recalc();
     const data = new FormData(orderForm);
     const lines = [];
 
-    lines.push("New tiramisu order request");
+    lines.push("Hi! I'd like to order for collection:");
     lines.push("");
     items.forEach((i) => lines.push(`• ${i.qty} × ${i.name} — ${money(i.line)}`));
     lines.push("");
     lines.push(`Total: ${money(total)}`);
     lines.push("");
-    lines.push(`Collection date: ${data.get("date") || "—"}`);
-    lines.push(`Preferred time:  ${data.get("time") || "—"}`);
+    lines.push(`Collection: ${prettyDate(data.get("date"))}`);
+    lines.push(`Preferred time: ${data.get("time") || "—"}`);
     lines.push("");
-    lines.push(`Name:  ${data.get("name") || "—"}`);
+    lines.push(`Name: ${data.get("name") || "—"}`);
     lines.push(`Phone: ${data.get("phone") || "—"}`);
-    lines.push(`Email: ${data.get("email") || "—"}`);
     const notes = (data.get("notes") || "").trim();
-    if (notes) {
-      lines.push("");
-      lines.push(`Notes: ${notes}`);
-    }
+    if (notes) lines.push(`Notes: ${notes}`);
     return lines.join("\n");
   }
 
-  /* Keep the WhatsApp link in sync */
-  function syncWhatsApp() {
-    const msg = encodeURIComponent(buildMessage());
-    waLink.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
-  }
-  orderForm.addEventListener("input", syncWhatsApp);
-
-  /* Submit → open email client with the prefilled order */
+  /* Submit → open WhatsApp with the order ready to send */
   orderForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    const { items, total } = recalc();
+    const { items } = recalc();
     if (items.length === 0) {
       alert("Please add at least one tiramisu to your order.");
       return;
@@ -159,12 +151,10 @@ if (orderForm) {
       return;
     }
 
-    const subject = encodeURIComponent("Tiramisu order request — collection");
-    const body = encodeURIComponent(buildMessage());
-    window.location.href = `mailto:${ORDER_EMAIL}?subject=${subject}&body=${body}`;
+    const msg = encodeURIComponent(buildMessage());
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank", "noopener");
   });
 
   /* Initial paint */
   recalc();
-  syncWhatsApp();
 }

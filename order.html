@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order &amp; collect — The Tiramisu Lab</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <meta name="description" content="Order artisan tiramisu from The Tiramisu Lab for collection in Clongriffin, Dublin. Choose your flavours, pick a date, and send your order on WhatsApp." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css?v=15" />
+</head>
+<body>
+
+  <!-- ============ Header ============ -->
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="index.html" aria-label="The Tiramisu Lab — home">
+        <span class="tl-circle tl-circle--sm" aria-hidden="true">
+          <span class="tl-logo">
+            <span class="tl-the">The</span>
+            <span class="tl-tira">Tira</span>
+            <span class="tl-misu-wrap">
+              <span class="tl-misu">misu</span>
+              <span class="tl-lab">Lab</span>
+            </span>
+          </span>
+        </span>
+      </a>
+      <a class="nav-ig nav-ig-mobile" href="https://instagram.com/the_tiramisulab" target="_blank" rel="noopener" aria-label="The Tiramisu Lab on Instagram">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="5.5"/>
+          <circle cx="12" cy="12" r="4.2"/>
+          <circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/>
+        </svg>
+      </a>
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="index.html#about">About us</a></li>
+        <li><a href="index.html#flavours">Flavours</a></li>
+        <li><a href="index.html#ingredients">Ingredients</a></li>
+        <li><a class="active" href="order.html">Order &amp; collect</a></li>
+        <li><a href="index.html#visit">Find us</a></li>
+        <li class="nav-ig-item"><a class="nav-ig" href="https://instagram.com/the_tiramisulab" target="_blank" rel="noopener" aria-label="The Tiramisu Lab on Instagram">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="5.5"/>
+            <circle cx="12" cy="12" r="4.2"/>
+            <circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/>
+          </svg>
+        </a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ============ Page hero ============ -->
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="eyebrow">Order ahead · Collect in Clongriffin</p>
+      <h1>Order &amp; collect</h1>
+      <p>Pick your flavours and a collection day at least two days away. Send it over on WhatsApp — we’ll confirm the time and send you a payment link.</p>
+    </div>
+  </section>
+
+  <!-- ============ Order form ============ -->
+  <div class="wrap">
+    <form id="orderForm" class="order-layout" novalidate>
+
+      <div class="order-form">
+        <!-- Flavours -->
+        <fieldset>
+          <legend>1 · Choose your tiramisu</legend>
+
+          <div class="product" data-name="Classic" data-price="6.5">
+            <div>
+              <div class="p-name">Classic</div>
+              <div class="p-price">€6.50</div>
+            </div>
+            <div class="qty" data-qty>
+              <button type="button" data-step="-1" aria-label="Decrease Classic">−</button>
+              <input type="number" name="qty_classic" value="0" min="0" max="99" inputmode="numeric" aria-label="Classic quantity" />
+              <button type="button" data-step="1" aria-label="Increase Classic">+</button>
+            </div>
+          </div>
+
+          <div class="product" data-name="Pistachio" data-price="7.5">
+            <div>
+              <div class="p-name">Pistachio</div>
+              <div class="p-price">€7.50</div>
+            </div>
+            <div class="qty" data-qty>
+              <button type="button" data-step="-1" aria-label="Decrease Pistachio">−</button>
+              <input type="number" name="qty_pistachio" value="0" min="0" max="99" inputmode="numeric" aria-label="Pistachio quantity" />
+              <button type="button" data-step="1" aria-label="Increase Pistachio">+</button>
+            </div>
+          </div>
+
+          <div class="product" data-name="Biscoff" data-price="7.5">
+            <div>
+              <div class="p-name">Biscoff</div>
+              <div class="p-price">€7.50</div>
+            </div>
+            <div class="qty" data-qty>
+              <button type="button" data-step="-1" aria-label="Decrease Biscoff">−</button>
+              <input type="number" name="qty_biscoff" value="0" min="0" max="99" inputmode="numeric" aria-label="Biscoff quantity" />
+              <button type="button" data-step="1" aria-label="Increase Biscoff">+</button>
+            </div>
+          </div>
+
+          <div class="product" data-name="Nutella" data-price="7.5">
+            <div>
+              <div class="p-name">Nutella</div>
+              <div class="p-price">€7.50</div>
+            </div>
+            <div class="qty" data-qty>
+              <button type="button" data-step="-1" aria-label="Decrease Nutella">−</button>
+              <input type="number" name="qty_nutella" value="0" min="0" max="99" inputmode="numeric" aria-label="Nutella quantity" />
+              <button type="button" data-step="1" aria-label="Increase Nutella">+</button>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Collection -->
+        <fieldset>
+          <legend>2 · Collection</legend>
+          <div class="field-row">
+            <div class="field">
+              <label for="date">Collection date</label>
+              <input type="date" id="date" name="date" required />
+            </div>
+            <div class="field">
+              <label for="time">Preferred time</label>
+              <input type="time" id="time" name="time" required />
+            </div>
+          </div>
+          <p class="hint" style="margin-top:-0.4rem">We need at least two days’ notice — everything is made to order. We’ll agree the exact collection time when we confirm. Pick-up is at 15 Main Street, Clongriffin.</p>
+        </fieldset>
+
+        <!-- Details -->
+        <fieldset>
+          <legend>3 · Your details</legend>
+          <div class="field">
+            <label for="name">Full name</label>
+            <input type="text" id="name" name="name" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel" required />
+          </div>
+          <div class="field">
+            <label for="notes">Notes <span class="hint">(allergies, a message on top, anything else)</span></label>
+            <textarea id="notes" name="notes" placeholder="e.g. nut allergy in the family, please label clearly"></textarea>
+          </div>
+        </fieldset>
+
+        <p class="avail-note"><strong>Allergens:</strong> our tiramisu contains egg, milk and gluten (wheat). Pistachio and Nutella also contain nuts. Made in a kitchen that handles nuts.</p>
+      </div>
+
+      <!-- Summary -->
+      <aside class="summary" aria-live="polite">
+        <h3>Your order</h3>
+        <ul class="summary-lines" id="summaryLines">
+          <li class="empty">Nothing added yet — pick a tiramisu to start.</li>
+        </ul>
+        <div class="summary-total">
+          <span>Total</span>
+          <span id="summaryTotal">€0.00</span>
+        </div>
+        <button type="submit" class="btn btn-primary">Send order on WhatsApp</button>
+        <p class="note">This opens WhatsApp with your order ready to send. We’ll confirm we can make it for your date, agree a collection time, then send you a payment link. Nothing is charged here, and your details are only used to handle your order.</p>
+        <p class="alt-contact">Want it delivered instead? <a href="https://deliveroo.ie/menu/dublin/baldoyle-racecourse/the-tiramisu-lab" target="_blank" rel="noopener">Order on Deliveroo</a></p>
+      </aside>
+
+    </form>
+  </div>
+
+  <!-- ============ Footer ============ -->
+  <footer class="site-footer" id="visit">
+    <div class="wrap footer-grid">
+      <div>
+        <a class="brand" href="index.html" style="color:var(--cream)">
+          <span class="tl-circle tl-circle--sm" aria-hidden="true">
+            <span class="tl-logo">
+              <span class="tl-the">The</span>
+              <span class="tl-tira">Tira</span>
+              <span class="tl-misu-wrap">
+                <span class="tl-misu">misu</span>
+                <span class="tl-lab">Lab</span>
+              </span>
+            </span>
+          </span>
+        </a>
+        <p style="margin-top:1rem;max-width:32ch;color:rgba(244,233,216,0.75)">Artisan tiramisu, the slow way. Savoiardi and mascarpone made fresh in our kitchen.</p>
+      </div>
+      <div>
+        <h4>Find us</h4>
+        <ul class="footer-list">
+          <li>15 Main Street, Clongriffin</li>
+          <li>Dublin, Ireland</li>
+          <li><a href="https://deliveroo.ie/menu/dublin/baldoyle-racecourse/the-tiramisu-lab" target="_blank" rel="noopener">Order on Deliveroo</a></li>
+          <li>Open Mon–Fri · 8–11pm</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Get in touch</h4>
+        <ul class="footer-list">
+          <li><a href="mailto:lucatardi@icloud.com" style="display:inline-flex;align-items:center;gap:0.5em;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="14" rx="2.5"/>
+              <path d="m3.5 7 8.5 6 8.5-6"/>
+            </svg>
+            lucatardi@icloud.com
+          </a></li>
+          <li><a href="tel:+353833311181" style="display:inline-flex;align-items:center;gap:0.5em;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.33 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            +353 83 331 1181
+          </a></li>
+          <li><a href="https://instagram.com/the_tiramisulab" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:0.5em;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5.5"/>
+              <circle cx="12" cy="12" r="4.2"/>
+              <circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/>
+            </svg>
+            @the_tiramisulab
+          </a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="wrap footer-bottom">
+      <span>© <span id="year"></span> The Tiramisu Lab. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script src="script.js?v=3"></script>
+</body>
+</html>
