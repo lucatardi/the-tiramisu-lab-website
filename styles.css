@@ -450,7 +450,7 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
 
 .order-layout {
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
   gap: clamp(2rem, 4vw, 3.5rem);
   align-items: start;
   padding-bottom: 5rem;
@@ -473,7 +473,7 @@ legend {
   padding: 0;
 }
 
-.field { margin-bottom: 1.2rem; }
+.field { margin-bottom: 1.2rem; min-width: 0; }
 .field label {
   display: block;
   font-weight: 700;
@@ -539,6 +539,7 @@ legend {
 
 input, select, textarea {
   width: 100%;
+  max-width: 100%;
   font-family: var(--sans);
   font-size: 1rem;
   color: var(--ink);
@@ -554,7 +555,8 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px rgba(201,138,75,0.18);
 }
 textarea { resize: vertical; min-height: 90px; }
-.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+/* minmax(0,1fr) so a long <select> option can't force the column wider */
+.field-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; }
 
 /* Product / flavor rows */
 .product {
@@ -677,5 +679,5 @@ textarea { resize: vertical; min-height: 90px; }
   .summary { position: static; }
 }
 @media (max-width: 480px) {
-  .field-row { grid-template-columns: 1fr; }
+  .field-row { grid-template-columns: minmax(0, 1fr); }
 }
