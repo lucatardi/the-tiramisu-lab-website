@@ -53,7 +53,7 @@ if (orderForm) {
     },
     evening: {
       label: "Evening", from: "20:00", to: "23:00", human: "8pm–11pm",
-      where: "15 Main Street, Clongriffin",
+      where: "in front of 15 Main Street, Clongriffin",
     },
   };
 
