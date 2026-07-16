@@ -44,12 +44,49 @@ if (orderForm) {
   const summaryLines = document.getElementById("summaryLines");
   const summaryTotal = document.getElementById("summaryTotal");
 
-  /* Collection date must be at least LEAD_DAYS away */
+  /* ---- Collection date: must be at least LEAD_DAYS away ----
+     Note: mobile date pickers ignore `min`, so we validate on change too. */
   const dateInput = document.getElementById("date");
+  const dateError = document.getElementById("dateError");
+  const dateHint = document.getElementById("dateHint");
+
+  /* Local-time yyyy-mm-dd (toISOString would shift us to UTC) */
+  const localISO = (d) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+  const earliest = new Date();
+  earliest.setHours(0, 0, 0, 0);
+  earliest.setDate(earliest.getDate() + LEAD_DAYS);
+  const earliestISO = localISO(earliest);
+  const earliestPretty = earliest.toLocaleDateString("en-IE", {
+    weekday: "long", day: "numeric", month: "long",
+  });
+
   if (dateInput) {
-    const earliest = new Date();
-    earliest.setDate(earliest.getDate() + LEAD_DAYS);
-    dateInput.min = earliest.toISOString().split("T")[0];
+    dateInput.min = earliestISO;
+    if (dateHint) {
+      dateHint.textContent =
+        `We need at least ${LEAD_DAYS} days’ notice — everything is made to order, so the earliest collection is ${earliestPretty}. We’ll agree the exact time when we confirm. Pick-up is in Clongriffin.`;
+    }
+
+    const validateDate = () => {
+      const v = dateInput.value;
+      const tooSoon = v && v < earliestISO;
+      dateInput.setCustomValidity(
+        tooSoon ? `Sorry — the earliest collection is ${earliestPretty}.` : ""
+      );
+      if (dateError) {
+        dateError.hidden = !tooSoon;
+        dateError.textContent = tooSoon
+          ? `That’s too soon — the earliest we can do is ${earliestPretty}.`
+          : "";
+      }
+      return !tooSoon;
+    };
+
+    dateInput.addEventListener("change", validateDate);
+    dateInput.addEventListener("input", validateDate);
+    orderForm.validateDate = validateDate;
   }
 
   /* Quantity steppers */
@@ -146,6 +183,7 @@ if (orderForm) {
       alert("Please add at least one tiramisu to your order.");
       return;
     }
+    if (orderForm.validateDate) orderForm.validateDate();
     if (!orderForm.checkValidity()) {
       orderForm.reportValidity();
       return;

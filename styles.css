@@ -482,6 +482,12 @@ legend {
   color: var(--cocoa);
 }
 .field .hint { font-weight: 400; color: var(--muted); font-size: 0.85rem; }
+.field-error {
+  margin: 0 0 0.7rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #B3402B;
+}
 
 input, select, textarea {
   width: 100%;
