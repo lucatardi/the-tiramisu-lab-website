@@ -101,14 +101,43 @@ if (orderForm) {
     return !msg;
   }
 
+  /* ---- Times: only the ones inside the chosen slot are offered ---- */
+  const TIME_STEP_MIN = 30;
+  const toMinutes = (hhmm) => {
+    const [h, m] = hhmm.split(":").map(Number);
+    return h * 60 + m;
+  };
+  const toValue = (mins) =>
+    `${String(Math.floor(mins / 60)).padStart(2, "0")}:${String(mins % 60).padStart(2, "0")}`;
+  const toLabel = (mins) => {
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return `${h % 12 === 0 ? 12 : h % 12}:${String(m).padStart(2, "0")}${h < 12 ? "am" : "pm"}`;
+  };
+  const slotTimes = (slot) => {
+    const out = [];
+    for (let m = toMinutes(slot.from); m <= toMinutes(slot.to); m += TIME_STEP_MIN) {
+      out.push({ value: toValue(m), label: toLabel(m) });
+    }
+    return out;
+  };
+
+  function fillTimes() {
+    if (!timeInput) return;
+    const keep = timeInput.value;
+    const times = slotTimes(currentSlot());
+    timeInput.innerHTML =
+      '<option value="">Choose a time…</option>' +
+      times.map((t) => `<option value="${t.value}">${t.label}</option>`).join("");
+    /* Keep the selection only if it's still valid for this slot */
+    timeInput.value = times.some((t) => t.value === keep) ? keep : "";
+  }
+
   function validateTime() {
     if (!timeInput) return true;
     const slot = currentSlot();
     const v = timeInput.value;
-    const msg =
-      v && (v < slot.from || v > slot.to)
-        ? `${slot.label} collection is ${slot.human} — please pick a time in that window.`
-        : "";
+    const msg = v && (v < slot.from || v > slot.to) ? `${slot.label} collection is ${slot.human}.` : "";
     timeInput.setCustomValidity(msg);
     showError(timeError, msg);
     return !msg;
@@ -120,10 +149,7 @@ if (orderForm) {
       const card = r.closest(".slot");
       if (card) card.classList.toggle("slot--on", r.checked);
     });
-    if (timeInput) {
-      timeInput.min = slot.from;
-      timeInput.max = slot.to;
-    }
+    fillTimes();
     if (dateHint) {
       dateHint.textContent =
         `Weekdays only, and we need at least ${LEAD_DAYS} days’ notice — everything is made to order, so the earliest is ${prettyDate(earliestISO)}. ` +
@@ -225,7 +251,11 @@ if (orderForm) {
     lines.push("");
     lines.push(`Total: ${money(total)}`);
     lines.push("");
-    lines.push(`Collection: ${prettyDate(data.get("date"))} at ${data.get("time") || "—"}`);
+    const timeLabel =
+      (timeInput && timeInput.selectedOptions[0] && timeInput.value
+        ? timeInput.selectedOptions[0].text
+        : data.get("time")) || "—";
+    lines.push(`Collection: ${prettyDate(data.get("date"))} at ${timeLabel}`);
     lines.push(`Pick-up: ${currentSlot().where}`);
     return lines.join("\n");
   }
