@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=16" />
+  <link rel="stylesheet" href="styles.css?v=17" />
 </head>
 <body>
 
@@ -58,9 +58,9 @@
   <!-- ============ Page hero ============ -->
   <section class="page-hero">
     <div class="wrap">
-      <p class="eyebrow">Order ahead · Collect in Clongriffin</p>
+      <p class="eyebrow">Order ahead · Two pick-up points</p>
       <h1>Order &amp; collect</h1>
-      <p>Pick your flavours and a collection day at least two days away. Send it over on WhatsApp — we’ll confirm the time and send you a payment link.</p>
+      <p>Pick your flavours, then collect in town during the day or in Clongriffin in the evening — weekdays, two days’ notice. Send it over on WhatsApp and we’ll confirm the time and send you a payment link.</p>
     </div>
   </section>
 
@@ -124,7 +124,23 @@
 
         <!-- Collection -->
         <fieldset>
-          <legend>2 · Collection</legend>
+          <legend>2 · Where &amp; when</legend>
+
+          <div class="slot-options" role="radiogroup" aria-label="Collection point">
+            <label class="slot">
+              <input type="radio" name="slot" value="daytime" checked />
+              <span class="slot-name">Daytime</span>
+              <span class="slot-when">9am – 6pm</span>
+              <span class="slot-where">In front of 124 St Stephen’s Green</span>
+            </label>
+            <label class="slot">
+              <input type="radio" name="slot" value="evening" />
+              <span class="slot-name">Evening</span>
+              <span class="slot-when">8pm – 11pm</span>
+              <span class="slot-where">15 Main Street, Clongriffin</span>
+            </label>
+          </div>
+
           <div class="field-row">
             <div class="field">
               <label for="date">Collection date</label>
@@ -136,7 +152,8 @@
             </div>
           </div>
           <p class="field-error" id="dateError" hidden></p>
-          <p class="hint" id="dateHint" style="margin-top:-0.4rem">We need at least two days’ notice — everything is made to order. We’ll agree the exact collection time when we confirm. Pick-up is in Clongriffin.</p>
+          <p class="field-error" id="timeError" hidden></p>
+          <p class="hint" id="dateHint" style="margin-top:-0.4rem"></p>
         </fieldset>
 
         <p class="avail-note"><strong>Allergens:</strong> our tiramisu contains egg, milk and gluten (wheat). Pistachio and Nutella also contain nuts. Made in a kitchen that handles nuts.</p>
@@ -219,6 +236,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=6"></script>
+  <script src="script.js?v=7"></script>
 </body>
 </html>

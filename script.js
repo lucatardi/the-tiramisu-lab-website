@@ -44,50 +44,111 @@ if (orderForm) {
   const summaryLines = document.getElementById("summaryLines");
   const summaryTotal = document.getElementById("summaryTotal");
 
-  /* ---- Collection date: must be at least LEAD_DAYS away ----
-     Note: mobile date pickers ignore `min`, so we validate on change too. */
+  /* ---- Collection: weekdays only, LEAD_DAYS notice, location depends on slot ----
+     Mobile date/time pickers ignore min/max, so we validate on change too. */
+  const SLOTS = {
+    daytime: {
+      label: "Daytime", from: "09:00", to: "18:00", human: "9am–6pm",
+      where: "in front of 124 St Stephen’s Green",
+    },
+    evening: {
+      label: "Evening", from: "20:00", to: "23:00", human: "8pm–11pm",
+      where: "15 Main Street, Clongriffin",
+    },
+  };
+
   const dateInput = document.getElementById("date");
+  const timeInput = document.getElementById("time");
   const dateError = document.getElementById("dateError");
+  const timeError = document.getElementById("timeError");
   const dateHint = document.getElementById("dateHint");
+  const slotInputs = Array.from(document.querySelectorAll('input[name="slot"]'));
 
   /* Local-time yyyy-mm-dd (toISOString would shift us to UTC) */
   const localISO = (d) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const isWeekend = (d) => d.getDay() === 0 || d.getDay() === 6;
 
+  /* Earliest = LEAD_DAYS away, rolled forward past the weekend */
   const earliest = new Date();
   earliest.setHours(0, 0, 0, 0);
   earliest.setDate(earliest.getDate() + LEAD_DAYS);
+  while (isWeekend(earliest)) earliest.setDate(earliest.getDate() + 1);
   const earliestISO = localISO(earliest);
-  const earliestPretty = earliest.toLocaleDateString("en-IE", {
-    weekday: "long", day: "numeric", month: "long",
-  });
+
+  const currentSlot = () =>
+    SLOTS[(slotInputs.find((r) => r.checked) || {}).value] || SLOTS.daytime;
+
+  const showError = (el, msg) => {
+    if (!el) return;
+    el.hidden = !msg;
+    el.textContent = msg || "";
+  };
+
+  function validateDate() {
+    if (!dateInput) return true;
+    const v = dateInput.value;
+    let msg = "";
+    if (v) {
+      if (v < earliestISO) {
+        msg = `That’s too soon — the earliest we can do is ${prettyDate(earliestISO)}.`;
+      } else if (isWeekend(new Date(v + "T00:00:00"))) {
+        msg = "We only do collections Monday to Friday.";
+      }
+    }
+    dateInput.setCustomValidity(msg);
+    showError(dateError, msg);
+    return !msg;
+  }
+
+  function validateTime() {
+    if (!timeInput) return true;
+    const slot = currentSlot();
+    const v = timeInput.value;
+    const msg =
+      v && (v < slot.from || v > slot.to)
+        ? `${slot.label} collection is ${slot.human} — please pick a time in that window.`
+        : "";
+    timeInput.setCustomValidity(msg);
+    showError(timeError, msg);
+    return !msg;
+  }
+
+  function syncSlot() {
+    const slot = currentSlot();
+    slotInputs.forEach((r) => {
+      const card = r.closest(".slot");
+      if (card) card.classList.toggle("slot--on", r.checked);
+    });
+    if (timeInput) {
+      timeInput.min = slot.from;
+      timeInput.max = slot.to;
+    }
+    if (dateHint) {
+      dateHint.textContent =
+        `Weekdays only, and we need at least ${LEAD_DAYS} days’ notice — everything is made to order, so the earliest is ${prettyDate(earliestISO)}. ` +
+        `${slot.label} collection is ${slot.human}, ${slot.where}. We’ll confirm the exact time.`;
+    }
+    validateTime();
+  }
 
   if (dateInput) {
     dateInput.min = earliestISO;
-    if (dateHint) {
-      dateHint.textContent =
-        `We need at least ${LEAD_DAYS} days’ notice — everything is made to order, so the earliest collection is ${earliestPretty}. We’ll agree the exact time when we confirm. Pick-up is in Clongriffin.`;
-    }
-
-    const validateDate = () => {
-      const v = dateInput.value;
-      const tooSoon = v && v < earliestISO;
-      dateInput.setCustomValidity(
-        tooSoon ? `Sorry — the earliest collection is ${earliestPretty}.` : ""
-      );
-      if (dateError) {
-        dateError.hidden = !tooSoon;
-        dateError.textContent = tooSoon
-          ? `That’s too soon — the earliest we can do is ${earliestPretty}.`
-          : "";
-      }
-      return !tooSoon;
-    };
-
     dateInput.addEventListener("change", validateDate);
     dateInput.addEventListener("input", validateDate);
-    orderForm.validateDate = validateDate;
   }
+  if (timeInput) {
+    timeInput.addEventListener("change", validateTime);
+    timeInput.addEventListener("input", validateTime);
+  }
+  slotInputs.forEach((r) => r.addEventListener("change", syncSlot));
+  syncSlot();
+
+  orderForm.validateCollection = () => {
+    const okDate = validateDate();
+    const okTime = validateTime();
+    return okDate && okTime;
+  };
 
   /* Quantity steppers */
   document.querySelectorAll("[data-qty]").forEach((qty) => {
@@ -164,8 +225,8 @@ if (orderForm) {
     lines.push("");
     lines.push(`Total: ${money(total)}`);
     lines.push("");
-    lines.push(`Collection: ${prettyDate(data.get("date"))}`);
-    lines.push(`Preferred time: ${data.get("time") || "—"}`);
+    lines.push(`Collection: ${prettyDate(data.get("date"))} at ${data.get("time") || "—"}`);
+    lines.push(`Pick-up: ${currentSlot().where}`);
     return lines.join("\n");
   }
 
@@ -178,7 +239,7 @@ if (orderForm) {
       alert("Please add at least one tiramisu to your order.");
       return;
     }
-    if (orderForm.validateDate) orderForm.validateDate();
+    if (orderForm.validateCollection) orderForm.validateCollection();
     if (!orderForm.checkValidity()) {
       orderForm.reportValidity();
       return;

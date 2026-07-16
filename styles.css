@@ -489,6 +489,54 @@ legend {
   color: #B3402B;
 }
 
+/* Collection point chooser */
+.slot-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-bottom: 1.3rem;
+}
+.slot {
+  position: relative;
+  display: block;
+  padding: 1rem 1.1rem;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: var(--cream);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.slot input {
+  position: absolute;
+  opacity: 0;
+  width: 0; height: 0;
+  pointer-events: none;
+}
+.slot:hover { border-color: var(--caramel); }
+.slot:focus-within,
+.slot--on {
+  border-color: var(--caramel);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(201, 138, 75, 0.18);
+}
+.slot-name {
+  display: block;
+  font-weight: 800;
+  color: var(--espresso);
+}
+.slot-when {
+  display: block;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--caramel-dk);
+}
+.slot-where {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 input, select, textarea {
   width: 100%;
   font-family: var(--sans);
@@ -616,6 +664,7 @@ textarea { resize: vertical; min-height: 90px; }
   .order-layout,
   .footer-grid { grid-template-columns: 1fr; }
   .story-split.reverse .story-art { order: 0; }
+  .slot-options { grid-template-columns: 1fr; }
   .hero-logo { display: none; } /* hide the large logo on mobile (header logo stays) */
   .summary { position: static; }
 }
