@@ -62,7 +62,6 @@ if (orderForm) {
   const timeInput = document.getElementById("time");
   const dateError = document.getElementById("dateError");
   const timeError = document.getElementById("timeError");
-  const dateHint = document.getElementById("dateHint");
   const slotInputs = Array.from(document.querySelectorAll('input[name="slot"]'));
 
   /* Local-time yyyy-mm-dd (toISOString would shift us to UTC) */
@@ -167,17 +166,11 @@ if (orderForm) {
   }
 
   function syncSlot() {
-    const slot = currentSlot();
     slotInputs.forEach((r) => {
       const card = r.closest(".slot");
       if (card) card.classList.toggle("slot--on", r.checked);
     });
     fillTimes();
-    if (dateHint) {
-      dateHint.textContent =
-        `Weekdays only, and we need at least ${LEAD_DAYS} days’ notice — everything is made to order, so the earliest is ${prettyDate(earliestISO)}. ` +
-        `${slot.label} collection is ${slot.human}, ${slot.where}. We’ll confirm the exact time.`;
-    }
     validateTime();
   }
 
