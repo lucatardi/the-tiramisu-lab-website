@@ -48,7 +48,8 @@ if (orderForm) {
      Mobile date/time pickers ignore min/max, so we validate on change too. */
   const SLOTS = {
     daytime: {
-      label: "Daytime", from: "09:00", to: "18:00", human: "9am–6pm",
+      label: "Daytime", from: "09:00", to: "18:00", human: "9–11am and 2–6pm",
+      exclude: [["11:30", "13:30"]], // not available over lunch
       where: "in front of 124 St Stephen’s Green",
     },
     evening: {
@@ -115,9 +116,11 @@ if (orderForm) {
     return `${h % 12 === 0 ? 12 : h % 12}:${String(m).padStart(2, "0")}${h < 12 ? "am" : "pm"}`;
   };
   const slotTimes = (slot) => {
+    const blocked = (mins) =>
+      (slot.exclude || []).some(([a, b]) => mins >= toMinutes(a) && mins <= toMinutes(b));
     const out = [];
     for (let m = toMinutes(slot.from); m <= toMinutes(slot.to); m += TIME_STEP_MIN) {
-      out.push({ value: toValue(m), label: toLabel(m) });
+      if (!blocked(m)) out.push({ value: toValue(m), label: toLabel(m) });
     }
     return out;
   };
@@ -137,7 +140,10 @@ if (orderForm) {
     if (!timeInput) return true;
     const slot = currentSlot();
     const v = timeInput.value;
-    const msg = v && (v < slot.from || v > slot.to) ? `${slot.label} collection is ${slot.human}.` : "";
+    const msg =
+      v && !slotTimes(slot).some((t) => t.value === v)
+        ? `${slot.label} collection is ${slot.human} — please choose a time from the list.`
+        : "";
     timeInput.setCustomValidity(msg);
     showError(timeError, msg);
     return !msg;
