@@ -168,9 +168,6 @@ if (orderForm) {
     lines.push(`Preferred time: ${data.get("time") || "—"}`);
     lines.push("");
     lines.push(`Name: ${data.get("name") || "—"}`);
-    lines.push(`Phone: ${data.get("phone") || "—"}`);
-    const notes = (data.get("notes") || "").trim();
-    if (notes) lines.push(`Notes: ${notes}`);
     return lines.join("\n");
   }
 
