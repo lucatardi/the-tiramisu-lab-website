@@ -524,12 +524,6 @@ legend {
   font-weight: 800;
   color: var(--espresso);
 }
-.slot-when {
-  display: block;
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: var(--caramel-dk);
-}
 .slot-where {
   display: block;
   margin-top: 0.3rem;
