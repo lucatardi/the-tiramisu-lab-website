@@ -125,6 +125,23 @@ if (orderForm) {
     return out;
   };
 
+  /* Only offer weekdays, starting from the earliest allowed day */
+  const DATE_CHOICES = 20; // roughly four working weeks
+  function fillDates() {
+    if (!dateInput) return;
+    const keep = dateInput.value;
+    const days = [];
+    const d = new Date(earliest);
+    while (days.length < DATE_CHOICES) {
+      if (!isWeekend(d)) days.push(localISO(d));
+      d.setDate(d.getDate() + 1);
+    }
+    dateInput.innerHTML =
+      '<option value="">Choose a date…</option>' +
+      days.map((v) => `<option value="${v}">${prettyDate(v)}</option>`).join("");
+    dateInput.value = days.includes(keep) ? keep : "";
+  }
+
   function fillTimes() {
     if (!timeInput) return;
     const keep = timeInput.value;
@@ -165,9 +182,8 @@ if (orderForm) {
   }
 
   if (dateInput) {
-    dateInput.min = earliestISO;
+    fillDates();
     dateInput.addEventListener("change", validateDate);
-    dateInput.addEventListener("input", validateDate);
   }
   if (timeInput) {
     timeInput.addEventListener("change", validateTime);
