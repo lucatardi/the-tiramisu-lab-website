@@ -166,8 +166,6 @@ if (orderForm) {
     lines.push("");
     lines.push(`Collection: ${prettyDate(data.get("date"))}`);
     lines.push(`Preferred time: ${data.get("time") || "—"}`);
-    lines.push("");
-    lines.push(`Name: ${data.get("name") || "—"}`);
     return lines.join("\n");
   }
 
