@@ -50,11 +50,11 @@ if (orderForm) {
     daytime: {
       label: "Daytime", from: "09:00", to: "18:00", human: "9–11am and 2–6pm",
       exclude: [["11:30", "13:30"]], // not available over lunch
-      where: "in front of 124 St Stephen’s Green",
+      where: "city centre (St Stephen’s Green)",
     },
     evening: {
       label: "Evening", from: "20:00", to: "23:00", human: "8pm–11pm",
-      where: "in front of 15 Main Street, Clongriffin",
+      where: "Clongriffin",
     },
   };
 
