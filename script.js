@@ -54,7 +54,7 @@ if (orderForm) {
     },
     evening: {
       label: "Evening", from: "20:00", to: "23:00", human: "8pm–11pm",
-      where: "Clongriffin, North Dublin",
+      where: "Clongriffin, D13",
     },
   };
 
