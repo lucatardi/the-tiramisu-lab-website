@@ -50,7 +50,7 @@ if (orderForm) {
     daytime: {
       label: "Daytime", from: "09:00", to: "18:00", human: "9–11am and 2–6pm",
       exclude: [["11:30", "13:30"]], // not available over lunch
-      where: "city centre (St Stephen’s Green)",
+      where: "St Stephen’s Green, D2",
     },
     evening: {
       label: "Evening", from: "20:00", to: "23:00", human: "8pm–11pm",
