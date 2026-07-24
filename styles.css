@@ -414,7 +414,7 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
 }
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
+  grid-template-columns: 1.6fr 1fr;
   gap: 2rem;
 }
 .site-footer a { color: var(--mascarpone); text-decoration: none; }
