@@ -370,9 +370,6 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
   transition: transform 0.55s ease;
 }
 .flavour-card.flipped .flip-inner { transform: rotateY(180deg); }
-@media (hover: hover) {
-  .flavour-card:hover .flip-inner { transform: rotateY(180deg); }
-}
 .flip-face {
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -394,34 +391,11 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
   padding: 1.6rem 1.9rem;
 }
 .flavour-card .flip-back h3 { margin: 0 0 0.6rem; color: var(--cream); }
-.flip-base {
-  margin: 0 0 0.9rem;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  color: rgba(244, 233, 216, 0.72);
-}
-.flip-ingredients {
-  list-style: none;
+.flavour-card .flip-list {
   margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.55rem;
-}
-.flip-ingredients li {
-  position: relative;
-  padding-left: 1.1rem;
-  font-size: 0.98rem;
+  font-size: 1rem;
+  line-height: 1.65;
   color: rgba(244, 233, 216, 0.9);
-}
-.flip-ingredients li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.55em;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--caramel);
 }
 .flip-badge {
   position: absolute;

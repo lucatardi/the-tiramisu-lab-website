@@ -28,14 +28,13 @@ if (navToggle && navLinks) {
 }
 
 /* ---- Flavour flip cards (home page) ----
-   Desktop flips on hover (CSS); touch flips on tap; keyboard on Enter/Space. */
+   Flips only on tap/click or keyboard (Enter/Space) — never on hover. */
 (function () {
   const cards = document.querySelectorAll(".flavour-card");
   if (!cards.length) return;
-  const isTouch = window.matchMedia("(hover: none)").matches;
   cards.forEach((card) => {
     const toggle = () => card.classList.toggle("flipped");
-    if (isTouch) card.addEventListener("click", toggle);
+    card.addEventListener("click", toggle);
     card.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
