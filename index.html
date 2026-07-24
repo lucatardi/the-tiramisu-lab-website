@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=21" />
+  <link rel="stylesheet" href="styles.css?v=23" />
 </head>
 <body>
 
@@ -147,29 +147,73 @@
         <h2>Four ways to enjoy it</h2>
         <p>Every flavour is built on the same from-scratch base — espresso-soaked homemade ladyfingers and mascarpone.</p>
       </div>
+      <p class="flavour-hint">Tap a flavour to see what’s inside.</p>
       <div class="flavour-grid">
-        <article class="flavour-card">
-          <div class="flavour-photo"><img src="images/classic.jpg" alt="Classic tiramisu dusted with cocoa" loading="lazy" /></div>
-          <div class="flavour-body">
-            <h3>Classic</h3>
+        <article class="flavour-card" tabindex="0" role="button" aria-label="Classic — show ingredients">
+          <div class="flip-inner">
+            <div class="flip-face flip-front">
+              <div class="flavour-photo"><img src="images/classic.jpg" alt="Classic tiramisu dusted with cocoa" loading="lazy" /></div>
+              <div class="flavour-body"><h3>Classic</h3></div>
+              <span class="flip-badge" aria-hidden="true">↻</span>
+            </div>
+            <div class="flip-face flip-back">
+              <h3>Ingredients</h3>
+              <p class="flip-base">Double cream, eggs, sugar, milk, flour &amp; cornflour</p>
+              <ul class="flip-ingredients">
+                <li>Cocoa</li>
+              </ul>
+            </div>
           </div>
         </article>
-        <article class="flavour-card">
-          <div class="flavour-photo"><img src="images/pistachio.jpg" alt="Pistachio tiramisu topped with crushed pistachio" loading="lazy" /></div>
-          <div class="flavour-body">
-            <h3>Pistachio</h3>
+        <article class="flavour-card" tabindex="0" role="button" aria-label="Pistachio — show ingredients">
+          <div class="flip-inner">
+            <div class="flip-face flip-front">
+              <div class="flavour-photo"><img src="images/pistachio.jpg" alt="Pistachio tiramisu topped with crushed pistachio" loading="lazy" /></div>
+              <div class="flavour-body"><h3>Pistachio</h3></div>
+              <span class="flip-badge" aria-hidden="true">↻</span>
+            </div>
+            <div class="flip-face flip-back">
+              <h3>Ingredients</h3>
+              <p class="flip-base">Double cream, eggs, sugar, milk, flour &amp; cornflour</p>
+              <ul class="flip-ingredients">
+                <li>Pistachio cream</li>
+                <li>Crushed pistachio</li>
+              </ul>
+            </div>
           </div>
         </article>
-        <article class="flavour-card">
-          <div class="flavour-photo"><img src="images/biscoff.jpg" alt="Biscoff tiramisu topped with crushed Lotus biscuits" loading="lazy" /></div>
-          <div class="flavour-body">
-            <h3>Biscoff</h3>
+        <article class="flavour-card" tabindex="0" role="button" aria-label="Biscoff — show ingredients">
+          <div class="flip-inner">
+            <div class="flip-face flip-front">
+              <div class="flavour-photo"><img src="images/biscoff.jpg" alt="Biscoff tiramisu topped with crushed Lotus biscuits" loading="lazy" /></div>
+              <div class="flavour-body"><h3>Biscoff</h3></div>
+              <span class="flip-badge" aria-hidden="true">↻</span>
+            </div>
+            <div class="flip-face flip-back">
+              <h3>Ingredients</h3>
+              <p class="flip-base">Double cream, eggs, sugar, milk, flour &amp; cornflour</p>
+              <ul class="flip-ingredients">
+                <li>Biscoff cream</li>
+                <li>Crushed Lotus biscuit</li>
+              </ul>
+            </div>
           </div>
         </article>
-        <article class="flavour-card">
-          <div class="flavour-photo"><img src="images/nutella.jpg" alt="Nutella tiramisu topped with crushed hazelnuts" loading="lazy" /></div>
-          <div class="flavour-body">
-            <h3>Nutella</h3>
+        <article class="flavour-card" tabindex="0" role="button" aria-label="Nutella — show ingredients">
+          <div class="flip-inner">
+            <div class="flip-face flip-front">
+              <div class="flavour-photo"><img src="images/nutella.jpg" alt="Nutella tiramisu topped with crushed hazelnuts" loading="lazy" /></div>
+              <div class="flavour-body"><h3>Nutella</h3></div>
+              <span class="flip-badge" aria-hidden="true">↻</span>
+            </div>
+            <div class="flip-face flip-back">
+              <h3>Ingredients</h3>
+              <p class="flip-base">Double cream, eggs, sugar, milk, flour &amp; cornflour</p>
+              <ul class="flip-ingredients">
+                <li>Nutella</li>
+                <li>Crushed hazelnuts</li>
+              </ul>
+            </div>
           </div>
         </article>
       </div>
@@ -284,6 +328,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=16"></script>
+  <script src="script.js?v=17"></script>
 </body>
 </html>
