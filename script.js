@@ -5,7 +5,12 @@
 /* ---- Config ---- */
 const WHATSAPP_NUMBER = "353833311181"; // digits only, incl. country code (no +)
 const CURRENCY = "€";
-const LEAD_DAYS = 2;                    // minimum days' notice for collection
+
+/* Minimum days' notice for collection.
+   After the evening cut-off it's too late to start prep for a collection
+   two days out, so the earliest jumps from 2 days to 3 days ahead. */
+const ORDER_CUTOFF_HOUR = 20; // 8pm
+const LEAD_DAYS = new Date().getHours() >= ORDER_CUTOFF_HOUR ? 3 : 2;
 
 /* ---- Footer year (all pages) ---- */
 const yearEl = document.getElementById("year");
