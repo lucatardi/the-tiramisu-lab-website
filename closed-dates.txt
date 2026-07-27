@@ -5,10 +5,10 @@
 #  picker (holidays, days you're already full, etc.).
 #
 #  How to add a date:
-#    • One day:   2026-08-14
-#    • A range:   2026-08-10..2026-08-20   (both days included)
+#    • One day:   14-08-2026
+#    • A range:   10-08-2026..20-08-2026   (both days included)
 #
-#  Dates are YEAR-MONTH-DAY. Put each on its own line.
+#  Dates are DAY-MONTH-YEAR. Put each on its own line.
 #  Lines starting with #  are ignored (like these notes).
 #  Blank lines are fine. A typo is simply skipped.
 #
@@ -16,9 +16,9 @@
 #  updates within about a minute.
 #
 #  Examples — delete the # to switch one on:
-# 2026-08-14
-# 2026-08-10..2026-08-20
+# 14-08-2026
+# 10-08-2026..20-08-2026
 # ─────────────────────────────────────────────────────────────
 
-2026-08-03
-2026-08-10..2026-08-14
+03-08-2026
+10-08-2026..14-08-2026

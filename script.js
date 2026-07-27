@@ -115,13 +115,21 @@ if (orderForm) {
       const text = await res.text();
       closedDates.clear();
       closedRanges.length = 0;
+      /* File uses DD-MM-YYYY; convert to YYYY-MM-DD internally for comparison */
+      const toISO = (dmy) => {
+        const [d, m, y] = dmy.split("-");
+        return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+      };
+      const D = "\\d{1,2}-\\d{1,2}-\\d{4}";
+      const rangeRe = new RegExp(`^(${D})\\s*\\.\\.\\s*(${D})$`);
+      const singleRe = new RegExp(`^(${D})$`);
       text.split(/\r?\n/).forEach((raw) => {
         const line = raw.trim();
         if (!line || line.startsWith("#")) return;
-        const range = line.match(/^(\d{4}-\d{2}-\d{2})\s*\.\.\s*(\d{4}-\d{2}-\d{2})$/);
-        const single = line.match(/^(\d{4}-\d{2}-\d{2})$/);
-        if (range) closedRanges.push([range[1], range[2]].sort());
-        else if (single) closedDates.add(single[1]);
+        const range = line.match(rangeRe);
+        const single = line.match(singleRe);
+        if (range) closedRanges.push([toISO(range[1]), toISO(range[2])].sort());
+        else if (single) closedDates.add(toISO(single[1]));
         /* anything else (a typo) is ignored so the picker never breaks */
       });
     } catch (e) {
