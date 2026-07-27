@@ -65,11 +65,11 @@ if (orderForm) {
      Mobile date/time pickers ignore min/max, so we validate on change too. */
   const SLOTS = {
     daytime: {
-      label: "Daytime", times: ["10:00", "17:00"], human: "10am or 5pm",
+      label: "Daytime", times: ["09:00", "10:00", "17:00"], human: "9am, 10am or 5pm",
       where: "St Stephen’s Green, D2",
     },
     evening: {
-      label: "Evening", times: ["20:00", "22:00"], human: "8pm or 10pm",
+      label: "Evening", times: ["20:00", "21:00", "22:00"], human: "8pm, 9pm or 10pm",
       where: "Clongriffin, D13",
     },
   };
@@ -166,7 +166,9 @@ if (orderForm) {
   const toLabel = (mins) => {
     const h = Math.floor(mins / 60);
     const m = mins % 60;
-    return `${h % 12 === 0 ? 12 : h % 12}:${String(m).padStart(2, "0")}${h < 12 ? "am" : "pm"}`;
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    const ampm = h < 12 ? "am" : "pm";
+    return m === 0 ? `${h12}${ampm}` : `${h12}:${String(m).padStart(2, "0")}${ampm}`;
   };
   const slotTimes = (slot) =>
     (slot.times || []).map((v) => ({ value: v, label: toLabel(toMinutes(v)) }));

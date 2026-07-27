@@ -619,15 +619,15 @@ textarea { resize: vertical; min-height: 90px; }
 
 /* Time toggle (two set times per slot) */
 .time-toggle {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 0.5rem;
 }
 .time-opt {
   position: relative;
+  flex: 1;
   display: block;
   text-align: center;
-  padding: 0.75em 0.4em;
+  padding: 0.75em 0.3em;
   border: 1.5px solid var(--line);
   border-radius: 10px;
   background: var(--cream);
