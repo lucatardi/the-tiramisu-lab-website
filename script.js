@@ -94,6 +94,13 @@ if (orderForm) {
   while (isWeekend(earliest)) earliest.setDate(earliest.getDate() + 1);
   const earliestISO = localISO(earliest);
 
+  /* Latest = no collections more than two weeks (14 days) ahead */
+  const HORIZON_DAYS = 14;
+  const latest = new Date();
+  latest.setHours(0, 0, 0, 0);
+  latest.setDate(latest.getDate() + HORIZON_DAYS);
+  const latestISO = localISO(latest);
+
   /* ---- Dates we've closed (holidays / already full) ----
      Loaded from closed-dates.txt so they can be edited on GitHub without a deploy. */
   const closedDates = new Set();
@@ -138,6 +145,8 @@ if (orderForm) {
     if (v) {
       if (v < earliestISO) {
         msg = `That’s too soon — the earliest we can do is ${prettyDate(earliestISO)}.`;
+      } else if (v > latestISO) {
+        msg = "That’s too far ahead — please pick a date within the next two weeks.";
       } else if (isWeekend(new Date(v + "T00:00:00"))) {
         msg = "We only do collections Monday to Friday.";
       } else if (isClosed(v)) {
@@ -162,15 +171,13 @@ if (orderForm) {
   const slotTimes = (slot) =>
     (slot.times || []).map((v) => ({ value: v, label: toLabel(toMinutes(v)) }));
 
-  /* Only offer weekdays that aren't closed, starting from the earliest allowed day */
-  const DATE_CHOICES = 20; // roughly four working weeks
-  const DATE_SCAN_LIMIT = 120; // don't scan forever if many days are closed
+  /* Offer weekdays that aren't closed, from the earliest allowed day up to the two-week horizon */
   function fillDates() {
     if (!dateInput) return;
     const keep = dateInput.value;
     const days = [];
     const d = new Date(earliest);
-    for (let i = 0; days.length < DATE_CHOICES && i < DATE_SCAN_LIMIT; i++) {
+    while (localISO(d) <= latestISO) {
       const iso = localISO(d);
       if (!isWeekend(d) && !isClosed(iso)) days.push(iso);
       d.setDate(d.getDate() + 1);
