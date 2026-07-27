@@ -65,12 +65,11 @@ if (orderForm) {
      Mobile date/time pickers ignore min/max, so we validate on change too. */
   const SLOTS = {
     daytime: {
-      label: "Daytime", from: "09:00", to: "18:00", human: "9–11am and 2–6pm",
-      exclude: [["11:30", "13:30"]], // not available over lunch
+      label: "Daytime", times: ["10:00", "17:00"], human: "10am or 5pm",
       where: "St Stephen’s Green, D2",
     },
     evening: {
-      label: "Evening", from: "20:00", to: "23:00", human: "8pm–11pm",
+      label: "Evening", times: ["20:00", "22:00"], human: "8pm or 10pm",
       where: "Clongriffin, D13",
     },
   };
@@ -150,28 +149,18 @@ if (orderForm) {
     return !msg;
   }
 
-  /* ---- Times: only the ones inside the chosen slot are offered ---- */
-  const TIME_STEP_MIN = 30;
+  /* ---- Times: only the specific slots we offer ---- */
   const toMinutes = (hhmm) => {
     const [h, m] = hhmm.split(":").map(Number);
     return h * 60 + m;
   };
-  const toValue = (mins) =>
-    `${String(Math.floor(mins / 60)).padStart(2, "0")}:${String(mins % 60).padStart(2, "0")}`;
   const toLabel = (mins) => {
     const h = Math.floor(mins / 60);
     const m = mins % 60;
     return `${h % 12 === 0 ? 12 : h % 12}:${String(m).padStart(2, "0")}${h < 12 ? "am" : "pm"}`;
   };
-  const slotTimes = (slot) => {
-    const blocked = (mins) =>
-      (slot.exclude || []).some(([a, b]) => mins >= toMinutes(a) && mins <= toMinutes(b));
-    const out = [];
-    for (let m = toMinutes(slot.from); m <= toMinutes(slot.to); m += TIME_STEP_MIN) {
-      if (!blocked(m)) out.push({ value: toValue(m), label: toLabel(m) });
-    }
-    return out;
-  };
+  const slotTimes = (slot) =>
+    (slot.times || []).map((v) => ({ value: v, label: toLabel(toMinutes(v)) }));
 
   /* Only offer weekdays that aren't closed, starting from the earliest allowed day */
   const DATE_CHOICES = 20; // roughly four working weeks
