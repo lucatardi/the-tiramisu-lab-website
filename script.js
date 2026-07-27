@@ -75,7 +75,7 @@ if (orderForm) {
   };
 
   const dateInput = document.getElementById("date");
-  const timeInput = document.getElementById("time");
+  const timeToggle = document.getElementById("timeToggle");
   const dateError = document.getElementById("dateError");
   const timeError = document.getElementById("timeError");
   const closedNotice = document.getElementById("closedNotice");
@@ -171,6 +171,15 @@ if (orderForm) {
   const slotTimes = (slot) =>
     (slot.times || []).map((v) => ({ value: v, label: toLabel(toMinutes(v)) }));
 
+  const selectedTime = () => {
+    const r = orderForm.querySelector('input[name="time"]:checked');
+    return r ? r.value : "";
+  };
+  const selectedTimeLabel = () => {
+    const r = orderForm.querySelector('input[name="time"]:checked');
+    return r ? r.dataset.label : "";
+  };
+
   /* Offer weekdays that aren't closed, from the earliest allowed day up to the two-week horizon */
   function fillDates() {
     if (!dateInput) return;
@@ -197,27 +206,24 @@ if (orderForm) {
   }
 
   function fillTimes() {
-    if (!timeInput) return;
-    const keep = timeInput.value;
+    if (!timeToggle) return;
+    const keep = selectedTime();
     const times = slotTimes(currentSlot());
-    timeInput.innerHTML =
-      '<option value="">Choose a time…</option>' +
-      times.map((t) => `<option value="${t.value}">${t.label}</option>`).join("");
-    /* Keep the selection only if it's still valid for this slot */
-    timeInput.value = times.some((t) => t.value === keep) ? keep : "";
+    timeToggle.innerHTML = times
+      .map((t) => {
+        const on = t.value === keep;
+        return `<label class="time-opt${on ? " on" : ""}">
+            <input type="radio" name="time" value="${t.value}" data-label="${t.label}"${on ? " checked" : ""} />
+            <span>${t.label}</span>
+          </label>`;
+      })
+      .join("");
   }
 
-  function validateTime() {
-    if (!timeInput) return true;
-    const slot = currentSlot();
-    const v = timeInput.value;
-    const msg =
-      v && !slotTimes(slot).some((t) => t.value === v)
-        ? `${slot.label} collection is ${slot.human} — please choose a time from the list.`
-        : "";
-    timeInput.setCustomValidity(msg);
-    showError(timeError, msg);
-    return !msg;
+  function validateTime(reveal) {
+    const has = !!selectedTime();
+    showError(timeError, has || !reveal ? "" : "Please choose a time.");
+    return has;
   }
 
   function syncSlot() {
@@ -233,9 +239,13 @@ if (orderForm) {
     fillDates();
     dateInput.addEventListener("change", validateDate);
   }
-  if (timeInput) {
-    timeInput.addEventListener("change", validateTime);
-    timeInput.addEventListener("input", validateTime);
+  if (timeToggle) {
+    timeToggle.addEventListener("change", () => {
+      timeToggle.querySelectorAll(".time-opt").forEach((l) =>
+        l.classList.toggle("on", l.querySelector("input").checked)
+      );
+      validateTime();
+    });
   }
   slotInputs.forEach((r) => r.addEventListener("change", syncSlot));
   syncSlot();
@@ -245,7 +255,7 @@ if (orderForm) {
 
   orderForm.validateCollection = () => {
     const okDate = validateDate();
-    const okTime = validateTime();
+    const okTime = validateTime(true);
     return okDate && okTime;
   };
 
@@ -324,10 +334,7 @@ if (orderForm) {
     lines.push("");
     lines.push(`Total: ${money(total)}`);
     lines.push("");
-    const timeLabel =
-      (timeInput && timeInput.selectedOptions[0] && timeInput.value
-        ? timeInput.selectedOptions[0].text
-        : data.get("time")) || "—";
+    const timeLabel = selectedTimeLabel() || "—";
     lines.push(`Collection: ${prettyDate(data.get("date"))} at ${timeLabel}`);
     lines.push(`Pick-up: ${currentSlot().where}`);
     return lines.join("\n");
@@ -342,11 +349,12 @@ if (orderForm) {
       alert("Please add at least one tiramisu to your order.");
       return;
     }
-    if (orderForm.validateCollection) orderForm.validateCollection();
+    const okCollection = orderForm.validateCollection ? orderForm.validateCollection() : true;
     if (!orderForm.checkValidity()) {
       orderForm.reportValidity();
       return;
     }
+    if (!okCollection) return;
 
     const msg = encodeURIComponent(buildMessage());
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank", "noopener");

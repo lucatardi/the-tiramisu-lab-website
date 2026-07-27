@@ -617,6 +617,37 @@ textarea { resize: vertical; min-height: 90px; }
 /* minmax(0,1fr) so a long <select> option can't force the column wider */
 .field-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; }
 
+/* Time toggle (two set times per slot) */
+.time-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+.time-opt {
+  position: relative;
+  display: block;
+  text-align: center;
+  padding: 0.75em 0.4em;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: var(--cream);
+  color: var(--cocoa);
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+.time-opt input { position: absolute; opacity: 0; width: 0; height: 0; }
+.time-opt:hover { border-color: var(--caramel); }
+.time-opt.on {
+  border-color: var(--caramel);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(201, 138, 75, 0.18);
+}
+.time-opt:focus-within {
+  border-color: var(--caramel);
+  box-shadow: 0 0 0 3px rgba(201, 138, 75, 0.18);
+}
+
 /* Product / flavor rows */
 .product {
   display: grid;
