@@ -83,7 +83,7 @@ if (orderForm) {
   const timeToggle = document.getElementById("timeToggle");
   const dateError = document.getElementById("dateError");
   const timeError = document.getElementById("timeError");
-  const closedNotice = document.getElementById("closedNotice");
+  const soldOutNotice = document.getElementById("soldOutNotice");
   const submitBtn = orderForm.querySelector('button[type="submit"]');
   const slotInputs = Array.from(document.querySelectorAll('input[name="slot"]'));
 
@@ -106,20 +106,20 @@ if (orderForm) {
   latest.setDate(latest.getDate() + HORIZON_DAYS);
   const latestISO = localISO(latest);
 
-  /* ---- Dates we've closed (holidays / already full) ----
-     Loaded from closed-dates.txt so they can be edited on GitHub without a deploy. */
-  const closedDates = new Set();
-  const closedRanges = [];
-  const isClosed = (iso) =>
-    closedDates.has(iso) || closedRanges.some(([a, b]) => iso >= a && iso <= b);
+  /* ---- Sold-out dates (holidays / already full) ----
+     Loaded from sold-out-dates.txt so they can be edited on GitHub without a deploy. */
+  const soldOutDates = new Set();
+  const soldOutRanges = [];
+  const isSoldOut = (iso) =>
+    soldOutDates.has(iso) || soldOutRanges.some(([a, b]) => iso >= a && iso <= b);
 
-  async function loadClosedDates() {
+  async function loadSoldOutDates() {
     try {
-      const res = await fetch("closed-dates.txt?t=" + Date.now(), { cache: "no-store" });
+      const res = await fetch("sold-out-dates.txt?t=" + Date.now(), { cache: "no-store" });
       if (!res.ok) return;
       const text = await res.text();
-      closedDates.clear();
-      closedRanges.length = 0;
+      soldOutDates.clear();
+      soldOutRanges.length = 0;
       /* File uses DD-MM-YYYY; convert to YYYY-MM-DD internally for comparison */
       const toISO = (dmy) => {
         const [d, m, y] = dmy.split("-");
@@ -133,8 +133,8 @@ if (orderForm) {
         if (!line || line.startsWith("#")) return;
         const range = line.match(rangeRe);
         const single = line.match(singleRe);
-        if (range) closedRanges.push([toISO(range[1]), toISO(range[2])].sort());
-        else if (single) closedDates.add(toISO(single[1]));
+        if (range) soldOutRanges.push([toISO(range[1]), toISO(range[2])].sort());
+        else if (single) soldOutDates.add(toISO(single[1]));
         /* anything else (a typo) is ignored so the picker never breaks */
       });
     } catch (e) {
@@ -162,8 +162,8 @@ if (orderForm) {
         msg = "That’s too far ahead — please pick a date within the next two weeks.";
       } else if (isWeekend(new Date(v + "T00:00:00"))) {
         msg = "We only do collections Monday to Friday.";
-      } else if (isClosed(v)) {
-        msg = "Sorry, that date isn’t available — please pick another.";
+      } else if (isSoldOut(v)) {
+        msg = "That date is sold out — please pick another.";
       }
     }
     dateInput.setCustomValidity(msg);
@@ -195,29 +195,33 @@ if (orderForm) {
     return r ? r.dataset.label : "";
   };
 
-  /* Offer weekdays that aren't closed, from the earliest allowed day up to the two-week horizon */
+  /* Show every weekday in range up to the two-week horizon.
+     Sold-out days are shown but disabled, so people can see they're taken. */
   function fillDates() {
     if (!dateInput) return;
     const keep = dateInput.value;
-    const days = [];
+    const opts = [];
     const d = new Date(earliest);
     while (localISO(d) <= latestISO) {
       const iso = localISO(d);
-      if (!isWeekend(d) && !isClosed(iso)) days.push(iso);
+      if (!isWeekend(d)) opts.push({ value: iso, label: prettyDate(iso), soldOut: isSoldOut(iso) });
       d.setDate(d.getDate() + 1);
     }
-    if (days.length) {
-      dateInput.innerHTML =
-        '<option value="">Choose a date…</option>' +
-        days.map((v) => `<option value="${v}">${prettyDate(v)}</option>`).join("");
-      dateInput.value = days.includes(keep) ? keep : "";
-    } else {
-      dateInput.innerHTML = '<option value="">No dates available</option>';
-      dateInput.value = "";
-    }
-    const noneAvailable = days.length === 0;
-    if (closedNotice) closedNotice.hidden = !noneAvailable;
-    if (submitBtn) submitBtn.disabled = noneAvailable;
+    dateInput.innerHTML =
+      '<option value="">Choose a date…</option>' +
+      opts
+        .map((o) =>
+          o.soldOut
+            ? `<option value="${o.value}" disabled>${o.label} — Sold out</option>`
+            : `<option value="${o.value}">${o.label}</option>`
+        )
+        .join("");
+    /* Keep the selection only if it's still available (not sold out) */
+    dateInput.value = opts.some((o) => o.value === keep && !o.soldOut) ? keep : "";
+
+    const anyAvailable = opts.some((o) => !o.soldOut);
+    if (soldOutNotice) soldOutNotice.hidden = anyAvailable;
+    if (submitBtn) submitBtn.disabled = !anyAvailable;
   }
 
   function fillTimes() {
@@ -265,8 +269,8 @@ if (orderForm) {
   slotInputs.forEach((r) => r.addEventListener("change", syncSlot));
   syncSlot();
 
-  /* Pull in the closed dates, then rebuild the picker without them */
-  loadClosedDates().then(fillDates);
+  /* Pull in the sold-out dates, then rebuild the picker to mark them */
+  loadSoldOutDates().then(fillDates);
 
   orderForm.validateCollection = () => {
     const okDate = validateDate();

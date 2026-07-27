@@ -551,6 +551,7 @@ legend {
   font-weight: 700;
   color: var(--caramel-dk);
 }
+select option:disabled { color: var(--muted); }
 .btn:disabled,
 .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
 

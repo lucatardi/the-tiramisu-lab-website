@@ -1,8 +1,10 @@
 # ─────────────────────────────────────────────────────────────
-#  The Tiramisu Lab — CLOSED DATES
+#  The Tiramisu Lab — SOLD OUT DATES
 # ─────────────────────────────────────────────────────────────
-#  Add a line here to hide a date from the "Order & collect"
-#  picker (holidays, days you're already full, etc.).
+#  Add a line here to mark a date as SOLD OUT in the "Order &
+#  collect" picker (holidays, or days you're already full).
+#  Sold-out dates still show in the list, but greyed out and
+#  labelled "Sold out" so they can't be picked.
 #
 #  How to add a date:
 #    • One day:   14-08-2026
