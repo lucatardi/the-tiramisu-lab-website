@@ -545,6 +545,14 @@ legend {
   font-weight: 700;
   color: #B3402B;
 }
+.field-notice {
+  margin: 0.2rem 0 0.7rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--caramel-dk);
+}
+.btn:disabled,
+.btn[disabled] { opacity: 0.5; cursor: not-allowed; }
 
 /* Collection point chooser */
 .slot-options {

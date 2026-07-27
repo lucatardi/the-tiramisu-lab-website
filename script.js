@@ -79,6 +79,8 @@ if (orderForm) {
   const timeInput = document.getElementById("time");
   const dateError = document.getElementById("dateError");
   const timeError = document.getElementById("timeError");
+  const closedNotice = document.getElementById("closedNotice");
+  const submitBtn = orderForm.querySelector('button[type="submit"]');
   const slotInputs = Array.from(document.querySelectorAll('input[name="slot"]'));
 
   /* Local-time yyyy-mm-dd (toISOString would shift us to UTC) */
@@ -92,6 +94,34 @@ if (orderForm) {
   earliest.setDate(earliest.getDate() + LEAD_DAYS);
   while (isWeekend(earliest)) earliest.setDate(earliest.getDate() + 1);
   const earliestISO = localISO(earliest);
+
+  /* ---- Dates we've closed (holidays / already full) ----
+     Loaded from closed-dates.txt so they can be edited on GitHub without a deploy. */
+  const closedDates = new Set();
+  const closedRanges = [];
+  const isClosed = (iso) =>
+    closedDates.has(iso) || closedRanges.some(([a, b]) => iso >= a && iso <= b);
+
+  async function loadClosedDates() {
+    try {
+      const res = await fetch("closed-dates.txt?t=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) return;
+      const text = await res.text();
+      closedDates.clear();
+      closedRanges.length = 0;
+      text.split(/\r?\n/).forEach((raw) => {
+        const line = raw.trim();
+        if (!line || line.startsWith("#")) return;
+        const range = line.match(/^(\d{4}-\d{2}-\d{2})\s*\.\.\s*(\d{4}-\d{2}-\d{2})$/);
+        const single = line.match(/^(\d{4}-\d{2}-\d{2})$/);
+        if (range) closedRanges.push([range[1], range[2]].sort());
+        else if (single) closedDates.add(single[1]);
+        /* anything else (a typo) is ignored so the picker never breaks */
+      });
+    } catch (e) {
+      /* fail open — if the list can't load, keep every date available */
+    }
+  }
 
   const currentSlot = () =>
     SLOTS[(slotInputs.find((r) => r.checked) || {}).value] || SLOTS.daytime;
@@ -111,6 +141,8 @@ if (orderForm) {
         msg = `That’s too soon — the earliest we can do is ${prettyDate(earliestISO)}.`;
       } else if (isWeekend(new Date(v + "T00:00:00"))) {
         msg = "We only do collections Monday to Friday.";
+      } else if (isClosed(v)) {
+        msg = "Sorry, that date isn’t available — please pick another.";
       }
     }
     dateInput.setCustomValidity(msg);
@@ -141,21 +173,31 @@ if (orderForm) {
     return out;
   };
 
-  /* Only offer weekdays, starting from the earliest allowed day */
+  /* Only offer weekdays that aren't closed, starting from the earliest allowed day */
   const DATE_CHOICES = 20; // roughly four working weeks
+  const DATE_SCAN_LIMIT = 120; // don't scan forever if many days are closed
   function fillDates() {
     if (!dateInput) return;
     const keep = dateInput.value;
     const days = [];
     const d = new Date(earliest);
-    while (days.length < DATE_CHOICES) {
-      if (!isWeekend(d)) days.push(localISO(d));
+    for (let i = 0; days.length < DATE_CHOICES && i < DATE_SCAN_LIMIT; i++) {
+      const iso = localISO(d);
+      if (!isWeekend(d) && !isClosed(iso)) days.push(iso);
       d.setDate(d.getDate() + 1);
     }
-    dateInput.innerHTML =
-      '<option value="">Choose a date…</option>' +
-      days.map((v) => `<option value="${v}">${prettyDate(v)}</option>`).join("");
-    dateInput.value = days.includes(keep) ? keep : "";
+    if (days.length) {
+      dateInput.innerHTML =
+        '<option value="">Choose a date…</option>' +
+        days.map((v) => `<option value="${v}">${prettyDate(v)}</option>`).join("");
+      dateInput.value = days.includes(keep) ? keep : "";
+    } else {
+      dateInput.innerHTML = '<option value="">No dates available</option>';
+      dateInput.value = "";
+    }
+    const noneAvailable = days.length === 0;
+    if (closedNotice) closedNotice.hidden = !noneAvailable;
+    if (submitBtn) submitBtn.disabled = noneAvailable;
   }
 
   function fillTimes() {
@@ -201,6 +243,9 @@ if (orderForm) {
   }
   slotInputs.forEach((r) => r.addEventListener("change", syncSlot));
   syncSlot();
+
+  /* Pull in the closed dates, then rebuild the picker without them */
+  loadClosedDates().then(fillDates);
 
   orderForm.validateCollection = () => {
     const okDate = validateDate();

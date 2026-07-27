@@ -1,0 +1,21 @@
+# ─────────────────────────────────────────────────────────────
+#  The Tiramisu Lab — CLOSED DATES
+# ─────────────────────────────────────────────────────────────
+#  Add a line here to hide a date from the "Order & collect"
+#  picker (holidays, days you're already full, etc.).
+#
+#  How to add a date:
+#    • One day:   2026-08-14
+#    • A range:   2026-08-10..2026-08-20   (both days included)
+#
+#  Dates are YEAR-MONTH-DAY. Put each on its own line.
+#  Lines starting with #  are ignored (like these notes).
+#  Blank lines are fine. A typo is simply skipped.
+#
+#  After you save/commit this file on GitHub, the website
+#  updates within about a minute.
+#
+#  Examples — delete the # to switch one on:
+# 2026-08-14
+# 2026-08-10..2026-08-20
+# ─────────────────────────────────────────────────────────────
