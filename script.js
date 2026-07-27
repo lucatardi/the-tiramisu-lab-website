@@ -195,16 +195,22 @@ if (orderForm) {
     return r ? r.dataset.label : "";
   };
 
-  /* Show every weekday in range up to the two-week horizon.
-     Sold-out days are shown but disabled, so people can see they're taken. */
+  /* Show every weekday from tomorrow up to the two-week horizon.
+     Days that are sold out OR too soon (inside the lead time) are shown
+     but disabled and labelled "Sold out", so people can see they're taken. */
   function fillDates() {
     if (!dateInput) return;
     const keep = dateInput.value;
     const opts = [];
-    const d = new Date(earliest);
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() + 1); // start from tomorrow
     while (localISO(d) <= latestISO) {
       const iso = localISO(d);
-      if (!isWeekend(d)) opts.push({ value: iso, label: prettyDate(iso), soldOut: isSoldOut(iso) });
+      if (!isWeekend(d)) {
+        const soldOut = iso < earliestISO || isSoldOut(iso);
+        opts.push({ value: iso, label: prettyDate(iso), soldOut });
+      }
       d.setDate(d.getDate() + 1);
     }
     dateInput.innerHTML =
