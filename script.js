@@ -339,6 +339,8 @@ if (orderForm) {
     const timeLabel = selectedTimeLabel() || "—";
     lines.push(`Collection: ${prettyDate(data.get("date"))} at ${timeLabel}`);
     lines.push(`Pick-up: ${currentSlot().where}`);
+    lines.push("");
+    lines.push(`Name: ${(data.get("name") || "").trim() || "—"}`);
     return lines.join("\n");
   }
 
