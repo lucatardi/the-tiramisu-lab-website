@@ -74,7 +74,7 @@ if (orderForm) {
       where: "St Stephen’s Green, D2",
     },
     evening: {
-      label: "Evening", times: ["20:00", "21:00", "22:00"], human: "8pm, 9pm or 10pm",
+      label: "Evening", times: ["21:00", "22:00"], human: "9pm or 10pm",
       where: "Clongriffin, D13",
     },
   };
@@ -234,9 +234,11 @@ if (orderForm) {
     if (!timeToggle) return;
     const keep = selectedTime();
     const times = slotTimes(currentSlot());
+    /* If there's only one time, pre-select it so there's nothing to tap */
+    const preselect = times.length === 1 ? times[0].value : keep;
     timeToggle.innerHTML = times
       .map((t) => {
-        const on = t.value === keep;
+        const on = t.value === preselect;
         return `<label class="time-opt${on ? " on" : ""}">
             <input type="radio" name="time" value="${t.value}" data-label="${t.label}"${on ? " checked" : ""} />
             <span>${t.label}</span>
