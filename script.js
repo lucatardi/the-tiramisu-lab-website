@@ -70,7 +70,7 @@ if (orderForm) {
      Mobile date/time pickers ignore min/max, so we validate on change too. */
   const SLOTS = {
     daytime: {
-      label: "Daytime", times: ["09:00", "10:00", "17:00"], human: "9am, 10am or 5pm",
+      label: "Daytime", times: ["09:00", "18:00"], human: "9am or 6pm",
       where: "St Stephen’s Green, D2",
     },
     evening: {
