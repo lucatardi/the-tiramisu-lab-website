@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thank you — The Tiramisu Lab</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <meta name="robots" content="noindex" />
+  <meta name="description" content="Thank you for your order from The Tiramisu Lab." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css?v=33" />
+</head>
+<body>
+
+  <!-- ============ Header ============ -->
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="index.html" aria-label="The Tiramisu Lab — home">
+        <span class="tl-circle tl-circle--sm" aria-hidden="true">
+          <span class="tl-logo">
+            <span class="tl-the">The</span>
+            <span class="tl-tira">Tira</span>
+            <span class="tl-misu-wrap">
+              <span class="tl-misu">misu</span>
+              <span class="tl-lab">Lab</span>
+            </span>
+          </span>
+        </span>
+      </a>
+    </div>
+  </header>
+
+  <!-- ============ Thank you ============ -->
+  <div class="wrap">
+    <div class="thankyou" id="thankyou">
+
+      <!-- state: loading -->
+      <div id="tyLoading">
+        <div class="ty-emoji" aria-hidden="true">🍮</div>
+        <h1>Confirming your order…</h1>
+        <p>One moment while we check your payment.</p>
+      </div>
+
+      <!-- state: paid -->
+      <div id="tyPaid" hidden>
+        <div class="ty-emoji" aria-hidden="true">🎉</div>
+        <h1 id="tyHeading">Grazie! Your tiramisu is booked.</h1>
+        <p>We’ve got your order and we’ll have it ready fresh. A confirmation email is on its way.</p>
+
+        <div class="ty-card">
+          <dl class="ty-details">
+            <div><dt>Order</dt><dd id="tyItems">—</dd></div>
+            <div><dt>Total</dt><dd id="tyTotal">—</dd></div>
+            <div><dt>Collect</dt><dd id="tyWhen">—</dd></div>
+            <div><dt>Where</dt><dd id="tyWhere">—</dd></div>
+          </dl>
+        </div>
+
+        <p class="ty-note">Please save the collection spot above — we’ll see you there. Any changes? Message us on <a href="https://instagram.com/the_tiramisulab" target="_blank" rel="noopener">Instagram</a>.</p>
+        <a class="btn btn-primary" href="index.html">Back to home</a>
+      </div>
+
+      <!-- state: not paid / error -->
+      <div id="tyError" hidden>
+        <div class="ty-emoji" aria-hidden="true">🤔</div>
+        <h1>We couldn’t find that order</h1>
+        <p>If you were charged, don’t worry — reach out on <a href="https://instagram.com/the_tiramisulab" target="_blank" rel="noopener">Instagram</a> or by email and we’ll sort it right away.</p>
+        <a class="btn btn-primary" href="order.html">Back to ordering</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="script.js?v=33"></script>
+</body>
+</html>

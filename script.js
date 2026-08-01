@@ -6,6 +6,13 @@
 const WHATSAPP_NUMBER = "353833311181"; // digits only, incl. country code (no +)
 const CURRENCY = "€";
 
+/* Point this at your deployed Cloudflare Worker to switch the order
+   page over to on-site Stripe payment (card / Apple Pay / Google Pay).
+   While it's empty the site keeps the original WhatsApp flow, so
+   nothing breaks until the Worker is live.
+   e.g. "https://tiramisu-lab.<your-subdomain>.workers.dev"          */
+const CHECKOUT_API = "";
+
 /* Minimum days' notice for collection.
    After the evening cut-off it's too late to start prep for a collection
    two days out, so the earliest jumps from 2 days to 3 days ahead. */
@@ -156,6 +163,21 @@ if (orderForm && !isNight) {
     }
   }
 
+  /* Days already at capacity (20 pots), from the Worker's counter.
+     Returned as YYYY-MM-DD, so they drop straight into the same set
+     and render as "Sold out" exactly like the manual list. */
+  async function loadFullDates() {
+    if (!CHECKOUT_API) return;
+    try {
+      const res = await fetch(CHECKOUT_API + "/full-dates", { cache: "no-store" });
+      if (!res.ok) return;
+      const data = await res.json();
+      (data.full || []).forEach((iso) => soldOutDates.add(iso));
+    } catch (e) {
+      /* fail open */
+    }
+  }
+
   const currentSlot = () =>
     SLOTS[(slotInputs.find((r) => r.checked) || {}).value] || SLOTS.daytime;
 
@@ -291,8 +313,21 @@ if (orderForm && !isNight) {
   slotInputs.forEach((r) => r.addEventListener("change", syncSlot));
   syncSlot();
 
-  /* Pull in the sold-out dates, then rebuild the picker to mark them */
-  loadSoldOutDates().then(fillDates);
+  /* Pull in the sold-out dates + any full days, then rebuild the picker */
+  Promise.all([loadSoldOutDates(), loadFullDates()]).then(fillDates);
+
+  /* In Stripe mode, relabel the primary action + reassure about payment */
+  if (CHECKOUT_API) {
+    if (submitBtn) submitBtn.textContent = "Continue to secure payment";
+    const note = document.getElementById("submitNote");
+    if (note)
+      note.textContent =
+        "You’ll pay securely by card, Apple Pay or Google Pay. We’ll email your confirmation and the exact collection spot right after.";
+    const slotHint = document.querySelector(".slot-options + .hint");
+    if (slotHint)
+      slotHint.textContent =
+        "We’ll send the exact meeting point in your confirmation, right after payment.";
+  }
 
   orderForm.validateCollection = () => {
     const okDate = validateDate();
@@ -383,7 +418,57 @@ if (orderForm && !isNight) {
     return lines.join("\n");
   }
 
-  /* Submit → open WhatsApp with the order ready to send */
+  /* ---- Checkout helpers (Stripe mode) ---- */
+  const checkoutError = document.getElementById("checkoutError");
+  const setCheckoutError = (msg) => {
+    if (!checkoutError) return;
+    checkoutError.hidden = !msg;
+    checkoutError.textContent = msg || "";
+  };
+  const savedLabel = submitBtn ? submitBtn.textContent : "";
+  const setBusy = (b) => {
+    if (!submitBtn) return;
+    submitBtn.disabled = b;
+    submitBtn.textContent = b ? "Redirecting…" : savedLabel;
+  };
+
+  async function startCheckout(items) {
+    const data = new FormData(orderForm);
+    const payload = {
+      items: items.map((i) => ({ id: i.name.toLowerCase(), qty: i.qty })),
+      date: data.get("date"),
+      dateLabel: prettyDate(data.get("date")),
+      time: selectedTimeLabel(),
+      slot: (slotInputs.find((r) => r.checked) || {}).value || "daytime",
+      name: (data.get("name") || "").trim(),
+    };
+    setCheckoutError("");
+    setBusy(true);
+    try {
+      const res = await fetch(CHECKOUT_API + "/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (res.status === 409) {
+        setBusy(false);
+        setCheckoutError("Sorry — that date just sold out. Please pick another.");
+        loadFullDates().then(fillDates);
+        return;
+      }
+      if (!res.ok) throw new Error("checkout failed");
+      const { url } = await res.json();
+      if (!url) throw new Error("no url");
+      window.location = url; // → Stripe hosted checkout
+    } catch (err) {
+      setBusy(false);
+      setCheckoutError(
+        "Something went wrong starting checkout. Please try again, or message us on Instagram."
+      );
+    }
+  }
+
+  /* Submit → Stripe checkout if configured, else WhatsApp */
   orderForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -399,6 +484,12 @@ if (orderForm && !isNight) {
     }
     if (!okCollection) return;
 
+    if (CHECKOUT_API) {
+      startCheckout(items);
+      return;
+    }
+
+    /* Fallback: open WhatsApp with the order ready to send */
     const msg = encodeURIComponent(buildMessage());
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank", "noopener");
   });
@@ -406,3 +497,49 @@ if (orderForm && !isNight) {
   /* Initial paint */
   recalc();
 }
+
+/* ===========================================================
+   Thank-you page — reveal the paid order + collection spot
+   =========================================================== */
+(function () {
+  const ty = document.getElementById("thankyou");
+  if (!ty) return;
+
+  const showTy = (id) =>
+    ["tyLoading", "tyPaid", "tyError"].forEach((x) => {
+      const el = document.getElementById(x);
+      if (el) el.hidden = x !== id;
+    });
+  const setText = (id, t) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = t;
+  };
+
+  const sessionId = new URLSearchParams(location.search).get("session_id");
+  if (!CHECKOUT_API || !sessionId) return showTy("tyError");
+
+  fetch(CHECKOUT_API + "/session?id=" + encodeURIComponent(sessionId), {
+    cache: "no-store",
+  })
+    .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
+    .then(({ ok, data }) => {
+      if (!ok || !data.paid) return showTy("tyError");
+      setText("tyItems", data.items || "—");
+      setText(
+        "tyTotal",
+        data.total != null ? "€" + Number(data.total).toFixed(2) : "—"
+      );
+      setText(
+        "tyWhen",
+        (data.dateLabel || "—") + (data.time ? " at " + data.time : "")
+      );
+      setText("tyWhere", data.where || "—");
+      if (data.name)
+        setText(
+          "tyHeading",
+          "Grazie, " + data.name.split(" ")[0] + "! Your tiramisu is booked."
+        );
+      showTy("tyPaid");
+    })
+    .catch(() => showTy("tyError"));
+})();

@@ -571,6 +571,37 @@ select option:disabled { color: var(--muted); }
 .btn:disabled,
 .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
 
+/* Thank-you page */
+.thankyou {
+  max-width: 600px;
+  margin: 3rem auto 5rem;
+  text-align: center;
+}
+.ty-emoji { font-size: 3.6rem; line-height: 1; margin-bottom: 0.4rem; }
+.thankyou h1 { margin: 0 0 0.6rem; }
+.thankyou > div > p { color: var(--muted); max-width: 46ch; margin: 0 auto 1.4rem; }
+.ty-card {
+  text-align: left;
+  background: linear-gradient(150deg, #fff, var(--mascarpone));
+  border-radius: var(--radius);
+  padding: 1.6rem 1.8rem;
+  box-shadow: var(--shadow-sm);
+  margin: 0 auto 1.6rem;
+}
+.ty-details { margin: 0; }
+.ty-details > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid rgba(122, 101, 83, 0.18);
+}
+.ty-details > div:last-child { border-bottom: 0; }
+.ty-details dt { color: var(--muted); font-weight: 500; }
+.ty-details dd { margin: 0; text-align: right; font-weight: 700; color: var(--espresso); }
+.ty-note { font-size: 0.95rem; }
+.thankyou .btn { margin-top: 0.4rem; }
+
 /* Collection point chooser */
 .slot-options {
   display: grid;

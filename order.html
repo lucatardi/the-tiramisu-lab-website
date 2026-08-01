@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=31" />
+  <link rel="stylesheet" href="styles.css?v=33" />
 </head>
 <body>
 
@@ -189,7 +189,8 @@
           <span id="summaryTotal">€0.00</span>
         </div>
         <button type="submit" class="btn btn-primary">Send order on WhatsApp</button>
-        <p class="note">This opens WhatsApp with your order ready to send. We’ll confirm we can make it for your date, agree a collection time, then send you a payment link. Nothing is charged here, and your details are only used to handle your order.</p>
+        <p class="field-error" id="checkoutError" hidden></p>
+        <p class="note" id="submitNote">This opens WhatsApp with your order ready to send. We’ll confirm we can make it for your date, agree a collection time, then send you a payment link. Nothing is charged here, and your details are only used to handle your order.</p>
         <p class="alt-contact">Want it delivered instead? <a href="https://deliveroo.ie/menu/dublin/baldoyle-racecourse/the-tiramisu-lab" target="_blank" rel="noopener">Order on Deliveroo</a></p>
       </aside>
 
@@ -246,6 +247,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=32"></script>
+  <script src="script.js?v=33"></script>
 </body>
 </html>
