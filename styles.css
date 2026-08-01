@@ -801,8 +801,10 @@ textarea { resize: vertical; min-height: 90px; }
     display: none;
   }
   .nav-links.open { display: flex; }
-  .nav-toggle { display: block; }
-  .nav-ig-mobile { display: inline-flex; margin-left: auto; margin-right: 1rem; }
+  .nav-toggle { display: block; margin-left: 1rem; }
+  .nav-ig-mobile { display: inline-flex; margin: 0; }
+  .brand + .nav-ig-mobile { margin-left: auto; } /* only the first icon pushes right */
+  .nav-ig-mobile + .nav-ig-mobile { margin-left: 0.9rem; } /* gap between the two */
   .nav-links li.nav-ig-item { display: none; } /* hide the in-menu icon; the header one shows instead */
   .hero-grid,
   .story-split,
