@@ -61,21 +61,7 @@ if (navToggle && navLinks) {
    =========================================================== */
 const orderForm = document.getElementById("orderForm");
 
-/* ---- Night mode: the baker (and the kitchen) is asleep ---- */
-const NIGHT_START = 23; // 11pm
-const NIGHT_END = 7; // 7am
-const isNight = (() => {
-  const h = new Date().getHours();
-  return h >= NIGHT_START || h < NIGHT_END;
-})();
-if (orderForm && isNight) {
-  orderForm.hidden = true;
-  orderForm.style.display = "none"; // beats .order-layout { display: grid }
-  const nc = document.getElementById("nightClosed");
-  if (nc) nc.hidden = false;
-}
-
-if (orderForm && !isNight) {
+if (orderForm) {
   const money = (n) => CURRENCY + n.toFixed(2);
 
   const products = Array.from(document.querySelectorAll(".product")).map((el) => ({
