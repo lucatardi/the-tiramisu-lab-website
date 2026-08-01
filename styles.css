@@ -772,6 +772,36 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .alt-contact a { color: var(--caramel); font-weight: 700; }
 
+/* ---------- Reviews (Google) ---------- */
+.reviews-rating { font-size: 1.15rem; color: var(--espresso); font-weight: 600; margin-top: 0.4rem; }
+.reviews-rating .stars { color: var(--gold); letter-spacing: 1px; margin-right: 0.35rem; }
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+.review-card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 1.4rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+  text-align: left;
+}
+.review-top { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.7rem; }
+.review-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; flex: none; }
+.review-avatar--blank {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--mascarpone); color: var(--espresso); font-weight: 700; font-size: 1.1rem;
+}
+.review-who { min-width: 0; }
+.review-author { font-weight: 700; color: var(--espresso); }
+.review-stars { color: var(--gold); letter-spacing: 1px; font-size: 0.95rem; }
+.review-when { margin-left: auto; align-self: flex-start; font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+.review-text { margin: 0; color: var(--espresso); line-height: 1.55; }
+.reviews-foot { margin-top: 2rem; }
+.reviews-src { margin-top: 0.9rem; font-size: 0.85rem; color: var(--muted); }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 860px) {
   .nav-links {

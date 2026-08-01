@@ -536,3 +536,58 @@ if (orderForm) {
     })
     .catch(() => showTy("tyError"));
 })();
+
+/* ===========================================================
+   Google reviews (home page) — live from the Worker, cached.
+   The section stays hidden unless real reviews come back.
+   =========================================================== */
+(function () {
+  const sec = document.getElementById("reviews");
+  if (!sec || !CHECKOUT_API) return;
+
+  const esc = (s) =>
+    String(s).replace(
+      /[&<>"']/g,
+      (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+    );
+  const stars = (r) => {
+    const n = Math.max(0, Math.min(5, Math.round(r)));
+    return "★★★★★".slice(0, n) + "☆☆☆☆☆".slice(0, 5 - n);
+  };
+
+  const card = (rv) => `<article class="review-card">
+      <div class="review-top">
+        ${
+          rv.photo
+            ? `<img class="review-avatar" src="${esc(rv.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer" />`
+            : `<span class="review-avatar review-avatar--blank" aria-hidden="true">${esc(
+                (rv.author || "?").charAt(0)
+              )}</span>`
+        }
+        <div class="review-who">
+          <div class="review-author">${esc(rv.author || "Google user")}</div>
+          <div class="review-stars" aria-label="${rv.rating} out of 5">${stars(rv.rating)}</div>
+        </div>
+        ${rv.when ? `<span class="review-when">${esc(rv.when)}</span>` : ""}
+      </div>
+      <p class="review-text">${esc(rv.text)}</p>
+    </article>`;
+
+  fetch(CHECKOUT_API + "/reviews", { cache: "no-store" })
+    .then((r) => r.json())
+    .then((data) => {
+      if (!data || !Array.isArray(data.reviews) || !data.reviews.length) return; // stay hidden
+      const ratingEl = document.getElementById("reviewsRating");
+      if (ratingEl && typeof data.rating === "number") {
+        ratingEl.innerHTML = `<span class="stars">${stars(data.rating)}</span> ${data.rating.toFixed(
+          1
+        )} · ${data.total} Google review${data.total === 1 ? "" : "s"}`;
+      }
+      const more = document.getElementById("reviewsMore");
+      if (more && data.mapsUri) more.href = data.mapsUri;
+      const grid = document.getElementById("reviewsGrid");
+      if (grid) grid.innerHTML = data.reviews.map(card).join("");
+      sec.hidden = false;
+    })
+    .catch(() => {});
+})();
