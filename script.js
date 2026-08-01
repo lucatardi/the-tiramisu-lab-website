@@ -413,8 +413,6 @@ if (orderForm && !isNight) {
     const timeLabel = selectedTimeLabel() || "—";
     lines.push(`Collection: ${prettyDate(data.get("date"))} at ${timeLabel}`);
     lines.push(`Pick-up: ${currentSlot().where}`);
-    lines.push("");
-    lines.push(`Name: ${(data.get("name") || "").trim() || "—"}`);
     return lines.join("\n");
   }
 
@@ -440,7 +438,6 @@ if (orderForm && !isNight) {
       dateLabel: prettyDate(data.get("date")),
       time: selectedTimeLabel(),
       slot: (slotInputs.find((r) => r.checked) || {}).value || "daytime",
-      name: (data.get("name") || "").trim(),
     };
     setCheckoutError("");
     setBusy(true);
