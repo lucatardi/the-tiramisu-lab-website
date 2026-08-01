@@ -531,6 +531,16 @@ if (orderForm && !isNight) {
         (data.dateLabel || "—") + (data.time ? " at " + data.time : "")
       );
       setText("tyWhere", data.where || "—");
+      const tyInfo = document.getElementById("tyInfo");
+      if (tyInfo && data.info) {
+        tyInfo.textContent = data.info;
+        tyInfo.hidden = false;
+      }
+      const tyMaps = document.getElementById("tyMaps");
+      if (tyMaps && data.maps) {
+        tyMaps.href = data.maps;
+        tyMaps.hidden = false;
+      }
       if (data.name)
         setText(
           "tyHeading",
