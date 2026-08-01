@@ -11,7 +11,7 @@ const CURRENCY = "€";
    While it's empty the site keeps the original WhatsApp flow, so
    nothing breaks until the Worker is live.
    e.g. "https://tiramisu-lab.<your-subdomain>.workers.dev"          */
-const CHECKOUT_API = "";
+const CHECKOUT_API = "https://tiramisu-lab.thetiramisulab.workers.dev";
 
 /* Minimum days' notice for collection.
    After the evening cut-off it's too late to start prep for a collection
