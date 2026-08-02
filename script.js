@@ -14,8 +14,7 @@ const CURRENCY = "€";
 const CHECKOUT_API = "https://tiramisu-lab.thetiramisulab.workers.dev";
 
 /* Direct Google "write a review" link (opens the star dialog).
-   The review banner only appears once this is set AND the visitor
-   arrived via the QR code on the tiramisu (a ?r in the URL).        */
+   Kept here for later — the QR review banner is currently removed. */
 const REVIEW_URL = "https://g.page/r/CcqYdAoQnAT0EAE/review";
 
 /* Minimum days' notice for collection.
@@ -595,39 +594,4 @@ if (orderForm) {
       sec.hidden = false;
     })
     .catch(() => {});
-})();
-
-/* ===========================================================
-   Review banner — shown to visitors who scan the QR on the
-   tiramisu (a ?r in the URL). Dismissible; stays dismissed
-   for the visit. Never shows without REVIEW_URL set.
-   =========================================================== */
-(function () {
-  const banner = document.getElementById("reviewBanner");
-  if (!banner || !REVIEW_URL) return;
-
-  const SEEN = "tl_review";
-  const DISMISSED = "tl_review_x";
-  try {
-    if (new URLSearchParams(location.search).has("r")) {
-      sessionStorage.setItem(SEEN, "1");
-    }
-    if (sessionStorage.getItem(SEEN) !== "1") return;
-    if (sessionStorage.getItem(DISMISSED) === "1") return;
-  } catch (e) {
-    return; // storage blocked → don't show
-  }
-
-  const btn = document.getElementById("reviewBannerBtn");
-  if (btn) btn.href = REVIEW_URL;
-  banner.hidden = false;
-
-  const close = document.getElementById("reviewBannerClose");
-  if (close)
-    close.addEventListener("click", () => {
-      banner.hidden = true;
-      try {
-        sessionStorage.setItem(DISMISSED, "1");
-      } catch (e) {}
-    });
 })();

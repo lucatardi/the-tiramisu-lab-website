@@ -772,39 +772,6 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .alt-contact a { color: var(--caramel); font-weight: 700; }
 
-/* ---------- Review banner (QR visitors) ---------- */
-.review-banner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.6rem 1rem;
-  background: var(--gold);
-  color: var(--espresso);
-  padding: 0.7rem 1.1rem;
-  text-align: center;
-  font-weight: 600;
-}
-.review-banner-btn {
-  background: var(--espresso);
-  color: var(--cream);
-  text-decoration: none;
-  padding: 0.4rem 1rem;
-  border-radius: 999px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-.review-banner-btn:hover { background: var(--cocoa); }
-.review-banner-close {
-  background: none;
-  border: 0;
-  color: var(--espresso);
-  font-size: 1.4rem;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0 0.2rem;
-}
-
 /* ---------- Reviews (Google) ---------- */
 .reviews-rating { font-size: 1.15rem; color: var(--espresso); font-weight: 600; margin-top: 0.4rem; }
 .reviews-rating .stars { color: var(--gold); letter-spacing: 1px; margin-right: 0.35rem; }
