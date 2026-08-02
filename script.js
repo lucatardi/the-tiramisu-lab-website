@@ -103,6 +103,11 @@ if (orderForm) {
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   const isWeekend = (d) => d.getDay() === 0 || d.getDay() === 6;
 
+  /* Weekdays we never collect on — shown as "Sold out" in the picker.
+     Day numbers: 0=Sun, 1=Mon … 6=Sat. Currently: Mondays off. */
+  const CLOSED_WEEKDAYS = new Set([1]);
+  const isClosedDay = (d) => CLOSED_WEEKDAYS.has(d.getDay());
+
   /* Earliest = LEAD_DAYS away, rolled forward past the weekend */
   const earliest = new Date();
   earliest.setHours(0, 0, 0, 0);
@@ -188,7 +193,7 @@ if (orderForm) {
         msg = "That’s too far ahead — please pick a date within the next two weeks.";
       } else if (isWeekend(new Date(v + "T00:00:00"))) {
         msg = "We only do collections Monday to Friday.";
-      } else if (isSoldOut(v)) {
+      } else if (isSoldOut(v) || isClosedDay(new Date(v + "T00:00:00"))) {
         msg = "That date is sold out — please pick another.";
       }
     }
@@ -234,7 +239,7 @@ if (orderForm) {
     while (localISO(d) <= latestISO) {
       const iso = localISO(d);
       if (!isWeekend(d)) {
-        const soldOut = iso < earliestISO || isSoldOut(iso);
+        const soldOut = iso < earliestISO || isSoldOut(iso) || isClosedDay(d);
         opts.push({ value: iso, label: prettyDate(iso), soldOut });
       }
       d.setDate(d.getDate() + 1);
