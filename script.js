@@ -3,7 +3,7 @@
    =========================================================== */
 
 /* ---- Config ---- */
-const WHATSAPP_NUMBER = "353833311181"; // digits only, incl. country code (no +)
+const WHATSAPP_NUMBER = "353899525318"; // digits only, incl. country code (no +)
 const CURRENCY = "€";
 
 /* Point this at your deployed Cloudflare Worker to switch the order
