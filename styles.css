@@ -485,6 +485,25 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
   margin: 0 0 0.9rem;
 }
 .footer-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.contact-btns { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.2rem; }
+.site-footer .contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.5rem 0.95rem;
+  border: 1px solid rgba(244, 231, 207, 0.28);
+  border-radius: 999px;
+  color: var(--mascarpone);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.contact-btn svg { display: block; flex: none; }
+.site-footer .contact-btn:hover {
+  background: rgba(244, 231, 207, 0.12);
+  border-color: var(--gold);
+  color: var(--cream);
+}
 .footer-bottom {
   border-top: 1px solid rgba(255,255,255,0.12);
   margin-top: 2.4rem; padding-top: 1.4rem;
