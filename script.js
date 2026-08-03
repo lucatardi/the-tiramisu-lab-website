@@ -76,6 +76,17 @@ if (orderForm) {
 
   const summaryLines = document.getElementById("summaryLines");
   const summaryTotal = document.getElementById("summaryTotal");
+  const capNote = document.getElementById("capNote");
+
+  /* Most pots we'll take in one order — bigger jobs go through WhatsApp. */
+  const MAX_ORDER = 20;
+  /* Pots currently in the cart, optionally ignoring one input (the one
+     being edited), so we can work out how much room is left. */
+  const cartQty = (except) =>
+    products.reduce(
+      (s, p) => s + (p.input === except ? 0 : parseInt(p.input.value, 10) || 0),
+      0
+    );
 
   /* ---- Collection: weekdays only, LEAD_DAYS notice, location depends on slot ----
      Mobile date/time pickers ignore min/max, so we validate on change too. */
@@ -336,14 +347,16 @@ if (orderForm) {
     qty.querySelectorAll("button").forEach((btn) => {
       btn.addEventListener("click", () => {
         const step = parseInt(btn.dataset.step, 10);
-        input.value = Math.max(0, Math.min(99, (parseInt(input.value, 10) || 0) + step));
+        const room = MAX_ORDER - cartQty(input); // pots left for this flavour
+        input.value = Math.max(0, Math.min(room, (parseInt(input.value, 10) || 0) + step));
         recalc();
       });
     });
     input.addEventListener("input", () => {
       let v = parseInt(input.value, 10);
       if (isNaN(v) || v < 0) v = 0;
-      if (v > 99) v = 99;
+      const room = MAX_ORDER - cartQty(input); // pots left for this flavour
+      if (v > room) v = room;
       input.value = v;
       recalc();
     });
@@ -382,6 +395,7 @@ if (orderForm) {
 
     const total = items.reduce((s, i) => s + i.line, 0);
     summaryTotal.textContent = money(total);
+    if (capNote) capNote.hidden = cartQty() < MAX_ORDER;
     return { items, total };
   }
 
@@ -467,6 +481,10 @@ if (orderForm) {
     const { items } = recalc();
     if (items.length === 0) {
       alert("Please add at least one tiramisu to your order.");
+      return;
+    }
+    if (cartQty() > MAX_ORDER) {
+      alert(`We can take up to ${MAX_ORDER} pots per order. For a bigger order, message us on WhatsApp.`);
       return;
     }
     const okCollection = orderForm.validateCollection ? orderForm.validateCollection() : true;
