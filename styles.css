@@ -365,12 +365,13 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
 }
 .flavour-card:focus-visible { outline: 3px solid var(--caramel); outline-offset: 3px; border-radius: var(--radius); }
 .flip-inner {
-  position: relative;
+  display: grid;
   transform-style: preserve-3d;
   transition: transform 0.55s ease;
 }
 .flavour-card.flipped .flip-inner { transform: rotateY(180deg); }
 .flip-face {
+  grid-area: 1 / 1; /* stack both faces → card height = the taller one */
   border: 1px solid var(--line);
   border-radius: var(--radius);
   overflow: hidden;
@@ -379,26 +380,24 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 }
+.flip-front { display: flex; flex-direction: column; }
 .flip-back {
-  position: absolute;
-  inset: 0;
   transform: rotateY(180deg);
   background: var(--espresso);
   color: var(--mascarpone);
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  overflow-y: auto;
-  padding: 1.2rem 1.4rem;
+  justify-content: safe center;
+  padding: 1.5rem 1.7rem;
 }
-.flip-desc { margin: 0 0 0.5rem; font-size: 0.92rem; line-height: 1.45; color: var(--cream); }
-.flip-h { margin: 0.55rem 0 0.15rem; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.09em; color: var(--gold); font-weight: 700; }
+.flavour-card .flip-desc { margin: 0 0 0.8rem; font-size: 1.05rem; line-height: 1.5; color: var(--cream); }
+.flip-h { margin: 0.7rem 0 0.2rem; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.09em; color: var(--gold); font-weight: 700; }
 .flavour-card .flip-back h3 { margin: 0 0 0.6rem; color: var(--cream); }
 .flavour-card .flip-list {
   margin: 0;
-  font-size: 0.85rem;
-  line-height: 1.45;
-  color: rgba(244, 233, 216, 0.9);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: rgba(244, 233, 216, 0.92);
 }
 .flip-badge {
   position: absolute;
@@ -415,7 +414,8 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
   line-height: 1;
 }
 .flavour-photo {
-  aspect-ratio: 16 / 10;
+  flex: 1;
+  min-height: 190px;
   background: var(--mascarpone);
 }
 .flavour-photo img {
