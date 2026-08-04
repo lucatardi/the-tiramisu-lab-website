@@ -19,9 +19,20 @@ const REVIEW_URL = "https://g.page/r/CcqYdAoQnAT0EAE/review";
 
 /* Minimum days' notice for collection.
    After the evening cut-off it's too late to start prep for a collection
-   two days out, so the earliest jumps from 2 days to 3 days ahead. */
-const ORDER_CUTOFF_HOUR = 20; // 8pm
-const LEAD_DAYS = new Date().getHours() >= ORDER_CUTOFF_HOUR ? 3 : 2;
+   two days out, so the earliest jumps from 2 days to 3 days ahead.
+   The cut-off is measured in Dublin time, not the visitor's own timezone. */
+const ORDER_CUTOFF_HOUR = 18; // 6pm Dublin time
+
+/* Current hour (0–23) in Dublin, whatever timezone the visitor is in. */
+function dublinHour() {
+  const h = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Dublin",
+    hour: "numeric",
+    hourCycle: "h23",
+  }).format(new Date());
+  return parseInt(h, 10) || 0;
+}
+const LEAD_DAYS = dublinHour() >= ORDER_CUTOFF_HOUR ? 3 : 2;
 
 /* ---- Footer year (all pages) ---- */
 const yearEl = document.getElementById("year");
