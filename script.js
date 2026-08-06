@@ -151,6 +151,18 @@ if (orderForm) {
   const isSoldOut = (iso) =>
     soldOutDates.has(iso) || soldOutRanges.some(([a, b]) => iso >= a && iso <= b);
 
+  /* Pots still available per day, from the Worker. `dailyCap` is the per-day
+     limit; `capLeft[iso]` holds the remaining pots for any day with orders
+     (untouched days default to the full cap). */
+  let dailyCap = null;
+  const capLeft = {};
+  /* Only show "only N left" once a day drops below this many pots. */
+  const LOW_STOCK_AT = 15;
+  const potsLeft = (iso) => {
+    if (dailyCap == null) return null; // capacity unknown → show no number
+    return capLeft[iso] != null ? capLeft[iso] : dailyCap;
+  };
+
   async function loadSoldOutDates() {
     try {
       const res = await fetch("sold-out-dates.txt?t=" + Date.now(), { cache: "no-store" });
@@ -190,6 +202,8 @@ if (orderForm) {
       if (!res.ok) return;
       const data = await res.json();
       (data.full || []).forEach((iso) => soldOutDates.add(iso));
+      if (typeof data.cap === "number") dailyCap = data.cap;
+      if (data.left) Object.assign(capLeft, data.left);
     } catch (e) {
       /* fail open */
     }
@@ -262,7 +276,11 @@ if (orderForm) {
       const iso = localISO(d);
       if (!isWeekend(d)) {
         const soldOut = iso < earliestISO || isSoldOut(iso) || isClosedDay(d);
-        opts.push({ value: iso, label: prettyDate(iso), soldOut });
+        /* Only surface the number when we're running low (< 15 left), so
+           quiet days just show the date without a scarcity cue. */
+        const left = soldOut ? null : potsLeft(iso);
+        const lowLeft = left != null && left < LOW_STOCK_AT ? left : null;
+        opts.push({ value: iso, label: prettyDate(iso), soldOut, lowLeft });
       }
       d.setDate(d.getDate() + 1);
     }
@@ -272,7 +290,11 @@ if (orderForm) {
         .map((o) =>
           o.soldOut
             ? `<option value="${o.value}" disabled>${o.label} — Sold out</option>`
-            : `<option value="${o.value}">${o.label}</option>`
+            : `<option value="${o.value}">${o.label}${
+                o.lowLeft != null
+                  ? ` — only ${o.lowLeft} left`
+                  : ""
+              }</option>`
         )
         .join("");
     /* Keep the selection only if it's still available (not sold out) */
