@@ -156,12 +156,38 @@ if (orderForm) {
      (untouched days default to the full cap). */
   let dailyCap = null;
   const capLeft = {};
-  /* Only show "only N left" once a day drops below this many pots. */
-  const LOW_STOCK_AT = 15;
+  /* Start showing "only N left" once a day is at or below this many pots. */
+  const LOW_STOCK_AT = 7;
   const potsLeft = (iso) => {
-    if (dailyCap == null) return null; // capacity unknown → show no number
+    if (dailyCap == null) return null; // capacity unknown → don't restrict
     return capLeft[iso] != null ? capLeft[iso] : dailyCap;
   };
+
+  /* How many pots this order can still add: the smaller of our per-order cap
+     and whatever's left on the chosen day. With no day picked yet (or no
+     capacity data), only the per-order cap applies. */
+  const selectedISO = () => (dateInput && dateInput.value) || "";
+  function orderLimit() {
+    const left = selectedISO() ? potsLeft(selectedISO()) : null;
+    if (left != null && left < MAX_ORDER) return { limit: left, reason: "day" };
+    return { limit: MAX_ORDER, reason: "max" };
+  }
+  /* Trim the cart down so it never exceeds `limit` (used when the day changes
+     to one with less room). Reduces from the last flavour upward. */
+  function clampCart() {
+    let over = cartQty() - orderLimit().limit;
+    if (over <= 0) return false;
+    for (let i = products.length - 1; i >= 0 && over > 0; i--) {
+      const inp = products[i].input;
+      const v = parseInt(inp.value, 10) || 0;
+      const cut = Math.min(v, over);
+      if (cut) {
+        inp.value = v - cut;
+        over -= cut;
+      }
+    }
+    return true;
+  }
 
   async function loadSoldOutDates() {
     try {
@@ -275,32 +301,44 @@ if (orderForm) {
     while (localISO(d) <= latestISO) {
       const iso = localISO(d);
       if (!isWeekend(d)) {
-        const soldOut = iso < earliestISO || isSoldOut(iso) || isClosedDay(d);
-        /* Only surface the number when we're running low (< 15 left), so
-           quiet days just show the date without a scarcity cue. */
-        const left = soldOut ? null : potsLeft(iso);
-        const lowLeft = left != null && left < LOW_STOCK_AT ? left : null;
-        opts.push({ value: iso, label: prettyDate(iso), soldOut, lowLeft });
+        const hardSold = iso < earliestISO || isSoldOut(iso) || isClosedDay(d);
+        const left = hardSold ? null : potsLeft(iso);
+        /* A day the current order can't fit into is offered but disabled,
+           labelled with what's left so it's clear why. */
+        const need = cartQty();
+        const notEnough = left != null && need > left;
+        /* Only surface the number when we're running low (≤ 7 left), so quiet
+           days just show the date without a scarcity cue. */
+        const lowLeft = left != null && left <= LOW_STOCK_AT ? left : null;
+        opts.push({
+          value: iso,
+          label: prettyDate(iso),
+          soldOut: hardSold,
+          notEnough,
+          left,
+          lowLeft,
+        });
       }
       d.setDate(d.getDate() + 1);
     }
     dateInput.innerHTML =
       '<option value="">Choose a date…</option>' +
       opts
-        .map((o) =>
-          o.soldOut
-            ? `<option value="${o.value}" disabled>${o.label} — Sold out</option>`
-            : `<option value="${o.value}">${o.label}${
-                o.lowLeft != null
-                  ? ` — only ${o.lowLeft} left`
-                  : ""
-              }</option>`
-        )
+        .map((o) => {
+          if (o.soldOut)
+            return `<option value="${o.value}" disabled>${o.label} — Sold out</option>`;
+          if (o.notEnough)
+            return `<option value="${o.value}" disabled>${o.label} — only ${o.left} left</option>`;
+          return `<option value="${o.value}">${o.label}${
+            o.lowLeft != null ? ` — only ${o.lowLeft} left` : ""
+          }</option>`;
+        })
         .join("");
-    /* Keep the selection only if it's still available (not sold out) */
-    dateInput.value = opts.some((o) => o.value === keep && !o.soldOut) ? keep : "";
+    /* Keep the selection only if it's still pickable (not sold out or too small) */
+    const stillOk = (o) => o.value === keep && !o.soldOut && !o.notEnough;
+    dateInput.value = opts.some(stillOk) ? keep : "";
 
-    const anyAvailable = opts.some((o) => !o.soldOut);
+    const anyAvailable = opts.some((o) => !o.soldOut && !o.notEnough);
     if (soldOutNotice) soldOutNotice.hidden = anyAvailable;
     if (submitBtn) submitBtn.disabled = !anyAvailable;
   }
@@ -339,7 +377,11 @@ if (orderForm) {
 
   if (dateInput) {
     fillDates();
-    dateInput.addEventListener("change", validateDate);
+    dateInput.addEventListener("change", () => {
+      validateDate();
+      clampCart(); // trim the order if the new day has less room
+      recalc();
+    });
   }
   if (timeToggle) {
     timeToggle.addEventListener("change", () => {
@@ -380,7 +422,7 @@ if (orderForm) {
     qty.querySelectorAll("button").forEach((btn) => {
       btn.addEventListener("click", () => {
         const step = parseInt(btn.dataset.step, 10);
-        const room = MAX_ORDER - cartQty(input); // pots left for this flavour
+        const room = orderLimit().limit - cartQty(input); // room left for this flavour
         input.value = Math.max(0, Math.min(room, (parseInt(input.value, 10) || 0) + step));
         recalc();
       });
@@ -388,7 +430,7 @@ if (orderForm) {
     input.addEventListener("input", () => {
       let v = parseInt(input.value, 10);
       if (isNaN(v) || v < 0) v = 0;
-      const room = MAX_ORDER - cartQty(input); // pots left for this flavour
+      const room = orderLimit().limit - cartQty(input); // room left for this flavour
       if (v > room) v = room;
       input.value = v;
       recalc();
@@ -428,7 +470,23 @@ if (orderForm) {
 
     const total = items.reduce((s, i) => s + i.line, 0);
     summaryTotal.textContent = money(total);
-    if (capNote) capNote.hidden = cartQty() < MAX_ORDER;
+
+    /* Cap note: explain whichever limit we've hit — the per-order max, or the
+       remaining pots for the chosen day. */
+    if (capNote) {
+      const { limit, reason } = orderLimit();
+      capNote.hidden = cartQty() < limit;
+      if (!capNote.hidden) {
+        capNote.innerHTML =
+          reason === "day"
+            ? `That’s all ${limit} left for ${prettyDate(selectedISO())}. Pick another day for more, or <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`
+            : `That’s our max of ${MAX_ORDER} pots per order. For a bigger order, just <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`;
+      }
+    }
+
+    /* Keep the date picker in sync: days that can't fit the current cart get
+       disabled. */
+    fillDates();
     return { items, total };
   }
 
