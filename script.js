@@ -112,7 +112,9 @@ if (orderForm) {
     },
   };
 
-  const dateInput = document.getElementById("date");
+  const dateInput = document.getElementById("date"); // hidden input holding the chosen ISO date
+  const dateList = document.getElementById("dateList"); // card list container
+  const cartNote = document.getElementById("cartNote");
   const timeToggle = document.getElementById("timeToggle");
   const dateError = document.getElementById("dateError");
   const timeError = document.getElementById("timeError");
@@ -137,8 +139,10 @@ if (orderForm) {
   while (isWeekend(earliest)) earliest.setDate(earliest.getDate() + 1);
   const earliestISO = localISO(earliest);
 
-  /* Latest = no collections more than two weeks (14 days) ahead */
-  const HORIZON_DAYS = 14;
+  /* No fixed booking window — the picker simply shows the next DATE_CARDS
+     available dates, however far out they fall. This is only a safety cap so
+     the search always terminates (e.g. if almost everything is booked). */
+  const HORIZON_DAYS = 120;
   const latest = new Date();
   latest.setHours(0, 0, 0, 0);
   latest.setDate(latest.getDate() + HORIZON_DAYS);
@@ -156,8 +160,10 @@ if (orderForm) {
      (untouched days default to the full cap). */
   let dailyCap = null;
   const capLeft = {};
-  /* Start showing "only N left" once a day is at or below this many pots. */
-  const LOW_STOCK_AT = 7;
+  /* Show "Only N left" once a day drops below this many pots. */
+  const LOW_STOCK_AT = 5;
+  /* How many date cards to show at once (the soonest available ones). */
+  const DATE_CARDS = 5;
   const potsLeft = (iso) => {
     if (dailyCap == null) return null; // capacity unknown → don't restrict
     return capLeft[iso] != null ? capLeft[iso] : dailyCap;
@@ -244,24 +250,25 @@ if (orderForm) {
     el.textContent = msg || "";
   };
 
-  function validateDate() {
+  /* `reveal` = show a "please choose a date" error when nothing is picked.
+     We validate manually because the date now lives in a hidden input. */
+  function validateDate(reveal) {
     if (!dateInput) return true;
     const v = dateInput.value;
     let msg = "";
     if (v) {
       if (v < earliestISO) {
         msg = `That’s too soon — the earliest we can do is ${prettyDate(earliestISO)}.`;
-      } else if (v > latestISO) {
-        msg = "That’s too far ahead — please pick a date within the next two weeks.";
       } else if (isWeekend(new Date(v + "T00:00:00"))) {
-        msg = "We only do collections Monday to Friday.";
+        msg = "We only do collections Tuesday to Friday.";
       } else if (isSoldOut(v) || isClosedDay(new Date(v + "T00:00:00"))) {
         msg = "That date is sold out — please pick another.";
       }
+    } else if (reveal) {
+      msg = "Please choose a date.";
     }
-    dateInput.setCustomValidity(msg);
     showError(dateError, msg);
-    return !msg;
+    return !!v && !msg;
   }
 
   /* ---- Times: only the specific slots we offer ---- */
@@ -288,62 +295,72 @@ if (orderForm) {
     return r ? r.dataset.label : "";
   };
 
-  /* Show every weekday from tomorrow up to the two-week horizon.
-     Days that are sold out OR too soon (inside the lead time) are shown
-     but disabled and labelled "Sold out", so people can see they're taken. */
+  /* Render the soonest DATE_CARDS available dates as a card list.
+     "Available" = a weekday we open, past the lead time, not manually closed,
+     and with pots left. Days that can't fit the current order still appear,
+     but disabled with an explanation. Everything else is simply not shown. */
   function fillDates() {
-    if (!dateInput) return;
+    if (!dateInput || !dateList) return;
     const keep = dateInput.value;
-    const opts = [];
+    const need = cartQty();
+
+    const cards = [];
     const d = new Date();
     d.setHours(0, 0, 0, 0);
-    d.setDate(d.getDate() + 1); // start from tomorrow
-    while (localISO(d) <= latestISO) {
+    d.setDate(d.getDate() + 1); // from tomorrow
+    while (localISO(d) <= latestISO && cards.length < DATE_CARDS) {
       const iso = localISO(d);
-      if (!isWeekend(d)) {
-        const hardSold = iso < earliestISO || isSoldOut(iso) || isClosedDay(d);
-        const left = hardSold ? null : potsLeft(iso);
-        /* Nothing left is sold out, whether or not the Worker listed the day
-           in `full` — never label a day "only 0 left". */
-        const soldOut = hardSold || (left != null && left <= 0);
-        /* A day the current order can't fit into is offered but disabled,
-           labelled with what's left so it's clear why. */
-        const need = cartQty();
-        const notEnough = !soldOut && left != null && need > left;
-        /* Only surface the number when we're running low (≤ 7 left), so quiet
-           days just show the date without a scarcity cue. */
-        const lowLeft = left != null && left <= LOW_STOCK_AT ? left : null;
-        opts.push({
-          value: iso,
-          label: prettyDate(iso),
-          soldOut,
-          notEnough,
-          left,
-          lowLeft,
-        });
+      if (!isWeekend(d) && !isClosedDay(d)) {
+        const tooSoon = iso < earliestISO;
+        const manual = isSoldOut(iso); // includes worker "full" days
+        const left = tooSoon || manual ? null : potsLeft(iso);
+        const full = left != null && left <= 0;
+        if (!tooSoon && !manual && !full) cards.push({ iso, left });
       }
       d.setDate(d.getDate() + 1);
     }
-    dateInput.innerHTML =
-      '<option value="">Choose a date…</option>' +
-      opts
-        .map((o) => {
-          if (o.soldOut)
-            return `<option value="${o.value}" disabled>${o.label} — Sold out</option>`;
-          if (o.notEnough)
-            return `<option value="${o.value}" disabled>${o.label} — only ${o.left} left</option>`;
-          return `<option value="${o.value}">${o.label}${
-            o.lowLeft != null ? ` — only ${o.lowLeft} left` : ""
-          }</option>`;
-        })
-        .join("");
-    /* Keep the selection only if it's still pickable (not sold out or too small) */
-    const stillOk = (o) => o.value === keep && !o.soldOut && !o.notEnough;
-    dateInput.value = opts.some(stillOk) ? keep : "";
 
-    const anyAvailable = opts.some((o) => !o.soldOut && !o.notEnough);
-    if (soldOutNotice) soldOutNotice.hidden = anyAvailable;
-    if (submitBtn) submitBtn.disabled = !anyAvailable;
+    const fits = (c) => !(c.left != null && need > c.left);
+
+    dateList.innerHTML = cards
+      .map((c) => {
+        const dd = new Date(c.iso + "T00:00:00");
+        const wd = dd.toLocaleDateString("en-IE", { weekday: "long" });
+        const rest = dd.toLocaleDateString("en-IE", { day: "numeric", month: "long" });
+        const notEnough = !fits(c);
+        const selected = c.iso === keep && !notEnough;
+        let right;
+        if (notEnough) right = `<span class="pill gone">${c.left} left · need ${need}</span>`;
+        else if (c.left != null && c.left < LOW_STOCK_AT)
+          right = `<span class="pill ${c.left <= 2 ? "tight" : "low"}">Only ${c.left} left</span>`;
+        else right = `<span class="chev" aria-hidden="true">›</span>`;
+        return `<button type="button" class="datecard${selected ? " sel" : ""}${
+          notEnough ? " off" : ""
+        }" data-iso="${c.iso}"${notEnough ? " disabled" : ""} role="radio" aria-checked="${
+          selected ? "true" : "false"
+        }">
+            <span class="radio" aria-hidden="true"></span>
+            <span class="dc-main"><span class="dc-day">${wd}</span><span class="dc-date">${rest}</span></span>
+            <span class="dc-right">${right}</span>
+          </button>`;
+      })
+      .join("");
+
+    /* Drop the selection if the chosen day disappeared or no longer fits. */
+    if (!cards.some((c) => c.iso === keep && fits(c))) dateInput.value = "";
+
+    /* Order-aware banner: only when the cart can't fit one of the shown days. */
+    if (cartNote) {
+      const anyTight = need > 0 && cards.some((c) => !fits(c));
+      cartNote.hidden = !anyTight;
+      if (anyTight)
+        cartNote.innerHTML = `You’ve picked <strong>${need} pot${
+          need === 1 ? "" : "s"
+        }</strong> — dates that can’t fit are marked below.`;
+    }
+
+    if (soldOutNotice) soldOutNotice.hidden = cards.length > 0;
+    if (submitBtn) submitBtn.disabled = !cards.some(fits);
   }
 
   function fillTimes() {
@@ -378,12 +395,15 @@ if (orderForm) {
     validateTime();
   }
 
-  if (dateInput) {
+  if (dateInput && dateList) {
     fillDates();
-    dateInput.addEventListener("change", () => {
-      validateDate();
+    dateList.addEventListener("click", (e) => {
+      const card = e.target.closest(".datecard");
+      if (!card || card.disabled || !card.dataset.iso) return;
+      dateInput.value = card.dataset.iso;
+      validateDate(true);
       clampCart(); // trim the order if the new day has less room
-      recalc();
+      recalc(); // re-renders the cards (selection) + summary
     });
   }
   if (timeToggle) {
@@ -414,7 +434,7 @@ if (orderForm) {
   }
 
   orderForm.validateCollection = () => {
-    const okDate = validateDate();
+    const okDate = validateDate(true);
     const okTime = validateTime(true);
     return okDate && okTime;
   };
