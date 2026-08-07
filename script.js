@@ -303,17 +303,20 @@ if (orderForm) {
       if (!isWeekend(d)) {
         const hardSold = iso < earliestISO || isSoldOut(iso) || isClosedDay(d);
         const left = hardSold ? null : potsLeft(iso);
+        /* Nothing left is sold out, whether or not the Worker listed the day
+           in `full` — never label a day "only 0 left". */
+        const soldOut = hardSold || (left != null && left <= 0);
         /* A day the current order can't fit into is offered but disabled,
            labelled with what's left so it's clear why. */
         const need = cartQty();
-        const notEnough = left != null && need > left;
+        const notEnough = !soldOut && left != null && need > left;
         /* Only surface the number when we're running low (≤ 7 left), so quiet
            days just show the date without a scarcity cue. */
         const lowLeft = left != null && left <= LOW_STOCK_AT ? left : null;
         opts.push({
           value: iso,
           label: prettyDate(iso),
-          soldOut: hardSold,
+          soldOut,
           notEnough,
           left,
           lowLeft,
