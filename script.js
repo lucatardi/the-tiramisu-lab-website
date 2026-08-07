@@ -89,6 +89,9 @@ if (orderForm) {
   const summaryTotal = document.getElementById("summaryTotal");
   const capNote = document.getElementById("capNote");
   const flavourCap = document.getElementById("flavourCap");
+  /* True only right after a "+" tap that couldn't add (order already at the
+     day's remaining or the per-order max). Drives the cap explanation. */
+  let blockedAdd = false;
 
   /* Most pots we'll take in one order — bigger jobs go through WhatsApp. */
   const MAX_ORDER = 20;
@@ -446,8 +449,13 @@ if (orderForm) {
     qty.querySelectorAll("button").forEach((btn) => {
       btn.addEventListener("click", () => {
         const step = parseInt(btn.dataset.step, 10);
+        const cur = parseInt(input.value, 10) || 0;
         const room = orderLimit().limit - cartQty(input); // room left for this flavour
-        input.value = Math.max(0, Math.min(room, (parseInt(input.value, 10) || 0) + step));
+        const next = Math.max(0, Math.min(room, cur + step));
+        /* Only flag a hit when they actually tried to add and couldn't — so
+           landing exactly on the day's remaining count stays quiet. */
+        blockedAdd = step > 0 && next === cur;
+        input.value = next;
         recalc();
       });
     });
@@ -495,20 +503,21 @@ if (orderForm) {
     const total = items.reduce((s, i) => s + i.line, 0);
     summaryTotal.textContent = money(total);
 
-    /* Cap note: explain whichever limit we've hit — the per-order max, or the
-       remaining pots for the chosen day. Shown next to the +/− (where the tap
-       gets blocked) AND in the summary. */
+    /* Cap note: explain the limit ONLY when a "+" was actually blocked — so
+       ordering exactly what a day has left stays quiet. Cleared as soon as the
+       order drops below the limit. Shown next to the +/− and in the summary. */
     const { limit, reason } = orderLimit();
-    const atCap = cartQty() >= limit;
-    const capMsg = !atCap
+    if (cartQty() < limit) blockedAdd = false;
+    const showCap = blockedAdd && cartQty() >= limit;
+    const capMsg = !showCap
       ? ""
       : reason === "day"
       ? `That’s all ${limit} left for ${prettyDate(selectedISO())}. Pick another day for more, or <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`
       : `That’s our max of ${MAX_ORDER} pots per order. For a bigger order, just <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`;
     [capNote, flavourCap].forEach((el) => {
       if (!el) return;
-      el.hidden = !atCap;
-      if (atCap) el.innerHTML = capMsg;
+      el.hidden = !showCap;
+      if (showCap) el.innerHTML = capMsg;
     });
 
     /* Keep the date picker in sync: days that can't fit the current cart get
