@@ -76,7 +76,7 @@
       <div class="order-form">
         <!-- Flavours -->
         <fieldset>
-          <legend>Pick your tiramisu</legend>
+          <legend>Choose your tiramisu</legend>
 
           <div class="product" data-name="Classic" data-price="6.5">
             <img class="p-thumb" src="images/classic.jpg" alt="" loading="lazy" />
@@ -131,9 +131,23 @@
           </div>
         </fieldset>
 
-        <!-- Collection -->
+        <!-- When -->
         <fieldset>
-          <legend>Select the best collection option for you</legend>
+          <legend>When would you like it?</legend>
+
+          <div class="field">
+            <label for="date">Collection date</label>
+            <select id="date" name="date" required>
+              <option value="">Choose a date…</option>
+            </select>
+          </div>
+          <p class="field-error" id="dateError" hidden></p>
+          <p class="field-notice" id="soldOutNotice" hidden>All our dates are sold out right now — please check back soon, or message us on Instagram.</p>
+        </fieldset>
+
+        <!-- Where -->
+        <fieldset>
+          <legend>Where should we meet?</legend>
 
           <div class="slot-options" role="radiogroup" aria-label="Collection point">
             <label class="slot">
@@ -149,21 +163,11 @@
           </div>
           <p class="hint" style="margin-top:-0.6rem;margin-bottom:1.3rem">We’ll send the exact meeting point with your payment link.</p>
 
-          <div class="field-row">
-            <div class="field">
-              <label for="date">Collection date</label>
-              <select id="date" name="date" required>
-                <option value="">Choose a date…</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Time</label>
-              <div class="time-toggle" id="timeToggle" role="radiogroup" aria-label="Collection time"></div>
-            </div>
+          <div class="field">
+            <label>Pick-up time</label>
+            <div class="time-toggle" id="timeToggle" role="radiogroup" aria-label="Collection time"></div>
           </div>
-          <p class="field-error" id="dateError" hidden></p>
           <p class="field-error" id="timeError" hidden></p>
-          <p class="field-notice" id="soldOutNotice" hidden>All our dates are sold out right now — please check back soon, or message us on Instagram.</p>
         </fieldset>
 
       </div>
