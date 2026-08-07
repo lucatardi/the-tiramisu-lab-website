@@ -88,6 +88,7 @@ if (orderForm) {
   const summaryLines = document.getElementById("summaryLines");
   const summaryTotal = document.getElementById("summaryTotal");
   const capNote = document.getElementById("capNote");
+  const flavourCap = document.getElementById("flavourCap");
 
   /* Most pots we'll take in one order — bigger jobs go through WhatsApp. */
   const MAX_ORDER = 20;
@@ -495,17 +496,20 @@ if (orderForm) {
     summaryTotal.textContent = money(total);
 
     /* Cap note: explain whichever limit we've hit — the per-order max, or the
-       remaining pots for the chosen day. */
-    if (capNote) {
-      const { limit, reason } = orderLimit();
-      capNote.hidden = cartQty() < limit;
-      if (!capNote.hidden) {
-        capNote.innerHTML =
-          reason === "day"
-            ? `That’s all ${limit} left for ${prettyDate(selectedISO())}. Pick another day for more, or <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`
-            : `That’s our max of ${MAX_ORDER} pots per order. For a bigger order, just <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`;
-      }
-    }
+       remaining pots for the chosen day. Shown next to the +/− (where the tap
+       gets blocked) AND in the summary. */
+    const { limit, reason } = orderLimit();
+    const atCap = cartQty() >= limit;
+    const capMsg = !atCap
+      ? ""
+      : reason === "day"
+      ? `That’s all ${limit} left for ${prettyDate(selectedISO())}. Pick another day for more, or <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`
+      : `That’s our max of ${MAX_ORDER} pots per order. For a bigger order, just <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`;
+    [capNote, flavourCap].forEach((el) => {
+      if (!el) return;
+      el.hidden = !atCap;
+      if (atCap) el.innerHTML = capMsg;
+    });
 
     /* Keep the date picker in sync: days that can't fit the current cart get
        disabled. */
