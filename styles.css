@@ -485,6 +485,7 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
   grid-template-columns: 1.6fr 1fr;
   gap: 2rem;
 }
+.footer-tag { margin-top: 1rem; } /* spacing below the logo (desktop) */
 .site-footer a { color: var(--mascarpone); text-decoration: none; }
 .site-footer a:hover { color: var(--caramel); }
 .site-footer h4 {
@@ -522,6 +523,9 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
   .site-footer .contact-btns { justify-content: space-between; gap: 0.5rem; }
   .site-footer .contact-btn { gap: 0; padding: 0.9rem; justify-content: center; }
   .site-footer .contact-btn svg { width: 22px; height: 22px; }
+  /* Logo inline with the tagline text */
+  .footer-brand { display: flex; align-items: center; gap: 1rem; }
+  .footer-brand .footer-tag { margin-top: 0; }
 }
 .footer-bottom {
   border-top: 1px solid rgba(255,255,255,0.12);
