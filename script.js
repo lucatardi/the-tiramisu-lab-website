@@ -60,7 +60,12 @@ if (navToggle && navLinks) {
   const cards = document.querySelectorAll(".flavour-card");
   if (!cards.length) return;
   cards.forEach((card) => {
-    const toggle = () => card.classList.toggle("flipped");
+    /* Only one card open at a time: flipping one resets the rest. */
+    const toggle = () => {
+      const willFlip = !card.classList.contains("flipped");
+      cards.forEach((c) => c.classList.remove("flipped"));
+      if (willFlip) card.classList.add("flipped");
+    };
     card.addEventListener("click", toggle);
     card.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
