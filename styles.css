@@ -871,6 +871,11 @@ textarea { resize: vertical; min-height: 90px; }
 @media (max-width: 480px) {
   .field-row { grid-template-columns: minmax(0, 1fr); }
 }
+/* Hero call-to-action spans the full width on phones */
+@media (max-width: 560px) {
+  .hero-actions { width: 100%; }
+  .hero-actions .btn { width: 100%; justify-content: center; }
+}
 
 /* ===== "Why ours tastes different" comparison =====
    Mobile-first: stacked pair-cards. Desktop (≥760px): side-by-side grid. */
