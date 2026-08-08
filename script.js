@@ -87,7 +87,6 @@ if (orderForm) {
 
   const summaryLines = document.getElementById("summaryLines");
   const summaryTotal = document.getElementById("summaryTotal");
-  const capNote = document.getElementById("capNote");
   const flavourCap = document.getElementById("flavourCap");
   /* True only right after a "+" tap that couldn't add (order already at the
      day's remaining or the per-order max). Drives the cap explanation. */
@@ -514,11 +513,10 @@ if (orderForm) {
       : reason === "day"
       ? `That’s all ${limit} left for ${prettyDate(selectedISO())}. Pick another day for more, or <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`
       : `That’s our max of ${MAX_ORDER} pots per order. For a bigger order, just <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`;
-    [capNote, flavourCap].forEach((el) => {
-      if (!el) return;
-      el.hidden = !showCap;
-      if (showCap) el.innerHTML = capMsg;
-    });
+    if (flavourCap) {
+      flavourCap.hidden = !showCap;
+      if (showCap) flavourCap.innerHTML = capMsg;
+    }
 
     /* Keep the date picker in sync: days that can't fit the current cart get
        disabled. */
