@@ -872,6 +872,51 @@ textarea { resize: vertical; min-height: 90px; }
   .field-row { grid-template-columns: minmax(0, 1fr); }
 }
 
+/* ===== "Why ours tastes different" comparison =====
+   Mobile-first: stacked pair-cards. Desktop (≥760px): side-by-side grid. */
+.compare { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.8rem; }
+.compare-head { display: none; } /* column headers show on desktop only */
+.compare-row {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+  box-shadow: var(--shadow-sm);
+  border-left: 4px solid var(--gold);
+}
+.c-usual { display: flex; align-items: center; gap: 0.5rem; color: var(--muted); font-size: 0.86rem; margin-bottom: 0.45rem; }
+.c-usual .c-txt { text-decoration: line-through; text-decoration-color: rgba(122,101,83,0.5); }
+.c-ours { display: flex; align-items: center; gap: 0.55rem; color: var(--espresso); font-weight: 700; font-size: 1.05rem; line-height: 1.25; }
+.compare .mark { width: 19px; height: 19px; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: 0.66rem; font-weight: 700; }
+.compare .mark.x { background: rgba(122,101,83,0.14); color: var(--muted); }
+.compare .mark.ok { background: var(--gold); color: var(--espresso); }
+
+@media (min-width: 760px) {
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    max-width: 820px;
+    margin: 1.8rem auto 0;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 14px 40px rgba(42,21,5,0.14);
+  }
+  /* let the wrapper rows/head dissolve so their cells become grid items */
+  .compare-head, .compare-row { display: contents; }
+  .ch-usual, .ch-ours { padding: 1rem 1.2rem; font-weight: 700; font-size: 0.95rem; }
+  .ch-usual { background: var(--white); color: var(--muted); }
+  .ch-ours { background: var(--espresso); color: var(--gold); }
+  .c-usual, .c-ours {
+    padding: 1rem 1.2rem; display: flex; align-items: center; gap: 0.6rem;
+    font-size: 0.98rem; line-height: 1.35;
+    margin: 0; border-left: 0; border-radius: 0; box-shadow: none;
+    border-top: 1px solid rgba(122,101,83,0.16);
+  }
+  .c-usual { background: var(--white); color: var(--muted); }
+  .c-ours { background: var(--espresso); color: var(--cream); font-weight: 600; border-top-color: rgba(244,231,207,0.12); }
+  .c-usual .c-txt { text-decoration: none; } /* no strikethrough in side-by-side */
+}
+
 /* ===== Date picker: card list ===== */
 .when-intro { color: var(--muted); font-size: 0.9rem; line-height: 1.5; margin: 0 0 1rem; }
 .when-label { color: var(--muted); font-size: 0.92rem; margin: 0 0 0.7rem; }
