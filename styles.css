@@ -889,6 +889,9 @@ textarea { resize: vertical; min-height: 90px; }
   .story-split.reverse .story-art { order: 0; }
   .slot-options { grid-template-columns: 1fr; }
   .hero-logo { display: none; } /* hide the large logo on mobile (header logo stays) */
+  /* Centre the hero copy when it stacks */
+  .hero-copy { text-align: center; }
+  .hero-actions { justify-content: center; }
   .summary { position: static; }
 }
 @media (max-width: 480px) {
