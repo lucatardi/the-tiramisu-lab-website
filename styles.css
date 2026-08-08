@@ -744,7 +744,10 @@ textarea { resize: vertical; min-height: 90px; }
    scrolling still work — that's exactly what `manipulation` preserves. */
 * { touch-action: manipulation; }
 .qty button:hover { background: var(--mascarpone); }
-.qty button:disabled { opacity: 0.3; cursor: default; }
+/* pointer-events:none so a double-tap on a disabled button falls through to
+   the parent (Safari ignores touch-action on disabled controls, which would
+   otherwise let the double-tap zoom). */
+.qty button:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
 .qty button:disabled:hover { background: none; }
 .qty input {
   width: 44px; text-align: center;
