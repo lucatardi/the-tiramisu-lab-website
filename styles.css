@@ -515,10 +515,13 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
   border-color: var(--gold);
   color: var(--cream);
 }
-/* On phones, the Get in touch buttons show the icon only (no text label) */
+/* On phones, the Get in touch buttons show the icon only (no text label),
+   sized up and spread evenly across one line. */
 @media (max-width: 560px) {
   .site-footer .contact-btn span { display: none; }
-  .site-footer .contact-btn { gap: 0; padding: 0.62rem; justify-content: center; }
+  .site-footer .contact-btns { justify-content: space-between; gap: 0.5rem; }
+  .site-footer .contact-btn { gap: 0; padding: 0.9rem; justify-content: center; }
+  .site-footer .contact-btn svg { width: 22px; height: 22px; }
 }
 .footer-bottom {
   border-top: 1px solid rgba(255,255,255,0.12);
