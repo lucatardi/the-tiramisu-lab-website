@@ -740,10 +740,9 @@ textarea { resize: vertical; min-height: 90px; }
   font-size: 1.2rem; font-weight: 700;
   color: var(--cocoa); cursor: pointer;
 }
-/* Kill the iOS double-tap-to-zoom on tappable controls (annoying when tapping
-   + / − quickly). Pinch-zoom is unaffected. */
-.qty button, .datecard, .time-opt, .slot, .btn, .sync,
-button, [role="button"] { touch-action: manipulation; }
+/* Kill iOS/Android double-tap-to-zoom across the whole site. Pinch-to-zoom and
+   scrolling still work — that's exactly what `manipulation` preserves. */
+* { touch-action: manipulation; }
 .qty button:hover { background: var(--mascarpone); }
 .qty button:disabled { opacity: 0.3; cursor: default; }
 .qty button:disabled:hover { background: none; }
