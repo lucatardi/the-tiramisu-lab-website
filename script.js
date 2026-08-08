@@ -518,6 +518,19 @@ if (orderForm) {
       if (showCap) flavourCap.innerHTML = capMsg;
     }
 
+    /* Grey out the steppers at their edges: − when a flavour is at 0, and +
+       once the whole order has reached the limit (the day's pots or the max). */
+    const atLimit = cartQty() >= limit;
+    products.forEach((p) => {
+      const box = p.input.closest("[data-qty]");
+      if (!box) return;
+      const v = parseInt(p.input.value, 10) || 0;
+      const minus = box.querySelector('[data-step="-1"]');
+      const plus = box.querySelector('[data-step="1"]');
+      if (minus) minus.disabled = v <= 0;
+      if (plus) plus.disabled = atLimit;
+    });
+
     /* Keep the date picker in sync: days that can't fit the current cart get
        disabled. */
     fillDates();
