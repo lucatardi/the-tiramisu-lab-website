@@ -892,6 +892,7 @@ textarea { resize: vertical; min-height: 90px; }
   /* Centre the hero copy when it stacks */
   .hero-copy { text-align: center; }
   .hero-actions { justify-content: center; }
+  .hero p.lead { margin-inline: auto; } /* centre the capped-width description box */
   .summary { position: static; }
 }
 @media (max-width: 480px) {
