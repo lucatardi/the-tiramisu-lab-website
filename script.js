@@ -368,7 +368,7 @@ if (orderForm) {
     }
 
     if (soldOutNotice) soldOutNotice.hidden = cards.length > 0;
-    if (submitBtn) submitBtn.disabled = !cards.some(fits);
+    updateSubmitState();
   }
 
   function fillTimes() {
@@ -394,6 +394,13 @@ if (orderForm) {
     return has;
   }
 
+  /* Enable the submit button only once the order is actually placeable:
+     at least one pot, a collection date, and a time. */
+  function updateSubmitState() {
+    if (!submitBtn) return;
+    submitBtn.disabled = !(cartQty() > 0 && !!selectedISO() && !!selectedTime());
+  }
+
   function syncSlot() {
     slotInputs.forEach((r) => {
       const card = r.closest(".slot");
@@ -401,6 +408,7 @@ if (orderForm) {
     });
     fillTimes();
     validateTime();
+    updateSubmitState();
   }
 
   if (dateInput && dateList) {
@@ -420,6 +428,7 @@ if (orderForm) {
         l.classList.toggle("on", l.querySelector("input").checked)
       );
       validateTime();
+      updateSubmitState();
     });
   }
   slotInputs.forEach((r) => r.addEventListener("change", syncSlot));
@@ -428,13 +437,11 @@ if (orderForm) {
   /* Pull in the sold-out dates + any full days, then rebuild the picker */
   Promise.all([loadSoldOutDates(), loadFullDates()]).then(fillDates);
 
-  /* In Stripe mode, relabel the primary action + reassure about payment */
+  /* In Stripe mode, relabel the primary action + hide the WhatsApp note */
   if (CHECKOUT_API) {
-    if (submitBtn) submitBtn.textContent = "Continue to secure payment";
+    if (submitBtn) submitBtn.textContent = "Continue to payment";
     const note = document.getElementById("submitNote");
-    if (note)
-      note.textContent =
-        "You’ll pay securely by card, Apple Pay or Google Pay. We’ll email your confirmation and the exact collection spot right after.";
+    if (note) note.hidden = true;
     const slotHint = document.querySelector(".slot-options + .hint");
     if (slotHint)
       slotHint.textContent =
