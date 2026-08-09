@@ -411,6 +411,55 @@ if (orderForm) {
     updateSubmitState();
   }
 
+  /* ---- Keep the selection across a Stripe round-trip ----
+     We hand off to Stripe with a full-page navigation, so hitting "back"
+     reloads this page fresh and would otherwise wipe the order. Stash the
+     choice in sessionStorage just before redirecting and pull it back on load.
+     sessionStorage is per-tab and clears when the tab closes, so it never
+     leaks a stale order into a brand-new visit. */
+  const ORDER_STATE_KEY = "tl_order_v1";
+  function saveState() {
+    try {
+      const qty = {};
+      products.forEach((p) => {
+        const v = parseInt(p.input.value, 10) || 0;
+        if (v) qty[p.name] = v;
+      });
+      sessionStorage.setItem(
+        ORDER_STATE_KEY,
+        JSON.stringify({
+          qty,
+          slot: (slotInputs.find((r) => r.checked) || {}).value || "",
+          date: dateInput ? dateInput.value : "",
+          time: selectedTime(),
+        })
+      );
+    } catch (e) {
+      /* storage disabled (private mode / quota) — just skip persistence */
+    }
+  }
+  function restoreState() {
+    let s;
+    try {
+      s = JSON.parse(sessionStorage.getItem(ORDER_STATE_KEY) || "null");
+    } catch (e) {
+      return null;
+    }
+    if (!s) return null;
+    if (s.qty) products.forEach((p) => { if (s.qty[p.name]) p.input.value = s.qty[p.name]; });
+    if (s.slot) {
+      const r = slotInputs.find((x) => x.value === s.slot);
+      if (r) r.checked = true;
+    }
+    if (s.date && dateInput) dateInput.value = s.date;
+    return s;
+  }
+
+  /* Bring back any order saved just before a Stripe redirect. Must run before
+     the first paint so slot/date/qty are already in place. The time radios are
+     rendered by fillTimes (below), so we re-check the saved time afterwards. */
+  const restored = restoreState();
+
   if (dateInput && dateList) {
     fillDates();
     dateList.addEventListener("click", (e) => {
@@ -434,8 +483,28 @@ if (orderForm) {
   slotInputs.forEach((r) => r.addEventListener("change", syncSlot));
   syncSlot();
 
-  /* Pull in the sold-out dates + any full days, then rebuild the picker */
-  Promise.all([loadSoldOutDates(), loadFullDates()]).then(fillDates);
+  /* Re-check the saved time now that syncSlot/fillTimes has rendered the
+     radios for the restored slot. */
+  if (restored && restored.time && timeToggle) {
+    timeToggle.querySelectorAll(".time-opt").forEach((l) => {
+      const inp = l.querySelector("input");
+      const on = inp.value === restored.time;
+      inp.checked = on;
+      l.classList.toggle("on", on);
+    });
+  }
+
+  /* Pull in the sold-out dates + any full days, then rebuild the picker.
+     A restored date can't be validated until this data is in, and the first
+     (data-less) fillDates may have dropped it — so re-apply it here and let
+     recalc validate it against real capacity (clearing it only if it's now
+     genuinely sold out). */
+  Promise.all([loadSoldOutDates(), loadFullDates()]).then(() => {
+    if (restored && restored.date && dateInput && !dateInput.value) {
+      dateInput.value = restored.date;
+    }
+    recalc();
+  });
 
   /* In Stripe mode, relabel the primary action + hide the WhatsApp note */
   if (CHECKOUT_API) {
@@ -615,6 +684,7 @@ if (orderForm) {
       if (!res.ok) throw new Error("checkout failed");
       const { url } = await res.json();
       if (!url) throw new Error("no url");
+      saveState(); // so "back" from Stripe restores the order
       window.location = url; // → Stripe hosted checkout
     } catch (err) {
       setBusy(false);
@@ -684,6 +754,9 @@ if (orderForm) {
     .then((res) => res.json().then((data) => ({ ok: res.ok, data })))
     .then(({ ok, data }) => {
       if (!ok || !data.paid) return showTy("tyError");
+      /* Order went through — drop the stashed selection so it won't be
+         restored if the order page is reopened in this tab. */
+      try { sessionStorage.removeItem("tl_order_v1"); } catch (e) {}
       setText("tyItems", data.items || "—");
       setText(
         "tyTotal",
