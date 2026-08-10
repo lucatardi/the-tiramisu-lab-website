@@ -407,13 +407,6 @@ if (orderForm) {
     const local = contactLocal();
     return local ? (contactDial() ? contactDial() + " " : "") + local : "";
   };
-  /* wa.me wants digits only: country code + national number with any leading
-     trunk zero dropped (e.g. +353 and "085 123 4567" → 353851234567). */
-  const contactWa = () => {
-    const cc = contactDial().replace(/\D/g, "");
-    const local = contactLocal().replace(/\D/g, "").replace(/^0+/, "");
-    return cc && local ? cc + local : "";
-  };
   const contactOk = () =>
     contactName().length > 0 && contactLocal().replace(/\D/g, "").length >= 7;
 
@@ -741,7 +734,6 @@ if (orderForm) {
       slot: (slotInputs.find((r) => r.checked) || {}).value || "daytime",
       name: contactName(),
       phone: contactPhone(),
-      phoneWa: contactWa(),
     };
     setCheckoutError("");
     setBusy(true);
