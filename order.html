@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=75" />
+  <link rel="stylesheet" href="styles.css?v=76" />
 </head>
 <body>
 
@@ -177,17 +177,52 @@
         <!-- Who -->
         <fieldset>
           <legend>Who’s collecting?</legend>
-          <div class="field-row">
-            <div class="field">
-              <label for="firstName">First name</label>
-              <input type="text" id="firstName" name="firstName" autocomplete="given-name" autocapitalize="words" maxlength="60" />
-            </div>
-            <div class="field">
-              <label for="phone">Mobile number</label>
-              <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" value="+353 " placeholder="+353 85 123 4567" maxlength="30" />
+          <div class="field">
+            <label for="firstName">First name</label>
+            <input type="text" id="firstName" name="firstName" autocomplete="given-name" autocapitalize="words" placeholder="e.g. Silenzio Bruno" maxlength="60" />
+          </div>
+          <div class="field">
+            <label for="phone">Mobile number</label>
+            <div class="phone-group">
+              <select id="phoneCC" aria-label="Country code" autocomplete="tel-country-code">
+                <option value="+353" selected>🇮🇪 Ireland +353</option>
+                <option value="+44">🇬🇧 United Kingdom +44</option>
+                <option value="+1">🇺🇸 United States +1</option>
+                <option value="+61">🇦🇺 Australia +61</option>
+                <option value="+43">🇦🇹 Austria +43</option>
+                <option value="+32">🇧🇪 Belgium +32</option>
+                <option value="+55">🇧🇷 Brazil +55</option>
+                <option value="+1">🇨🇦 Canada +1</option>
+                <option value="+86">🇨🇳 China +86</option>
+                <option value="+420">🇨🇿 Czechia +420</option>
+                <option value="+45">🇩🇰 Denmark +45</option>
+                <option value="+358">🇫🇮 Finland +358</option>
+                <option value="+33">🇫🇷 France +33</option>
+                <option value="+49">🇩🇪 Germany +49</option>
+                <option value="+30">🇬🇷 Greece +30</option>
+                <option value="+36">🇭🇺 Hungary +36</option>
+                <option value="+91">🇮🇳 India +91</option>
+                <option value="+39">🇮🇹 Italy +39</option>
+                <option value="+371">🇱🇻 Latvia +371</option>
+                <option value="+370">🇱🇹 Lithuania +370</option>
+                <option value="+52">🇲🇽 Mexico +52</option>
+                <option value="+31">🇳🇱 Netherlands +31</option>
+                <option value="+64">🇳🇿 New Zealand +64</option>
+                <option value="+234">🇳🇬 Nigeria +234</option>
+                <option value="+47">🇳🇴 Norway +47</option>
+                <option value="+48">🇵🇱 Poland +48</option>
+                <option value="+351">🇵🇹 Portugal +351</option>
+                <option value="+40">🇷🇴 Romania +40</option>
+                <option value="+34">🇪🇸 Spain +34</option>
+                <option value="+46">🇸🇪 Sweden +46</option>
+                <option value="+41">🇨🇭 Switzerland +41</option>
+                <option value="+90">🇹🇷 Turkey +90</option>
+                <option value="+380">🇺🇦 Ukraine +380</option>
+                <option value="+971">🇦🇪 United Arab Emirates +971</option>
+              </select>
+              <input type="tel" id="phone" name="phone" autocomplete="tel-national" inputmode="tel" placeholder="85 123 4567" maxlength="24" />
             </div>
           </div>
-          <p class="field-error" id="contactError" hidden></p>
           <p class="when-foot" style="margin-top:-0.5rem">So we know who to hand it to, and can reach you if anything changes.</p>
         </fieldset>
 
@@ -268,6 +303,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=75"></script>
+  <script src="script.js?v=76"></script>
 </body>
 </html>

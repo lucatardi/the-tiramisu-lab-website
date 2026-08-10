@@ -695,6 +695,10 @@ input:focus, select:focus, textarea:focus {
 textarea { resize: vertical; min-height: 90px; }
 /* minmax(0,1fr) so a long <select> option can't force the column wider */
 .field-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; }
+/* Country-code select + local number */
+.phone-group { display: flex; gap: 0.6rem; align-items: stretch; }
+.phone-group select { flex: 0 0 auto; width: auto; max-width: 48%; padding-right: 0.6em; }
+.phone-group input { flex: 1 1 auto; min-width: 0; }
 
 /* Time toggle (two set times per slot) */
 .time-toggle {

@@ -131,7 +131,7 @@ if (orderForm) {
   const slotInputs = Array.from(document.querySelectorAll('input[name="slot"]'));
   const firstNameInput = document.getElementById("firstName");
   const phoneInput = document.getElementById("phone");
-  const contactError = document.getElementById("contactError");
+  const phoneCC = document.getElementById("phoneCC");
 
   /* Local-time yyyy-mm-dd (toISOString would shift us to UTC) */
   const localISO = (d) =>
@@ -397,19 +397,18 @@ if (orderForm) {
     return has;
   }
 
-  /* First name + a plausible phone (≥7 digits) for the person collecting. */
+  /* First name + a plausible phone for the person collecting. The number is a
+     country-code dropdown + the local number; we store them combined, e.g.
+     "+353 85 123 4567". Validity checks the local part (≥7 digits). */
   const contactName = () => (firstNameInput ? firstNameInput.value.trim() : "");
-  const contactPhone = () => (phoneInput ? phoneInput.value.trim() : "");
+  const contactDial = () => (phoneCC ? phoneCC.value : "");
+  const contactLocal = () => (phoneInput ? phoneInput.value.trim() : "");
+  const contactPhone = () => {
+    const local = contactLocal();
+    return local ? (contactDial() ? contactDial() + " " : "") + local : "";
+  };
   const contactOk = () =>
-    contactName().length > 0 && contactPhone().replace(/\D/g, "").length >= 7;
-  function validateContact(reveal) {
-    const ok = contactOk();
-    showError(
-      contactError,
-      ok || !reveal ? "" : "Please add your first name and mobile number."
-    );
-    return ok;
-  }
+    contactName().length > 0 && contactLocal().replace(/\D/g, "").length >= 7;
 
   /* Enable the submit button only once the order is actually placeable:
      at least one pot, a collection date, a time, and who's collecting. */
@@ -455,7 +454,8 @@ if (orderForm) {
           date: dateInput ? dateInput.value : "",
           time: selectedTime(),
           name: contactName(),
-          phone: contactPhone(),
+          cc: contactDial(),
+          phone: contactLocal(),
         })
       );
     } catch (e) {
@@ -477,14 +477,48 @@ if (orderForm) {
     }
     if (s.date && dateInput) dateInput.value = s.date;
     if (s.name && firstNameInput) firstNameInput.value = s.name;
+    if (s.cc && phoneCC) phoneCC.value = s.cc;
     if (s.phone && phoneInput) phoneInput.value = s.phone;
     return s;
+  }
+
+  /* ---- Remember the collector across visits (returning customers) ----
+     Unlike the sessionStorage order above (one Stripe round-trip), this uses
+     localStorage so it survives closing the tab — a repeat customer doesn't
+     retype their name + number. Front-end only for now; it stays on their own
+     device and is written only when they actually place an order. */
+  const CONTACT_KEY = "tl_contact_v1";
+  function saveContact() {
+    try {
+      localStorage.setItem(
+        CONTACT_KEY,
+        JSON.stringify({ name: contactName(), cc: contactDial(), phone: contactLocal() })
+      );
+    } catch (e) {
+      /* storage disabled — skip */
+    }
+  }
+  function loadContact() {
+    let c;
+    try {
+      c = JSON.parse(localStorage.getItem(CONTACT_KEY) || "null");
+    } catch (e) {
+      return;
+    }
+    if (!c) return;
+    /* Only fill fields that are still empty, so a Stripe-return restore wins. */
+    if (firstNameInput && !firstNameInput.value && c.name) firstNameInput.value = c.name;
+    if (phoneInput && !phoneInput.value && c.phone) {
+      phoneInput.value = c.phone;
+      if (phoneCC && c.cc) phoneCC.value = c.cc;
+    }
   }
 
   /* Bring back any order saved just before a Stripe redirect. Must run before
      the first paint so slot/date/qty are already in place. The time radios are
      rendered by fillTimes (below), so we re-check the saved time afterwards. */
   const restored = restoreState();
+  loadContact(); // prefill name/phone for returning customers (empties only)
 
   if (dateInput && dateList) {
     fillDates();
@@ -509,15 +543,11 @@ if (orderForm) {
   slotInputs.forEach((r) => r.addEventListener("change", syncSlot));
   syncSlot();
 
-  /* Name/phone: keep the button state live and clear the error as they type. */
+  /* Name/phone: no inline error — just keep the submit button state live. */
   [firstNameInput, phoneInput].forEach((el) => {
-    if (!el) return;
-    el.addEventListener("input", () => {
-      if (contactError && !contactError.hidden && contactOk()) validateContact(true);
-      updateSubmitState();
-    });
-    el.addEventListener("blur", () => validateContact(true));
+    if (el) el.addEventListener("input", updateSubmitState);
   });
+  if (phoneCC) phoneCC.addEventListener("change", updateSubmitState);
 
   /* Re-check the saved time now that syncSlot/fillTimes has rendered the
      radios for the restored slot. */
@@ -556,8 +586,7 @@ if (orderForm) {
   orderForm.validateCollection = () => {
     const okDate = validateDate(true);
     const okTime = validateTime(true);
-    const okContact = validateContact(true);
-    return okDate && okTime && okContact;
+    return okDate && okTime && contactOk();
   };
 
   /* Quantity steppers */
@@ -752,6 +781,8 @@ if (orderForm) {
       return;
     }
     if (!okCollection) return;
+
+    saveContact(); // remember name/phone for their next visit
 
     if (CHECKOUT_API) {
       startCheckout(items);
