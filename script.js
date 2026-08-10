@@ -129,6 +129,9 @@ if (orderForm) {
   const soldOutNotice = document.getElementById("soldOutNotice");
   const submitBtn = orderForm.querySelector('button[type="submit"]');
   const slotInputs = Array.from(document.querySelectorAll('input[name="slot"]'));
+  const firstNameInput = document.getElementById("firstName");
+  const phoneInput = document.getElementById("phone");
+  const contactError = document.getElementById("contactError");
 
   /* Local-time yyyy-mm-dd (toISOString would shift us to UTC) */
   const localISO = (d) =>
@@ -394,11 +397,30 @@ if (orderForm) {
     return has;
   }
 
+  /* First name + a plausible phone (≥7 digits) for the person collecting. */
+  const contactName = () => (firstNameInput ? firstNameInput.value.trim() : "");
+  const contactPhone = () => (phoneInput ? phoneInput.value.trim() : "");
+  const contactOk = () =>
+    contactName().length > 0 && contactPhone().replace(/\D/g, "").length >= 7;
+  function validateContact(reveal) {
+    const ok = contactOk();
+    showError(
+      contactError,
+      ok || !reveal ? "" : "Please add your first name and mobile number."
+    );
+    return ok;
+  }
+
   /* Enable the submit button only once the order is actually placeable:
-     at least one pot, a collection date, and a time. */
+     at least one pot, a collection date, a time, and who's collecting. */
   function updateSubmitState() {
     if (!submitBtn) return;
-    submitBtn.disabled = !(cartQty() > 0 && !!selectedISO() && !!selectedTime());
+    submitBtn.disabled = !(
+      cartQty() > 0 &&
+      !!selectedISO() &&
+      !!selectedTime() &&
+      contactOk()
+    );
   }
 
   function syncSlot() {
@@ -432,6 +454,8 @@ if (orderForm) {
           slot: (slotInputs.find((r) => r.checked) || {}).value || "",
           date: dateInput ? dateInput.value : "",
           time: selectedTime(),
+          name: contactName(),
+          phone: contactPhone(),
         })
       );
     } catch (e) {
@@ -452,6 +476,8 @@ if (orderForm) {
       if (r) r.checked = true;
     }
     if (s.date && dateInput) dateInput.value = s.date;
+    if (s.name && firstNameInput) firstNameInput.value = s.name;
+    if (s.phone && phoneInput) phoneInput.value = s.phone;
     return s;
   }
 
@@ -482,6 +508,16 @@ if (orderForm) {
   }
   slotInputs.forEach((r) => r.addEventListener("change", syncSlot));
   syncSlot();
+
+  /* Name/phone: keep the button state live and clear the error as they type. */
+  [firstNameInput, phoneInput].forEach((el) => {
+    if (!el) return;
+    el.addEventListener("input", () => {
+      if (contactError && !contactError.hidden && contactOk()) validateContact(true);
+      updateSubmitState();
+    });
+    el.addEventListener("blur", () => validateContact(true));
+  });
 
   /* Re-check the saved time now that syncSlot/fillTimes has rendered the
      radios for the restored slot. */
@@ -520,7 +556,8 @@ if (orderForm) {
   orderForm.validateCollection = () => {
     const okDate = validateDate(true);
     const okTime = validateTime(true);
-    return okDate && okTime;
+    const okContact = validateContact(true);
+    return okDate && okTime && okContact;
   };
 
   /* Quantity steppers */
@@ -666,6 +703,8 @@ if (orderForm) {
       dateLabel: prettyDate(data.get("date")),
       time: selectedTimeLabel(),
       slot: (slotInputs.find((r) => r.checked) || {}).value || "daytime",
+      name: contactName(),
+      phone: contactPhone(),
     };
     setCheckoutError("");
     setBusy(true);

@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=74" />
+  <link rel="stylesheet" href="styles.css?v=75" />
 </head>
 <body>
 
@@ -174,6 +174,23 @@
           <p class="field-error" id="timeError" hidden></p>
         </fieldset>
 
+        <!-- Who -->
+        <fieldset>
+          <legend>Who’s collecting?</legend>
+          <div class="field-row">
+            <div class="field">
+              <label for="firstName">First name</label>
+              <input type="text" id="firstName" name="firstName" autocomplete="given-name" autocapitalize="words" placeholder="e.g. Sofia" maxlength="60" />
+            </div>
+            <div class="field">
+              <label for="phone">Mobile number</label>
+              <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="08X XXX XXXX" maxlength="30" />
+            </div>
+          </div>
+          <p class="field-error" id="contactError" hidden></p>
+          <p class="when-foot" style="margin-top:-0.5rem">So we know who to hand it to, and can reach you if anything changes.</p>
+        </fieldset>
+
       </div>
 
       <!-- Summary -->
@@ -251,6 +268,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=74"></script>
+  <script src="script.js?v=75"></script>
 </body>
 </html>
