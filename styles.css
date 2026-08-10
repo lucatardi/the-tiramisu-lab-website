@@ -870,6 +870,12 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .review-verify:hover { color: var(--espresso); text-decoration: underline; }
 .reviews-foot { margin-top: 2rem; }
+.reviews-more-link {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-family: var(--sans); font-weight: 700; font-size: 0.95rem;
+  color: var(--caramel-dk); text-decoration: underline; text-underline-offset: 3px;
+}
+.reviews-more-link:hover { color: var(--espresso); }
 .reviews-src { margin-top: 0.9rem; font-size: 0.85rem; color: var(--muted); }
 
 /* ---------- Responsive ---------- */
