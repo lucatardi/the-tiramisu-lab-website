@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=72" />
+  <link rel="stylesheet" href="styles.css?v=73" />
 </head>
 <body>
 
@@ -216,25 +216,48 @@
     </div>
   </section>
 
-  <!-- ============ Reviews (live from Google, hidden until loaded) ============ -->
-  <section id="reviews" hidden>
+  <!-- ============ Reviews (hardcoded, each linked to Google to verify) ============ -->
+  <section id="reviews" class="sec-drift">
+    <div class="drift"><svg viewBox="0 0 1200 74" preserveAspectRatio="none" aria-hidden="true"><path fill="#F4E7CF" d="M0,0 H1200 V25 C1168,25 1163,55 1126,55 C1092,55 1088,29 1052,29 C1006,29 1001,63 958,63 C918,63 913,30 878,30 C846,30 841,50 810,50 C778,50 773,28 740,28 C700,28 694,60 652,60 C614,60 609,29 572,29 C538,29 533,52 500,52 C466,52 461,28 426,28 C384,28 378,62 336,62 C298,62 293,30 258,30 C226,30 221,48 190,48 C158,48 153,28 118,28 C78,28 72,58 32,58 C12,58 8,30 0,30 Z"/></svg></div>
     <div class="wrap">
       <div class="section-head center">
         <p class="eyebrow">Reviews</p>
-        <h2>What people are saying</h2>
-        <p class="reviews-rating" id="reviewsRating"></p>
+        <h2>What they say about us</h2>
+        <p class="reviews-rating"><span class="stars">★★★★★</span> Loved on Google</p>
       </div>
-      <div class="reviews-grid" id="reviewsGrid"></div>
+      <div class="reviews-grid">
+
+        <article class="review-card">
+          <span class="review-quote" aria-hidden="true">“</span>
+          <p class="review-phrase">This is the best Tiramisu I have had.</p>
+          <div class="review-stars" aria-label="5 out of 5">★★★★★</div>
+          <a class="review-verify" href="https://share.google/OShi8FgLpzcb4oHbE" target="_blank" rel="noopener">Verified on Google<span aria-hidden="true"> ↗</span></a>
+        </article>
+
+        <article class="review-card">
+          <span class="review-quote" aria-hidden="true">“</span>
+          <p class="review-phrase">You can taste the passion in every single bite.</p>
+          <div class="review-stars" aria-label="5 out of 5">★★★★★</div>
+          <a class="review-verify" href="https://share.google/OShi8FgLpzcb4oHbE" target="_blank" rel="noopener">Verified on Google<span aria-hidden="true"> ↗</span></a>
+        </article>
+
+        <article class="review-card">
+          <span class="review-quote" aria-hidden="true">“</span>
+          <p class="review-phrase">I’ll honestly be thinking about this Tiramisu until I put another order in.</p>
+          <div class="review-stars" aria-label="5 out of 5">★★★★★</div>
+          <a class="review-verify" href="https://share.google/OShi8FgLpzcb4oHbE" target="_blank" rel="noopener">Verified on Google<span aria-hidden="true"> ↗</span></a>
+        </article>
+
+      </div>
       <div class="reviews-foot center">
-        <a class="btn btn-ghost" id="reviewsMore" href="#" target="_blank" rel="noopener">Read all reviews on Google</a>
-        <p class="reviews-src">Reviews from Google</p>
+        <a class="btn btn-ghost" id="reviewsMore" href="https://share.google/OShi8FgLpzcb4oHbE" target="_blank" rel="noopener">Read all reviews on Google</a>
       </div>
     </div>
   </section>
 
   <!-- ============ Footer ============ -->
   <footer class="site-footer sec-drift" id="visit">
-    <div class="drift"><svg viewBox="0 0 1200 74" preserveAspectRatio="none" aria-hidden="true"><path fill="#F4E7CF" d="M0,0 H1200 V24 C1172,24 1167,58 1128,58 C1090,58 1085,28 1048,28 C1010,28 1005,64 962,64 C920,64 915,30 878,30 C848,30 843,48 814,48 C784,48 779,28 744,28 C702,28 696,56 656,56 C620,56 615,30 580,30 C548,30 543,52 512,52 C480,52 475,28 440,28 C398,28 392,62 350,62 C312,62 307,30 272,30 C242,30 237,48 208,48 C178,48 173,28 138,28 C96,28 90,58 50,58 C26,58 21,30 0,30 Z"/></svg></div>
+    <div class="drift"><svg viewBox="0 0 1200 74" preserveAspectRatio="none" aria-hidden="true"><path fill="#FBF5EC" d="M0,0 H1200 V24 C1172,24 1167,58 1128,58 C1090,58 1085,28 1048,28 C1010,28 1005,64 962,64 C920,64 915,30 878,30 C848,30 843,48 814,48 C784,48 779,28 744,28 C702,28 696,56 656,56 C620,56 615,30 580,30 C548,30 543,52 512,52 C480,52 475,28 440,28 C398,28 392,62 350,62 C312,62 307,30 272,30 C242,30 237,48 208,48 C178,48 173,28 138,28 C96,28 90,58 50,58 C26,58 21,30 0,30 Z"/></svg></div>
     <div class="wrap footer-grid">
       <div class="footer-brand">
         <a class="brand" href="index.html" style="color:var(--cream)">
@@ -289,6 +312,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=72"></script>
+  <script src="script.js?v=73"></script>
 </body>
 </html>
