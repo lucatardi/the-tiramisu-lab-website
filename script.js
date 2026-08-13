@@ -173,8 +173,9 @@ if (orderForm) {
   const capLeft = {};
   /* Show "Only N left" once a day drops below this many pots. */
   const LOW_STOCK_AT = 5;
-  /* How many date cards to show at once (the soonest available ones). */
-  const DATE_CARDS = 5;
+  /* How many available dates to surface at once (the soonest ones); the last
+     shown week is completed, so the actual count can round up past this. */
+  const DATE_CARDS = 6;
   const potsLeft = (iso) => {
     if (dailyCap == null) return null; // capacity unknown → don't restrict
     return capLeft[iso] != null ? capLeft[iso] : dailyCap;
