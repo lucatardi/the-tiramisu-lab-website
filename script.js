@@ -326,7 +326,6 @@ if (orderForm) {
     };
     const weekLabel = (o) =>
       o <= 0 ? "This week" : o === 1 ? "Next week" : `In ${o} weeks`;
-    const shortDate = (d) => d.toLocaleDateString("en-IE", { day: "numeric", month: "short" });
 
     /* State of one Tue–Fri collection day. */
     const dayState = (d) => {
@@ -340,30 +339,39 @@ if (orderForm) {
       if (past) state = "past";
       else if (manual || full) state = "soldout";
       else if (tooSmall) state = "tight";
-      return { iso, wd: d.toLocaleDateString("en-IE", { weekday: "short" }), num: d.getDate(), left, state };
+      return {
+        iso,
+        wd: d.toLocaleDateString("en-IE", { weekday: "short" }),
+        num: d.getDate(),
+        mon: d.toLocaleDateString("en-IE", { month: "short" }),
+        left,
+        state,
+      };
     };
 
     const chip = (day) => {
       const open = day.state === "open";
       const selected = open && day.iso === keep;
       let cls = "daychip",
-        label = "";
+        label = "Available";
       if (open) {
         if (day.left != null && day.left < LOW_STOCK_AT) {
           label = `${day.left} left`;
           cls += day.left <= 2 ? " crit" : " low";
         }
+      } else if (day.state === "tight") {
+        cls += " off";
+        label = `${day.left} left`;
       } else {
         cls += " off";
-        if (day.state === "soldout") label = "Sold out";
-        else if (day.state === "tight") label = `${day.left} left`;
+        label = "Sold out"; // full, closed, or in the past
       }
       if (selected) cls += " sel";
       const tag = open ? "button" : "span";
       const attrs = open
         ? `type="button" data-iso="${day.iso}" role="radio" aria-checked="${selected ? "true" : "false"}"`
         : `aria-hidden="true"`;
-      return `<${tag} class="${cls}" ${attrs}><span class="wd">${day.wd}</span><span class="num">${day.num}</span><span class="st">${label}</span></${tag}>`;
+      return `<${tag} class="${cls}" ${attrs}><span class="wd">${day.wd}</span><span class="num">${day.num}<small>${day.mon}</small></span><span class="st">${label}</span></${tag}>`;
     };
 
     const today0 = new Date();
@@ -397,17 +405,8 @@ if (orderForm) {
         if (x.state === "open") openIsos.push(x.iso);
         if (x.state === "tight") anyTight = true;
       });
-      const tue = new Date(w); tue.setDate(tue.getDate() + 1);
-      const fri = new Date(w); fri.setDate(fri.getDate() + 4);
-      const range =
-        tue.getMonth() === fri.getMonth()
-          ? `${tue.getDate()}–${fri.getDate()} ${fri.toLocaleDateString("en-IE", { month: "short" })}`
-          : `${shortDate(tue)} – ${shortDate(fri)}`;
-      const sold = weekOpen === 0;
-      html += `<div class="week${sold ? " sold" : ""}">
-          <div class="week-head"><span class="week-title">${weekLabel(offset)}</span><span class="week-range">${range}</span>${
-        sold ? `<span class="week-sold">Sold out</span>` : ""
-      }</div>
+      html += `<div class="week">
+          <div class="week-head"><span class="week-title">${weekLabel(offset)}</span></div>
           <div class="week-days">${days.map(chip).join("")}</div>
         </div>`;
       openCount += weekOpen;
