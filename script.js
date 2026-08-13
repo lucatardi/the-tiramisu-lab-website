@@ -732,8 +732,8 @@ if (orderForm) {
       : reason === "day"
       ? `You’ve picked ${n} pot${n === 1 ? "" : "s"} — that’s all we have left for ${prettyDate(
           selectedISO()
-        )}. Pick another day for more, or <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`
-      : `You’ve picked ${MAX_ORDER} pots — that’s the most we take per order. For a bigger order, just <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`;
+        )}. Pick another day for more.`
+      : `You’ve picked ${MAX_ORDER} pots — that’s the most we take per order.`;
     if (flavourCap) {
       flavourCap.hidden = !showCap;
       if (showCap) flavourCap.innerHTML = capMsg;
