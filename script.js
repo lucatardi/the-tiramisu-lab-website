@@ -306,71 +306,129 @@ if (orderForm) {
     return r ? r.dataset.label : "";
   };
 
-  /* Render the soonest DATE_CARDS available dates as a card list.
-     "Available" = a weekday we open, past the lead time, not manually closed,
-     and with pots left. Days that can't fit the current order still appear,
-     but disabled with an explanation. Everything else is simply not shown. */
+  /* Show the next DATE_CARDS available dates, grouped by week. We always show
+     the current week, then future weeks that have a bookable day, until we've
+     surfaced DATE_CARDS available dates (completing the last shown week). Every
+     shown week renders Tue–Fri; days that are past, sold out, or too small for
+     the current cart are greyed. A week with nothing bookable shows a "Sold
+     out" badge (only the current week can reach that, since empty future weeks
+     are skipped). */
   function fillDates() {
     if (!dateInput || !dateList) return;
     const keep = dateInput.value;
     const need = cartQty();
 
-    const cards = [];
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    d.setDate(d.getDate() + 1); // from tomorrow
-    while (localISO(d) <= latestISO && cards.length < DATE_CARDS) {
+    const mondayOf = (d) => {
+      const x = new Date(d);
+      x.setHours(0, 0, 0, 0);
+      x.setDate(x.getDate() - ((x.getDay() + 6) % 7));
+      return x;
+    };
+    const weekLabel = (o) =>
+      o <= 0 ? "This week" : o === 1 ? "Next week" : `In ${o} weeks`;
+    const shortDate = (d) => d.toLocaleDateString("en-IE", { day: "numeric", month: "short" });
+
+    /* State of one Tue–Fri collection day. */
+    const dayState = (d) => {
       const iso = localISO(d);
-      if (!isWeekend(d) && !isClosedDay(d)) {
-        const tooSoon = iso < earliestISO;
-        const manual = isSoldOut(iso); // includes worker "full" days
-        const left = tooSoon || manual ? null : potsLeft(iso);
-        const full = left != null && left <= 0;
-        if (!tooSoon && !manual && !full) cards.push({ iso, left });
+      const past = iso < earliestISO;
+      const manual = isSoldOut(iso) || isClosedDay(d);
+      const left = past || manual ? null : potsLeft(iso);
+      const full = left != null && left <= 0;
+      const tooSmall = left != null && left > 0 && need > 0 && need > left;
+      let state = "open";
+      if (past) state = "past";
+      else if (manual || full) state = "soldout";
+      else if (tooSmall) state = "tight";
+      return { iso, wd: d.toLocaleDateString("en-IE", { weekday: "short" }), num: d.getDate(), left, state };
+    };
+
+    const chip = (day) => {
+      const open = day.state === "open";
+      const selected = open && day.iso === keep;
+      let cls = "daychip",
+        label = "";
+      if (open) {
+        if (day.left != null && day.left < LOW_STOCK_AT) {
+          label = `${day.left} left`;
+          cls += day.left <= 2 ? " crit" : " low";
+        }
+      } else {
+        cls += " off";
+        if (day.state === "soldout") label = "Sold out";
+        else if (day.state === "tight") label = `${day.left} left`;
       }
-      d.setDate(d.getDate() + 1);
+      if (selected) cls += " sel";
+      const tag = open ? "button" : "span";
+      const attrs = open
+        ? `type="button" data-iso="${day.iso}" role="radio" aria-checked="${selected ? "true" : "false"}"`
+        : `aria-hidden="true"`;
+      return `<${tag} class="${cls}" ${attrs}><span class="wd">${day.wd}</span><span class="num">${day.num}</span><span class="st">${label}</span></${tag}>`;
+    };
+
+    const today0 = new Date();
+    today0.setHours(0, 0, 0, 0);
+    const curWeek = mondayOf(today0);
+    const openIsos = [];
+    let openCount = 0,
+      anyTight = false,
+      html = "";
+
+    for (let w = new Date(curWeek); localISO(w) <= latestISO; w.setDate(w.getDate() + 7)) {
+      const offset = Math.round((w - curWeek) / (7 * 86400000));
+      const days = [1, 2, 3, 4].map((i) => {
+        const d = new Date(w);
+        d.setDate(d.getDate() + i); // Tue..Fri
+        return dayState(d);
+      });
+      const weekOpen = days.filter((x) => x.state === "open").length;
+      /* A week with nothing bookable is only shown as the current week's "Sold
+         out" row, and only while we're still inside its Tue–Fri (so it drops
+         off at the weekend). Empty future weeks are skipped entirely. */
+      if (weekOpen === 0) {
+        const dow = today0.getDay(); // Tue=2 … Fri=5
+        const keepSold = offset === 0 && dow >= 2 && dow <= 5;
+        if (!keepSold) {
+          if (openCount >= DATE_CARDS) break;
+          continue;
+        }
+      }
+      days.forEach((x) => {
+        if (x.state === "open") openIsos.push(x.iso);
+        if (x.state === "tight") anyTight = true;
+      });
+      const tue = new Date(w); tue.setDate(tue.getDate() + 1);
+      const fri = new Date(w); fri.setDate(fri.getDate() + 4);
+      const range =
+        tue.getMonth() === fri.getMonth()
+          ? `${tue.getDate()}–${fri.getDate()} ${fri.toLocaleDateString("en-IE", { month: "short" })}`
+          : `${shortDate(tue)} – ${shortDate(fri)}`;
+      const sold = weekOpen === 0;
+      html += `<div class="week${sold ? " sold" : ""}">
+          <div class="week-head"><span class="week-title">${weekLabel(offset)}</span><span class="week-range">${range}</span>${
+        sold ? `<span class="week-sold">Sold out</span>` : ""
+      }</div>
+          <div class="week-days">${days.map(chip).join("")}</div>
+        </div>`;
+      openCount += weekOpen;
+      if (openCount >= DATE_CARDS) break;
     }
 
-    const fits = (c) => !(c.left != null && need > c.left);
+    dateList.innerHTML = html;
 
-    dateList.innerHTML = cards
-      .map((c) => {
-        const dd = new Date(c.iso + "T00:00:00");
-        const wd = dd.toLocaleDateString("en-IE", { weekday: "long" });
-        const rest = dd.toLocaleDateString("en-IE", { day: "numeric", month: "long" });
-        const notEnough = !fits(c);
-        const selected = c.iso === keep && !notEnough;
-        let right;
-        if (notEnough) right = `<span class="pill gone">${c.left} left · need ${need}</span>`;
-        else if (c.left != null && c.left < LOW_STOCK_AT)
-          right = `<span class="pill ${c.left <= 2 ? "tight" : "low"}">Only ${c.left} left</span>`;
-        else right = `<span class="chev" aria-hidden="true">›</span>`;
-        return `<button type="button" class="datecard${selected ? " sel" : ""}${
-          notEnough ? " off" : ""
-        }" data-iso="${c.iso}"${notEnough ? " disabled" : ""} role="radio" aria-checked="${
-          selected ? "true" : "false"
-        }">
-            <span class="radio" aria-hidden="true"></span>
-            <span class="dc-main"><span class="dc-date">${rest}</span><span class="dc-day">${wd}</span></span>
-            <span class="dc-right">${right}</span>
-          </button>`;
-      })
-      .join("");
+    /* Drop the selection if the chosen day is no longer bookable. */
+    if (openIsos.indexOf(keep) === -1) dateInput.value = "";
 
-    /* Drop the selection if the chosen day disappeared or no longer fits. */
-    if (!cards.some((c) => c.iso === keep && fits(c))) dateInput.value = "";
-
-    /* Order-aware banner: only when the cart can't fit one of the shown days. */
     if (cartNote) {
-      const anyTight = need > 0 && cards.some((c) => !fits(c));
-      cartNote.hidden = !anyTight;
-      if (anyTight)
+      const show = need > 0 && anyTight;
+      cartNote.hidden = !show;
+      if (show)
         cartNote.innerHTML = `You’ve picked <strong>${need} pot${
           need === 1 ? "" : "s"
-        }</strong> — dates that can’t fit are marked below.`;
+        }</strong> — days that can’t fit are greyed out.`;
     }
 
-    if (soldOutNotice) soldOutNotice.hidden = cards.length > 0;
+    if (soldOutNotice) soldOutNotice.hidden = openIsos.length > 0;
     updateSubmitState();
   }
 
@@ -523,7 +581,7 @@ if (orderForm) {
   if (dateInput && dateList) {
     fillDates();
     dateList.addEventListener("click", (e) => {
-      const card = e.target.closest(".datecard");
+      const card = e.target.closest(".daychip");
       if (!card || card.disabled || !card.dataset.iso) return;
       dateInput.value = card.dataset.iso;
       validateDate(true);

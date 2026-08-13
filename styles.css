@@ -977,32 +977,26 @@ textarea { resize: vertical; min-height: 90px; }
 .when-foot { color: var(--muted); font-size: 0.85rem; margin: 1rem 0 0; }
 .cart-note { font-size: 0.85rem; color: var(--caramel-dk); background: #FBEED2; border-radius: 10px; padding: 0.55rem 0.8rem; margin: 0 0 0.9rem; }
 
-.datelist { display: flex; flex-direction: column; gap: 0.55rem; }
-.datecard {
-  display: flex; align-items: center; gap: 0.9rem; width: 100%; text-align: left;
-  background: var(--white); border: 1.5px solid var(--line); border-radius: 14px;
-  padding: 0.8rem 1rem; cursor: pointer; font: inherit; color: inherit;
+.datelist { display: flex; flex-direction: column; gap: 1.3rem; }
+.week-head { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.55rem; }
+.week-title { font-weight: 800; font-size: 1.02rem; color: var(--espresso); }
+.week-range { color: var(--muted); font-size: 0.85rem; }
+.week-sold { margin-left: auto; background: #EFE7DA; color: var(--muted); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.2rem 0.6rem; border-radius: 999px; }
+.week.sold .week-title, .week.sold .week-range { color: var(--muted); }
+.week-days { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+.daychip {
+  display: flex; flex-direction: column; align-items: center; gap: 0.1rem;
+  background: var(--white); border: 1.5px solid var(--line); border-radius: 12px;
+  padding: 0.6rem 0.3rem 0.55rem; cursor: pointer; font: inherit; color: inherit; text-align: center;
   transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
 }
-.datecard:hover { border-color: var(--caramel); }
-.datecard:focus-visible { outline: 2px solid var(--caramel); outline-offset: 2px; }
-.dc-main { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
-.dc-date { font-weight: 700; font-size: 1.05rem; }
-.dc-day { color: var(--muted); font-size: 0.85rem; }
-.dc-right { display: flex; align-items: center; gap: 0.7rem; flex-shrink: 0; }
-.datecard .radio {
-  width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line);
-  flex-shrink: 0; display: grid; place-items: center;
-}
-.datecard.sel { border-color: var(--espresso); background: linear-gradient(90deg, rgba(232,200,136,0.14), var(--white) 70%); box-shadow: 0 2px 10px rgba(42,21,5,0.08); }
-.datecard.sel .radio { border-color: var(--espresso); background: var(--espresso); }
-.datecard.sel .radio::after { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--gold); }
-
-.datecard .pill { font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 999px; white-space: nowrap; }
-.datecard .pill.low { background: #FBEED2; color: var(--caramel-dk); }
-.datecard .pill.tight { background: #F6E0DC; color: #9A3B2E; }
-.datecard .pill.gone { background: #EFE7DA; color: var(--muted); }
-.datecard .chev { color: var(--muted); }
-
-.datecard.off { cursor: not-allowed; background: var(--cream); opacity: 0.72; }
-.datecard.off .dc-date { color: var(--muted); }
+.daychip .wd { font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+.daychip .num { font-size: 1.3rem; font-weight: 800; line-height: 1.1; }
+.daychip .st { font-size: 0.66rem; font-weight: 700; margin-top: 0.1rem; min-height: 0.95em; color: var(--muted); }
+button.daychip:hover { border-color: var(--caramel); }
+button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset: 2px; }
+.daychip.low .st { color: var(--caramel-dk); }
+.daychip.crit .st { color: #9A3B2E; }
+.daychip.sel { border-color: var(--espresso); background: linear-gradient(160deg, var(--white), rgba(232,200,136,0.22)); box-shadow: 0 2px 10px rgba(42,21,5,0.1); }
+.daychip.off { cursor: not-allowed; background: var(--cream); opacity: 0.6; }
+.daychip.off .num { color: var(--muted); }
