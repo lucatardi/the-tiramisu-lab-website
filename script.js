@@ -721,17 +721,19 @@ if (orderForm) {
     const total = items.reduce((s, i) => s + i.line, 0);
     summaryTotal.textContent = money(total);
 
-    /* Cap note: explain the limit ONLY when a "+" was actually blocked — so
-       ordering exactly what a day has left stays quiet. Cleared as soon as the
-       order drops below the limit. Shown next to the +/− and in the summary. */
+    /* Cap banner (below the flavours): shown whenever the order has hit the
+       limit for what you can still add — the selected day's remaining pots, or
+       our per-order max. Cleared as soon as the order drops below it. */
     const { limit, reason } = orderLimit();
-    if (cartQty() < limit) blockedAdd = false;
-    const showCap = blockedAdd && cartQty() >= limit;
+    const n = cartQty();
+    const showCap = n > 0 && n >= limit;
     const capMsg = !showCap
       ? ""
       : reason === "day"
-      ? `That’s all ${limit} left for ${prettyDate(selectedISO())}. Pick another day for more, or <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`
-      : `That’s our max of ${MAX_ORDER} pots per order. For a bigger order, just <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`;
+      ? `You’ve picked ${n} pot${n === 1 ? "" : "s"} — that’s all we have left for ${prettyDate(
+          selectedISO()
+        )}. Pick another day for more, or <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`
+      : `You’ve picked ${MAX_ORDER} pots — that’s the most we take per order. For a bigger order, just <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`;
     if (flavourCap) {
       flavourCap.hidden = !showCap;
       if (showCap) flavourCap.innerHTML = capMsg;
