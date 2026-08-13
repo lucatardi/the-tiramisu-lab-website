@@ -407,25 +407,27 @@ if (orderForm) {
       }
       /* A day is "dead" (unbookable) when it's sold out or in the past. Drop a
          whole row (Tue–Wed or Thu–Fri) when both its days are dead, and collapse
-         a fully-dead week to a single "Sold out" card. Rows with any stock day
-         stay, so a lone sold-out card can pair with one. We render day by day and
-         stop at exactly DATE_CARDS dates with stock — the last week is truncated
-         rather than completed, so the list never balloons past the target. */
+         a fully-dead week to a single "Sold out" card. We render row by row and
+         stop after a complete pair once we've surfaced enough stock dates — so
+         the list lands on 5–6 tidy two-per-row dates, never a lone card. */
       const dead = (x) => x.state === "soldout" || x.state === "past";
       let content = "",
         capped = false;
       if (days.every(dead)) {
         content = `<div class="week-empty">Sold out</div>`;
       } else {
-        const shown = [[days[0], days[1]], [days[2], days[3]]]
-          .filter((r) => !(dead(r[0]) && dead(r[1])))
-          .flat();
+        const rows = [[days[0], days[1]], [days[2], days[3]]].filter(
+          (r) => !(dead(r[0]) && dead(r[1]))
+        );
         const parts = [];
-        for (const x of shown) {
-          parts.push(chip(x));
-          if (x.state === "open") openIsos.push(x.iso);
-          if (x.state === "tight") anyTight = true;
-          if ((x.state === "open" || x.state === "tight") && ++stockCount >= DATE_CARDS) {
+        for (const r of rows) {
+          parts.push(chip(r[0]) + chip(r[1]));
+          for (const x of r) {
+            if (x.state === "open") openIsos.push(x.iso);
+            if (x.state === "tight") anyTight = true;
+            if (x.state === "open" || x.state === "tight") stockCount++;
+          }
+          if (stockCount >= DATE_CARDS - 1) {
             capped = true;
             break;
           }
