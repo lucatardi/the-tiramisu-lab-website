@@ -351,7 +351,7 @@ if (orderForm) {
           selected ? "true" : "false"
         }">
             <span class="radio" aria-hidden="true"></span>
-            <span class="dc-main"><span class="dc-day">${wd}</span><span class="dc-date">${rest}</span></span>
+            <span class="dc-main"><span class="dc-date">${rest}</span><span class="dc-day">${wd}</span></span>
             <span class="dc-right">${right}</span>
           </button>`;
       })

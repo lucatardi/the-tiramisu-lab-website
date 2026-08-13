@@ -987,8 +987,8 @@ textarea { resize: vertical; min-height: 90px; }
 .datecard:hover { border-color: var(--caramel); }
 .datecard:focus-visible { outline: 2px solid var(--caramel); outline-offset: 2px; }
 .dc-main { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
-.dc-day { font-weight: 700; font-size: 1.02rem; }
-.dc-date { color: var(--muted); font-size: 0.85rem; }
+.dc-date { font-weight: 700; font-size: 1.05rem; }
+.dc-day { color: var(--muted); font-size: 0.85rem; }
 .dc-right { display: flex; align-items: center; gap: 0.7rem; flex-shrink: 0; }
 .datecard .radio {
   width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--line);
@@ -1005,4 +1005,4 @@ textarea { resize: vertical; min-height: 90px; }
 .datecard .chev { color: var(--muted); }
 
 .datecard.off { cursor: not-allowed; background: var(--cream); opacity: 0.72; }
-.datecard.off .dc-day { color: var(--muted); }
+.datecard.off .dc-date { color: var(--muted); }
