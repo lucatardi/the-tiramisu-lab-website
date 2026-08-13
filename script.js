@@ -379,7 +379,7 @@ if (orderForm) {
     today0.setHours(0, 0, 0, 0);
     const curWeek = mondayOf(today0);
     const openIsos = [];
-    let openCount = 0,
+    let stockCount = 0,
       anyTight = false,
       html = "";
 
@@ -390,15 +390,18 @@ if (orderForm) {
         d.setDate(d.getDate() + i); // Tue..Fri
         return dayState(d);
       });
-      const weekOpen = days.filter((x) => x.state === "open").length;
-      /* A week with nothing bookable is only shown as the current week's "Sold
-         out" row, and only while we're still inside its Tue–Fri (so it drops
-         off at the weekend). Empty future weeks are skipped entirely. */
-      if (weekOpen === 0) {
+      /* "Stock" = a day with at least one pot free — bookable, or too small for
+         the current cart but not sold out. We surface the next DATE_CARDS dates
+         with any stock, then grey the ones the cart can't fit. */
+      const weekStock = days.filter((x) => x.state === "open" || x.state === "tight").length;
+      /* A week with no stock is only shown as the current week's "Sold out" row,
+         and only while we're still inside its Tue–Fri (so it drops off at the
+         weekend). Empty future weeks are skipped entirely. */
+      if (weekStock === 0) {
         const dow = today0.getDay(); // Tue=2 … Fri=5
         const keepSold = offset === 0 && dow >= 2 && dow <= 5;
         if (!keepSold) {
-          if (openCount >= DATE_CARDS) break;
+          if (stockCount >= DATE_CARDS) break;
           continue;
         }
       }
@@ -421,8 +424,8 @@ if (orderForm) {
           <div class="week-head"><span class="week-title">${weekLabel(offset)}</span></div>
           <div class="week-days">${content}</div>
         </div>`;
-      openCount += weekOpen;
-      if (openCount >= DATE_CARDS) break;
+      stockCount += weekStock;
+      if (stockCount >= DATE_CARDS) break;
     }
 
     dateList.innerHTML = html;
