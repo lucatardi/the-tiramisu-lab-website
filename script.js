@@ -405,27 +405,38 @@ if (orderForm) {
           continue;
         }
       }
-      days.forEach((x) => {
-        if (x.state === "open") openIsos.push(x.iso);
-        if (x.state === "tight") anyTight = true;
-      });
       /* A day is "dead" (unbookable) when it's sold out or in the past. Drop a
          whole row (Tue–Wed or Thu–Fri) when both its days are dead, and collapse
-         a fully-dead week to a single "Sold out" card. Rows with any bookable
-         (or too-small) day stay, so a lone sold-out card can pair with one. */
+         a fully-dead week to a single "Sold out" card. Rows with any stock day
+         stay, so a lone sold-out card can pair with one. We render day by day and
+         stop at exactly DATE_CARDS dates with stock — the last week is truncated
+         rather than completed, so the list never balloons past the target. */
       const dead = (x) => x.state === "soldout" || x.state === "past";
-      const content = days.every(dead)
-        ? `<div class="week-empty">Sold out</div>`
-        : [[days[0], days[1]], [days[2], days[3]]]
-            .filter((r) => !(dead(r[0]) && dead(r[1])))
-            .map((r) => chip(r[0]) + chip(r[1]))
-            .join("");
+      let content = "",
+        capped = false;
+      if (days.every(dead)) {
+        content = `<div class="week-empty">Sold out</div>`;
+      } else {
+        const shown = [[days[0], days[1]], [days[2], days[3]]]
+          .filter((r) => !(dead(r[0]) && dead(r[1])))
+          .flat();
+        const parts = [];
+        for (const x of shown) {
+          parts.push(chip(x));
+          if (x.state === "open") openIsos.push(x.iso);
+          if (x.state === "tight") anyTight = true;
+          if ((x.state === "open" || x.state === "tight") && ++stockCount >= DATE_CARDS) {
+            capped = true;
+            break;
+          }
+        }
+        content = parts.join("");
+      }
       html += `<div class="week">
           <div class="week-head"><span class="week-title">${weekLabel(offset)}</span></div>
           <div class="week-days">${content}</div>
         </div>`;
-      stockCount += weekStock;
-      if (stockCount >= DATE_CARDS) break;
+      if (capped) break;
     }
 
     dateList.innerHTML = html;
