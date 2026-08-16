@@ -914,6 +914,7 @@ if (orderForm) {
       /* Order went through — drop the stashed selection so it won't be
          restored if the order page is reopened in this tab. */
       try { sessionStorage.removeItem("tl_order_v1"); } catch (e) {}
+      setText("tyOrderId", data.orderId ? "#" + data.orderId : "—");
       setText("tyItems", data.items || "—");
       setText(
         "tyTotal",
