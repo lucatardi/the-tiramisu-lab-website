@@ -395,11 +395,11 @@ if (orderForm) {
          with any stock, then grey the ones the cart can't fit. */
       const weekStock = days.filter((x) => x.state === "open" || x.state === "tight").length;
       /* A week with no stock is only shown as the current week's "Sold out" row,
-         and only while we're still inside its Tue–Fri (so it drops off at the
-         weekend). Empty future weeks are skipped entirely. */
+         from Monday through Friday (so it drops off at the weekend, once the
+         week's collections are done). Empty future weeks are skipped entirely. */
       if (weekStock === 0) {
-        const dow = today0.getDay(); // Tue=2 … Fri=5
-        const keepSold = offset === 0 && dow >= 2 && dow <= 5;
+        const dow = today0.getDay(); // Mon=1 … Fri=5
+        const keepSold = offset === 0 && dow >= 1 && dow <= 5;
         if (!keepSold) {
           if (stockCount >= DATE_CARDS) break;
           continue;
