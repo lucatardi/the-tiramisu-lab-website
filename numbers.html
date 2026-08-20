@@ -102,7 +102,7 @@
       <div class="num-stat"><div class="n" id="sEggs">0</div><div class="l">eggs cracked 🥚</div></div>
       <div class="num-stat"><div class="n" id="sEspr">0</div><div class="l">espressos pulled ☕</div></div>
       <div class="num-stat"><div class="n" id="sLady">0</div><div class="l">savoiardi dunked</div></div>
-      <div class="num-stat"><div class="n" id="sTall">0</div><div class="l">stacked pot-on-pot 🏠</div></div>
+      <div class="num-stat"><div class="n" id="sTall">0</div><div class="l">emperor penguins tall 🐧</div></div>
       <div class="num-stat"><div class="n" id="sCocoa">0</div><div class="l">of cocoa tops, rim to rim 🍫</div></div>
     </div>
 
@@ -121,7 +121,7 @@
   <script>
     var API = "https://tiramisu-lab.thetiramisulab.workers.dev";
     var SEED = { total:194, byType:{Classic:94,Pistachio:41,Biscoff:34,Nutella:25}, since:"August 2026" };
-    var EGGS_PER=35/20, ESPRESSO_PER=10/20, SAVOIARDI_PER=2, POT_H_CM=7, COCOA_MM=98;
+    var EGGS_PER=35/20, ESPRESSO_PER=10/20, SAVOIARDI_PER=2, POT_H_CM=7, COCOA_MM=98, PENGUIN_M=1.2;
     var META = {
       Classic:  {color:"var(--classic)", quip:"the timeless original"},
       Pistachio:{color:"var(--pist)",    quip:"the flashy one"},
@@ -176,7 +176,7 @@
       countUp(document.getElementById("sEggs"), Math.round(total*EGGS_PER));
       countUp(document.getElementById("sEspr"), Math.round(total*ESPRESSO_PER));
       countUp(document.getElementById("sLady"), total*SAVOIARDI_PER);
-      document.getElementById("sTall").textContent = (total*POT_H_CM/100).toFixed(1)+" m";
+      document.getElementById("sTall").textContent = Math.round(total*POT_H_CM/100/PENGUIN_M);
       document.getElementById("sCocoa").textContent = (total*COCOA_MM/1000).toFixed(1)+" m";
 
       var goal = Math.ceil((total+1)/250)*250;
@@ -192,7 +192,7 @@
         'that’s <b>'+Math.round(total*EGGS_PER)+' eggs</b> cracked — '+Math.round(total*EGGS_PER/12)+' dozen, give or take 🥚',
         '<b>'+Math.round(total*ESPRESSO_PER)+' espressos</b> pulled — the moka pot never sleeps ☕',
         '<b>'+(total*SAVOIARDI_PER)+' savoiardi</b> dunked in espresso, two per pot',
-        'stacked pot on pot, <b>'+(total*POT_H_CM/100).toFixed(1)+' m</b> tall — a 4-storey Dublin townhouse 🏠',
+        'stacked pot on pot they reach <b>'+(total*POT_H_CM/100).toFixed(1)+' m</b> — that’s '+Math.round(total*POT_H_CM/100/PENGUIN_M)+' emperor penguins on each other’s shoulders 🐧',
         'line up the cocoa-dusted tops and they run <b>'+(total*COCOA_MM/1000).toFixed(1)+' m</b> rim to rim 🍫',
         'that’s <b>'+(total*POT_H_CM/100/5.5).toFixed(1)+'</b> giraffes of tiramisù, stacked high 🦒'
       ];
