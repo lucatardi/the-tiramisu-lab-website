@@ -33,21 +33,17 @@
     .num-h{font-family:"Fraunces",Georgia,serif;font-size:1.75rem;font-weight:600;margin:2.6rem 0 .25rem;color:var(--espresso)}
     .num-sub{color:var(--muted);font-size:.95rem;margin:0 0 1.2rem}
 
-    .num-flav{background:var(--sheet);border:1px solid var(--hair);border-radius:14px;padding:.95rem 1.05rem;margin-bottom:.7rem}
-    .num-ftop{display:flex;align-items:baseline;gap:.55rem;margin-bottom:.5rem}
-    .num-fname{font-weight:500;font-size:1.06rem;color:var(--espresso)}
-    .num-fquip{color:var(--muted);font-size:.85rem}
-    .num-crown{margin-left:auto;font-size:.68rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase;
-      background:var(--gold);color:#5b3d10;padding:.16rem .5rem;border-radius:999px;white-space:nowrap}
-    .num-fcount{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:500;font-size:1.06rem;color:var(--espresso)}
-    .num-ftop.has-crown .num-fcount{margin-left:.55rem}
-    .num-track{height:15px;background:var(--tan);border-radius:999px;overflow:hidden}
-    .num-fill{height:100%;width:0;border-radius:999px;transition:width 1.1s cubic-bezier(.22,1,.36,1)}
-    .num-ffoot{display:flex;justify-content:space-between;margin-top:.4rem;font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+    .num-podium{display:flex;align-items:flex-end;justify-content:center;gap:.7rem;height:245px;padding-top:1.4rem;margin-top:.4rem}
+    .num-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;width:70px}
+    .num-medal{font-size:1.15rem;line-height:1;height:1.35rem;margin-bottom:.3rem}
+    .num-barv{width:100%;border-radius:9px 9px 0 0;display:flex;align-items:flex-start;justify-content:center;color:var(--cream);font-size:.82rem;font-weight:600;padding-top:.4rem;height:0;transition:height 1.1s cubic-bezier(.22,1,.36,1)}
+    .num-lab{font-size:.8rem;margin-top:.5rem;text-align:center;line-height:1.25}
+    .num-lab b{font-weight:500;display:block;color:var(--espresso)}
+    .num-lab span{color:var(--muted);font-variant-numeric:tabular-nums}
 
 
 
-    @media (prefers-reduced-motion:reduce){.num-fill{transition:none}}
+    @media (prefers-reduced-motion:reduce){.num-barv{transition:none}}
   </style>
 </head>
 <body>
@@ -206,24 +202,19 @@
       countUp(document.getElementById("numTotal"), total);
 
       var wrap = document.getElementById("numFlavours");
-      wrap.innerHTML = "";
-      flavs.forEach(function(f, i){
-        var pct = total ? Math.round(f.n/total*100) : 0;
-        var crown = i===0;
-        var el = document.createElement("div");
-        el.className = "num-flav";
-        el.innerHTML =
-          '<div class="num-ftop'+(crown?' has-crown':'')+'">'
-          + '<span class="num-fname">'+f.name+'</span>'
-          + '<span class="num-fquip">'+f.quip+'</span>'
-          + (crown?'<span class="num-crown">👑 Top pot</span>':'')
-          + '<span class="num-fcount">'+f.n+'</span></div>'
-          + '<div class="num-track"><div class="num-fill" style="background:'+f.color+'"></div></div>'
-          + '<div class="num-ffoot"><span>'+pct+'% of every pot</span><span>'+f.n+' made</span></div>';
-        wrap.appendChild(el);
-        var fill = el.querySelector(".num-fill");
-        var w = (top ? f.n/top*100 : 0)+"%";
-        if(reduce){ fill.style.width=w; } else { setTimeout(function(){ fill.style.width=w; }, 260+i*60); }
+      wrap.className = "num-podium";
+      var medals = ["🥇","🥈","🥉"];
+      wrap.innerHTML = flavs.map(function(f, i){
+        var p = total ? Math.round(f.n/total*100) : 0;
+        var h = Math.round((top ? f.n/top : 0)*145)+16;
+        return '<div class="num-col">'
+          + '<div class="num-medal">'+(medals[i]||"")+'</div>'
+          + '<div class="num-barv" data-h="'+h+'" style="background:'+f.color+'">'+f.n+'</div>'
+          + '<div class="num-lab"><b>'+f.name+'</b><span>'+p+'%</span></div></div>';
+      }).join("");
+      wrap.querySelectorAll(".num-barv").forEach(function(b, i){
+        var h = b.getAttribute("data-h")+"px";
+        if(reduce){ b.style.height=h; } else { setTimeout(function(){ b.style.height=h; }, 260+i*90); }
       });
 
       var eggs=Math.round(total*EGGS_PER), espr=Math.round(total*ESPRESSO_PER), lady=total*SAVOIARDI_PER;
