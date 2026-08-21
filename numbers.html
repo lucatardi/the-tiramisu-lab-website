@@ -129,7 +129,7 @@
       <div class="num-stat"><div class="n" id="sEspr">0</div><div class="l">espressos pulled ☕</div></div>
       <div class="num-stat"><div class="n" id="sLady">0</div><div class="l">savoiardi dunked</div></div>
       <div class="num-stat"><div class="n" id="sTall">0</div><div class="l">emperor penguins tall 🐧</div></div>
-      <div class="num-stat"><div class="n" id="sCocoa">0</div><div class="l">of cocoa tops, rim to rim 🍫</div></div>
+      <div class="num-stat"><div class="n" id="sCocoa">0</div><div class="l">of cocoa dusted on top 🍫</div></div>
     </div>
 
     <div class="num-miles">
@@ -197,7 +197,7 @@
   <script>
     var API = "https://tiramisu-lab.thetiramisulab.workers.dev";
     var SEED = { total:341, byType:{Classic:165,Pistachio:72,Biscoff:60,Nutella:44}, since:"August 2026" };
-    var EGGS_PER=35/20, ESPRESSO_PER=10/20, SAVOIARDI_PER=2, POT_H_CM=7, COCOA_MM=98, PENGUIN_M=1.2;
+    var EGGS_PER=35/20, ESPRESSO_PER=10/20, SAVOIARDI_PER=2, POT_H_CM=7, PENGUIN_M=1.2;
     var HEN_YEAR=320, SAVOIARDO_CM=11, POOL_M=50, COCOA_M2=Math.PI*0.049*0.049;
     var META = {
       Classic:  {color:"var(--classic)", quip:"the timeless original"},
@@ -254,7 +254,7 @@
       countUp(document.getElementById("sEspr"), Math.round(total*ESPRESSO_PER));
       countUp(document.getElementById("sLady"), total*SAVOIARDI_PER);
       document.getElementById("sTall").textContent = Math.round(total*POT_H_CM/100/PENGUIN_M);
-      document.getElementById("sCocoa").textContent = (total*COCOA_MM/1000).toFixed(1)+" m";
+      document.getElementById("sCocoa").textContent = (total*COCOA_M2).toFixed(1)+" m²";
 
       var goal = Math.ceil((total+1)/250)*250;
       document.getElementById("numMlabel").textContent = "Next milestone: "+goal+" pots 🎉";
