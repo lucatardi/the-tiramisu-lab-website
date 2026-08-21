@@ -46,14 +46,8 @@
     .num-ffoot{display:flex;justify-content:space-between;margin-top:.4rem;font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
 
 
-    .num-miles{background:var(--sheet);border:1px solid var(--hair);border-radius:14px;padding:1.1rem 1.15rem;margin-top:.9rem}
-    .num-mtop{display:flex;justify-content:space-between;align-items:baseline;font-size:.92rem;margin-bottom:.55rem;color:var(--espresso)}
-    .num-mtop b{font-weight:500}
-    .num-mto{color:var(--muted)}
-    .num-mtrack{height:12px;background:var(--tan);border-radius:999px;overflow:hidden}
-    .num-mfill{height:100%;width:0;background:var(--gold);border-radius:999px;transition:width 1.3s cubic-bezier(.22,1,.36,1)}
 
-    @media (prefers-reduced-motion:reduce){.num-fill,.num-mfill{transition:none}}
+    @media (prefers-reduced-motion:reduce){.num-fill{transition:none}}
   </style>
 </head>
 <body>
@@ -118,10 +112,6 @@
     <p class="num-sub">Some flavours are just more popular. No hard feelings.</p>
     <div id="numFlavours"></div>
 
-    <div class="num-miles">
-      <div class="num-mtop"><b id="numMlabel">Next milestone</b><span class="num-mto" id="numMto">—</span></div>
-      <div class="num-mtrack"><div class="num-mfill" id="numMfill"></div></div>
-    </div>
   </main>
 
   <footer class="site-footer sec-drift" id="visit">
@@ -235,13 +225,6 @@
         var w = (top ? f.n/top*100 : 0)+"%";
         if(reduce){ fill.style.width=w; } else { setTimeout(function(){ fill.style.width=w; }, 260+i*60); }
       });
-
-      var goal = Math.ceil((total+1)/250)*250;
-      document.getElementById("numMlabel").textContent = "Next milestone: "+goal+" pots 🎉";
-      document.getElementById("numMto").textContent = (goal-total)+" to go";
-      var mfill = document.getElementById("numMfill");
-      var mw = Math.round(total/goal*100)+"%";
-      if(reduce){ mfill.style.width=mw; } else { setTimeout(function(){ mfill.style.width=mw; }, 400); }
 
       var eggs=Math.round(total*EGGS_PER), espr=Math.round(total*ESPRESSO_PER), lady=total*SAVOIARDI_PER;
       var EQUIV = [
