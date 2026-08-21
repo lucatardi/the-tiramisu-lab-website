@@ -254,7 +254,7 @@
       var eq = document.getElementById("numEquiv"), i = 0;
       function showEq(){ eq.innerHTML = "<span>"+EQUIV[i%EQUIV.length]+"</span>"; i++; }
       showEq();
-      if(!reduce && !window.__numEqTimer) window.__numEqTimer = setInterval(showEq, 3800);
+      if(!reduce && !window.__numEqTimer) window.__numEqTimer = setInterval(showEq, 4940);
     }
 
     fetch(API + "/stats", { cache:"no-store" })
