@@ -26,9 +26,10 @@
     .num-big{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(4.4rem,20vw,7rem);
       line-height:.92;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin:.1rem 0}
     .num-bigsub{font-family:"Fraunces",Georgia,serif;font-style:italic;font-size:1.35rem;margin:.1rem 0 1.1rem;opacity:.96}
-    .num-equiv{min-height:2.7em;display:flex;align-items:center;justify-content:center;padding:.75rem .9rem;
+    .num-equiv{position:relative;overflow:hidden;min-height:4.2rem;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.4;padding:.75rem 1rem;
       background:rgba(232,200,136,.12);border:1px solid rgba(232,200,136,.35);border-radius:12px;font-size:.98rem}
     .num-equiv b{color:var(--gold);font-weight:500}
+    .num-eqbar{position:absolute;left:0;bottom:0;height:3px;width:0;background:var(--gold);opacity:.85}
 
 
     .num-podium{display:flex;align-items:flex-end;justify-content:center;gap:.7rem;height:245px;padding-top:1.4rem;margin-top:2rem}
@@ -99,7 +100,7 @@
       <p class="num-eyebrow">Made with love, counted with pride</p>
       <div class="num-big" id="numTotal">0</div>
       <p class="num-bigsub">tiramisù made &amp; counting</p>
-      <div class="num-equiv" id="numEquiv"><span>Warming up the moka pot…</span></div>
+      <div class="num-equiv" id="numEquiv"><span id="numEqText">Warming up the moka pot…</span><div class="num-eqbar" id="numEqBar"></div></div>
     </section>
 
     <div id="numFlavours"></div>
@@ -219,12 +220,19 @@
         '<b>'+espr+' espressos</b> pulled — the moka never sleeps ☕',
         '<b>'+lady+' savoiardi</b> dunked — '+(lady*SAVOIARDO_CM/100/POOL_M).toFixed(1)+'× the length of an Olympic pool 🏊',
         '<b>'+(total*COCOA_M2).toFixed(1)+' m² of cocoa</b> dusted on top — about a double bed’s surface 🛏️',
-        'stacked pot on pot they reach <b>'+(total*POT_H_CM/100).toFixed(1)+' m</b> — '+Math.round(total*POT_H_CM/100/PENGUIN_M)+' emperor penguins on each other’s shoulders 🐧'
+        '<b>'+(total*POT_H_CM/100).toFixed(1)+' m</b> of pots stacked — as tall as '+Math.round(total*POT_H_CM/100/PENGUIN_M)+' emperor penguins 🐧'
       ];
-      var eq = document.getElementById("numEquiv"), i = 0;
-      function showEq(){ eq.innerHTML = "<span>"+EQUIV[i%EQUIV.length]+"</span>"; i++; }
+      var eqText = document.getElementById("numEqText"), eqBar = document.getElementById("numEqBar"), i = 0, EQ_MS = 4940;
+      function showEq(){
+        eqText.innerHTML = EQUIV[i%EQUIV.length]; i++;
+        if(eqBar && !reduce){
+          eqBar.style.transition = "none"; eqBar.style.width = "0%";
+          void eqBar.offsetWidth;
+          eqBar.style.transition = "width "+EQ_MS+"ms linear"; eqBar.style.width = "100%";
+        }
+      }
       showEq();
-      if(!reduce && !window.__numEqTimer) window.__numEqTimer = setInterval(showEq, 4940);
+      if(!reduce && !window.__numEqTimer) window.__numEqTimer = setInterval(showEq, EQ_MS);
     }
 
     fetch(API + "/stats", { cache:"no-store" })
