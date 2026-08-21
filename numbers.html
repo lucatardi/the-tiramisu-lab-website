@@ -202,7 +202,7 @@
     var API = "https://tiramisu-lab.thetiramisulab.workers.dev";
     var SEED = { total:341, byType:{Classic:165,Pistachio:72,Biscoff:60,Nutella:44}, since:"August 2026" };
     var EGGS_PER=35/20, ESPRESSO_PER=10/20, SAVOIARDI_PER=2, POT_H_CM=7, COCOA_MM=98, PENGUIN_M=1.2;
-    var EGG_G=50, HEN_YEAR=320, ESPRESSO_ML=30, SAVOIARDO_CM=11, POOL_M=50, COCOA_M2=Math.PI*0.049*0.049;
+    var HEN_YEAR=320, SAVOIARDO_CM=11, POOL_M=50, COCOA_M2=Math.PI*0.049*0.049;
     var META = {
       Classic:  {color:"var(--classic)", quip:"the timeless original"},
       Pistachio:{color:"var(--pist)",    quip:"the flashy one"},
@@ -271,14 +271,10 @@
 
       var eggs=Math.round(total*EGGS_PER), espr=Math.round(total*ESPRESSO_PER), lady=total*SAVOIARDI_PER;
       var EQUIV = [
-        '<b>'+eggs+' eggs</b> cracked — about '+Math.round(eggs/12)+' dozen, or '+Math.round(eggs/HEN_YEAR)+' hens’ full year of laying 🐔',
-        'those eggs tip the scales at <b>'+Math.round(eggs*EGG_G/1000)+' kg</b> — shells not included 🥚',
-        '<b>'+espr+' espressos</b> pulled — that’s '+(espr*ESPRESSO_ML/1000).toFixed(1)+' litres of pure Italian courage ☕',
-        '<b>'+espr+' espressos</b> and counting — the moka pot never sleeps (neither will you)',
-        '<b>'+lady+' savoiardi</b> dunked — laid end to end, '+(lady*SAVOIARDO_CM/100/POOL_M).toFixed(1)+'× the length of an Olympic pool 🏊',
-        'that’s <b>'+Math.round(lady/24)+' packs</b> of savoiardi, dipped one careful biscuit at a time 🇮🇹',
-        '<b>'+(total*COCOA_M2).toFixed(1)+' m² of cocoa</b> dusted on top — about a double bed’s worth of chocolate snow 🍫',
-        'line up the cocoa-dusted tops and they run <b>'+(total*COCOA_MM/1000).toFixed(1)+' m</b> rim to rim',
+        '<b>'+eggs+' eggs</b> cracked — '+Math.round(eggs/HEN_YEAR)+' hens’ full year of laying 🐔',
+        '<b>'+espr+' espressos</b> pulled — the moka never sleeps ☕',
+        '<b>'+lady+' savoiardi</b> dunked — '+(lady*SAVOIARDO_CM/100/POOL_M).toFixed(1)+'× the length of an Olympic pool 🏊',
+        '<b>'+(total*COCOA_M2).toFixed(1)+' m² of cocoa</b> dusted on top — about a double bed’s surface 🛏️',
         'stacked pot on pot they reach <b>'+(total*POT_H_CM/100).toFixed(1)+' m</b> — '+Math.round(total*POT_H_CM/100/PENGUIN_M)+' emperor penguins on each other’s shoulders 🐧'
       ];
       var eq = document.getElementById("numEquiv"), i = 0;
