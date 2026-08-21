@@ -45,10 +45,6 @@
     .num-fill{height:100%;width:0;border-radius:999px;transition:width 1.1s cubic-bezier(.22,1,.36,1)}
     .num-ffoot{display:flex;justify-content:space-between;margin-top:.4rem;font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
 
-    .num-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:.7rem}
-    .num-stat{background:var(--tan);border-radius:14px;padding:1rem 1.05rem}
-    .num-stat .n{font-family:"Fraunces",Georgia,serif;font-size:1.9rem;font-weight:600;font-variant-numeric:tabular-nums;line-height:1;color:var(--espresso)}
-    .num-stat .l{color:var(--muted);font-size:.86rem;margin-top:.25rem}
 
     .num-miles{background:var(--sheet);border:1px solid var(--hair);border-radius:14px;padding:1.1rem 1.15rem;margin-top:.9rem}
     .num-mtop{display:flex;justify-content:space-between;align-items:baseline;font-size:.92rem;margin-bottom:.55rem;color:var(--espresso)}
@@ -121,16 +117,6 @@
     <h2 class="num-h">The flavour standings</h2>
     <p class="num-sub">Some flavours are just more popular. No hard feelings.</p>
     <div id="numFlavours"></div>
-
-    <h2 class="num-h">What that took</h2>
-    <p class="num-sub">A tally of the delicious damage in the kitchen.</p>
-    <div class="num-grid">
-      <div class="num-stat"><div class="n" id="sEggs">0</div><div class="l">eggs cracked 🥚</div></div>
-      <div class="num-stat"><div class="n" id="sEspr">0</div><div class="l">espressos pulled ☕</div></div>
-      <div class="num-stat"><div class="n" id="sLady">0</div><div class="l">savoiardi dunked</div></div>
-      <div class="num-stat"><div class="n" id="sTall">0</div><div class="l">emperor penguins tall 🐧</div></div>
-      <div class="num-stat"><div class="n" id="sCocoa">0</div><div class="l">of cocoa dusted on top 🍫</div></div>
-    </div>
 
     <div class="num-miles">
       <div class="num-mtop"><b id="numMlabel">Next milestone</b><span class="num-mto" id="numMto">—</span></div>
@@ -249,12 +235,6 @@
         var w = (top ? f.n/top*100 : 0)+"%";
         if(reduce){ fill.style.width=w; } else { setTimeout(function(){ fill.style.width=w; }, 260+i*60); }
       });
-
-      countUp(document.getElementById("sEggs"), Math.round(total*EGGS_PER));
-      countUp(document.getElementById("sEspr"), Math.round(total*ESPRESSO_PER));
-      countUp(document.getElementById("sLady"), total*SAVOIARDI_PER);
-      document.getElementById("sTall").textContent = Math.round(total*POT_H_CM/100/PENGUIN_M);
-      document.getElementById("sCocoa").textContent = (total*COCOA_M2).toFixed(1)+" m²";
 
       var goal = Math.ceil((total+1)/250)*250;
       document.getElementById("numMlabel").textContent = "Next milestone: "+goal+" pots 🎉";
