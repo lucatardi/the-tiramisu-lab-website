@@ -57,8 +57,6 @@
     .num-mtrack{height:12px;background:var(--tan);border-radius:999px;overflow:hidden}
     .num-mfill{height:100%;width:0;background:var(--gold);border-radius:999px;transition:width 1.3s cubic-bezier(.22,1,.36,1)}
 
-    .num-close{text-align:center;color:var(--muted);font-size:.95rem;margin:2.2rem 0 .3rem}
-    .num-since{text-align:center;color:var(--muted);font-size:.8rem;opacity:.8;margin:0}
     @media (prefers-reduced-motion:reduce){.num-fill,.num-mfill{transition:none}}
   </style>
 </head>
@@ -138,8 +136,6 @@
       <div class="num-mtop"><b id="numMlabel">Next milestone</b><span class="num-mto" id="numMto">—</span></div>
       <div class="num-mtrack"><div class="num-mfill" id="numMfill"></div></div>
     </div>
-    <p class="num-close">Fresh out of a tiny Dublin kitchen, one pot at a time. 🍮</p>
-    <p class="num-since" id="numSince"></p>
   </main>
 
   <footer class="site-footer sec-drift" id="visit">
@@ -266,8 +262,6 @@
       var mfill = document.getElementById("numMfill");
       var mw = Math.round(total/goal*100)+"%";
       if(reduce){ mfill.style.width=mw; } else { setTimeout(function(){ mfill.style.width=mw; }, 400); }
-
-      if(data.since) document.getElementById("numSince").textContent = "Counting since "+data.since+".";
 
       var eggs=Math.round(total*EGGS_PER), espr=Math.round(total*ESPRESSO_PER), lady=total*SAVOIARDI_PER;
       var EQUIV = [
