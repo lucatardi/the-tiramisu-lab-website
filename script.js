@@ -173,9 +173,10 @@ if (orderForm) {
   const capLeft = {};
   /* Show "Only N left" once a day drops below this many pots. */
   const LOW_STOCK_AT = 5;
-  /* How many available dates to surface at once (the soonest ones); the last
-     shown week is completed, so the actual count can round up past this. */
-  const DATE_CARDS = 6;
+  /* How many available dates to surface at once — capped to one week (Tue–Fri),
+     so bookings don't open two weeks ahead while next week is still wide open.
+     Only spills into the following week if next week is partly sold out. */
+  const DATE_CARDS = 4;
   const potsLeft = (iso) => {
     if (dailyCap == null) return null; // capacity unknown → don't restrict
     return capLeft[iso] != null ? capLeft[iso] : dailyCap;
@@ -409,7 +410,7 @@ if (orderForm) {
          whole row (Tue–Wed or Thu–Fri) when both its days are dead, and collapse
          a fully-dead week to a single "Sold out" card. We render row by row and
          stop after a complete pair once we've surfaced enough stock dates — so
-         the list lands on 5–6 tidy two-per-row dates, never a lone card. */
+         the list lands on up to one week of tidy two-per-row dates, never a lone card. */
       const dead = (x) => x.state === "soldout" || x.state === "past";
       let content = "",
         capped = false;
