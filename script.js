@@ -312,9 +312,9 @@ if (orderForm) {
      the current week, then future weeks that have a bookable day, until we've
      surfaced DATE_CARDS available dates (completing the last shown week). Every
      shown week renders Tue–Fri; days that are past, sold out, or too small for
-     the current cart are greyed. A week with nothing bookable shows a "Sold
-     out" badge (only the current week can reach that, since empty future weeks
-     are skipped). */
+     the current cart are greyed. A week with nothing bookable shows a single
+     "Sold out" card — this includes an upcoming week that's closed/sold out
+     (e.g. the Sunday auto-close); only entirely-past weeks are skipped. */
   function fillDates() {
     if (!dateInput || !dateList) return;
     const keep = dateInput.value;
@@ -395,13 +395,13 @@ if (orderForm) {
          the current cart but not sold out. We surface the next DATE_CARDS dates
          with any stock, then grey the ones the cart can't fit. */
       const weekStock = days.filter((x) => x.state === "open" || x.state === "tight").length;
-      /* A week with no stock is only shown as the current week's "Sold out" row,
-         from Monday through Friday (so it drops off at the weekend, once the
-         week's collections are done). Empty future weeks are skipped entirely. */
+      /* A week with nothing bookable: skip it if it's entirely in the past, but
+         DO show an upcoming week that's fully sold out / closed as a single
+         "Sold out" card (so customers can see next week is shut). Stop once
+         we've already surfaced enough available dates. */
       if (weekStock === 0) {
-        const dow = today0.getDay(); // Mon=1 … Fri=5
-        const keepSold = offset === 0 && dow >= 1 && dow <= 5;
-        if (!keepSold) {
+        const allPast = days.every((x) => x.state === "past");
+        if (allPast || stockCount >= DATE_CARDS) {
           if (stockCount >= DATE_CARDS) break;
           continue;
         }
