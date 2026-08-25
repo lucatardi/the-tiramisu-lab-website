@@ -620,6 +620,9 @@ if (orderForm) {
      rendered by fillTimes (below), so we re-check the saved time afterwards. */
   const restored = restoreState();
   loadContact(); // prefill name/phone for returning customers (empties only)
+  /* Prefilled name/phone fire no input event, so check promo eligibility once
+     on load too (defined below; hoisted). */
+  setTimeout(() => { try { checkEligible(); } catch (e) {} }, 0);
 
   if (dateInput && dateList) {
     fillDates();
