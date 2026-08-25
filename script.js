@@ -93,21 +93,6 @@ if (orderForm) {
   const summaryLines = document.getElementById("summaryLines");
   const summaryTotal = document.getElementById("summaryTotal");
   const flavourCap = document.getElementById("flavourCap");
-  /* Promo: the box is revealed only for an eligible name/phone (a cosmetic
-     curtain); the typed code is what Stripe validates + applies. */
-  const promoBox = document.getElementById("promoBox");
-  const promoCode = document.getElementById("promoCode");
-  const promoNote = document.getElementById("promoNote");
-  const promoLabel = document.getElementById("promoLabel");
-  let activePromo = null; // { amountOff, percentOff } once a typed code validates
-  const applyPromo = (t) =>
-    !activePromo
-      ? t
-      : activePromo.amountOff
-      ? Math.max(0, t - activePromo.amountOff)
-      : activePromo.percentOff
-      ? Math.max(0, t * (1 - activePromo.percentOff / 100))
-      : t;
   /* True only right after a "+" tap that couldn't add (order already at the
      day's remaining or the per-order max). Drives the cap explanation. */
   let blockedAdd = false;
@@ -620,9 +605,6 @@ if (orderForm) {
      rendered by fillTimes (below), so we re-check the saved time afterwards. */
   const restored = restoreState();
   loadContact(); // prefill name/phone for returning customers (empties only)
-  /* Prefilled name/phone fire no input event, so check promo eligibility once
-     on load too (defined below; hoisted). */
-  setTimeout(() => { try { checkEligible(); } catch (e) {} }, 0);
 
   if (dateInput && dateList) {
     fillDates();
@@ -653,67 +635,6 @@ if (orderForm) {
   });
   if (phoneCC) phoneCC.addEventListener("change", updateSubmitState);
 
-  /* Promo: reveal the code box for an eligible name/phone, then validate the
-     typed code against Stripe (via the Worker). The code is the real lock. */
-  let promoT1 = null;
-  let promoT2 = null;
-  async function checkEligible() {
-    if (!promoBox || !CHECKOUT_API) return;
-    try {
-      const q = new URLSearchParams({ name: contactName(), phone: contactPhone() });
-      const res = await fetch(CHECKOUT_API + "/promo-check?" + q, { cache: "no-store" });
-      const d = res.ok ? await res.json() : {};
-      if (d.eligible) {
-        promoBox.hidden = false;
-        if (promoLabel) promoLabel.textContent = d.label ? d.label + " — enter your code" : "Have a code?";
-      } else if (!promoBox.hidden) {
-        promoBox.hidden = true;
-        if (promoCode) promoCode.value = "";
-        activePromo = null;
-        if (promoNote) promoNote.textContent = "";
-        recalc();
-      }
-    } catch (e) {}
-  }
-  async function checkCode() {
-    if (!promoCode || !CHECKOUT_API) return;
-    const code = promoCode.value.trim();
-    if (!code) {
-      activePromo = null;
-      if (promoNote) promoNote.textContent = "";
-      recalc();
-      return;
-    }
-    try {
-      const res = await fetch(CHECKOUT_API + "/validate-code?code=" + encodeURIComponent(code), { cache: "no-store" });
-      const d = res.ok ? await res.json() : {};
-      if (d.valid) {
-        activePromo = { amountOff: d.amountOff || 0, percentOff: d.percentOff || 0 };
-      } else {
-        activePromo = null;
-        if (promoNote) {
-          promoNote.textContent = "That code isn’t valid.";
-          promoNote.className = "promo-note err";
-        }
-      }
-    } catch (e) {
-      activePromo = null;
-    }
-    recalc();
-  }
-  const nudgeEligible = () => {
-    clearTimeout(promoT1);
-    promoT1 = setTimeout(checkEligible, 400);
-  };
-  [firstNameInput, phoneInput].forEach((el) => {
-    if (el) el.addEventListener("input", nudgeEligible);
-  });
-  if (phoneCC) phoneCC.addEventListener("change", nudgeEligible);
-  if (promoCode)
-    promoCode.addEventListener("input", () => {
-      clearTimeout(promoT2);
-      promoT2 = setTimeout(checkCode, 400);
-    });
 
   /* Re-check the saved time now that syncSlot/fillTimes has rendered the
      radios for the restored slot. */
@@ -813,16 +734,7 @@ if (orderForm) {
     }
 
     const total = items.reduce((s, i) => s + i.line, 0);
-    const discounted = applyPromo(total);
-    if (activePromo && discounted < total) {
-      summaryTotal.innerHTML = `<span class="was">${money(total)}</span> ${money(discounted)}`;
-      if (promoNote) {
-        promoNote.textContent = `🤎 You save ${money(total - discounted)}`;
-        promoNote.className = "promo-note ok";
-      }
-    } else {
-      summaryTotal.textContent = money(total);
-    }
+    summaryTotal.textContent = money(total);
 
     /* Cap banner (below the flavours): shown whenever the order has hit the
        limit for what you can still add — the selected day's remaining pots, or
@@ -911,7 +823,6 @@ if (orderForm) {
       slot: (slotInputs.find((r) => r.checked) || {}).value || "daytime",
       name: contactName(),
       phone: contactPhone(),
-      code: promoBox && !promoBox.hidden && promoCode ? promoCode.value.trim() : "",
     };
     setCheckoutError("");
     setBusy(true);
