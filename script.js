@@ -927,18 +927,6 @@ if (orderForm) {
         loadFullDates().then(fillDates);
         return;
       }
-      if (res.status === 400) {
-        const err = await res.json().catch(() => ({}));
-        setBusy(false);
-        if (err.error === "invalid_code") {
-          activePromo = null;
-          recalc();
-          setCheckoutError("That promo code isn’t valid anymore — please remove it and try again.");
-        } else {
-          setCheckoutError("Something went wrong with your order. Please check it and try again.");
-        }
-        return;
-      }
       if (!res.ok) throw new Error("checkout failed");
       const { url } = await res.json();
       if (!url) throw new Error("no url");
