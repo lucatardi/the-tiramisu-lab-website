@@ -827,6 +827,12 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .summary .btn-primary:hover { background: #d89a5d; }
 .summary .note { font-size: 0.8rem; color: rgba(244,233,216,0.7); margin: 1rem 0 0; }
+.promo-box { margin: 0 0 1rem; text-align: left; }
+.promo-box label { display: block; font-weight: 600; font-size: 0.9rem; margin: 0 0 0.35rem; color: var(--cream); }
+.promo-note { font-size: 0.85rem; margin: 0.4rem 0 0; }
+.promo-note.ok { color: #9ED9AC; }
+.promo-note.err { color: #F3B0A3; }
+#summaryTotal .was { text-decoration: line-through; opacity: 0.55; font-weight: 400; margin-right: 0.4rem; }
 
 .alt-contact {
   text-align: center;
