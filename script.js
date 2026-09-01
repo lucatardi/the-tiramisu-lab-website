@@ -478,6 +478,10 @@ if (orderForm) {
   }
 
   function validateTime(reveal) {
+    if (isToaster()) {
+      showError(timeError, "");
+      return true;
+    }
     const has = !!selectedTime();
     showError(timeError, has || !reveal ? "" : "Please choose a time.");
     return has;
@@ -496,16 +500,44 @@ if (orderForm) {
   const contactOk = () =>
     contactName().length > 0 && contactLocal().replace(/\D/g, "").length >= 7;
 
+  /* ---- "Toaster" mode ----
+     Colleagues at Toast put "Toaster" in their name. Their tiramisù is left in
+     the Toast fridge, so there's no pick-up time to choose — we disable the time
+     field and show a note instead. (The 10% colleague discount is gated on the
+     same keyword server-side.) */
+  const isToaster = () => /toaster/i.test(contactName());
+  function applyToaster() {
+    const on = isToaster();
+    if (timeToggle) {
+      timeToggle.classList.toggle("time-toggle--off", on);
+      timeToggle.querySelectorAll("input").forEach((r) => {
+        r.disabled = on;
+      });
+      const field = timeToggle.closest(".field");
+      if (field) {
+        let note = document.getElementById("toasterNote");
+        if (!note) {
+          note = document.createElement("p");
+          note.id = "toasterNote";
+          note.className = "hint toaster-note";
+          note.textContent =
+            "🧊 The tiramisù will be in the Toast fridge waiting for you to be collected.";
+          field.appendChild(note);
+        }
+        note.hidden = !on;
+      }
+    }
+    if (on) showError(timeError, "");
+    updateSubmitState();
+  }
+
   /* Enable the submit button only once the order is actually placeable:
-     at least one pot, a collection date, a time, and who's collecting. */
+     at least one pot, a collection date, a time (unless Toaster mode), and
+     who's collecting. */
   function updateSubmitState() {
     if (!submitBtn) return;
-    submitBtn.disabled = !(
-      cartQty() > 0 &&
-      !!selectedISO() &&
-      !!selectedTime() &&
-      contactOk()
-    );
+    const timeOk = isToaster() || !!selectedTime();
+    submitBtn.disabled = !(cartQty() > 0 && !!selectedISO() && timeOk && contactOk());
   }
 
   function syncSlot() {
@@ -628,10 +660,12 @@ if (orderForm) {
   }
   slotInputs.forEach((r) => r.addEventListener("change", syncSlot));
   syncSlot();
+  applyToaster(); // in case a "Toaster" name was restored
 
-  /* Name/phone: no inline error — just keep the submit button state live. */
+  /* Name/phone: no inline error — just keep the submit button state live.
+     A name change may toggle Toaster mode, so re-apply it on name input. */
   [firstNameInput, phoneInput].forEach((el) => {
-    if (el) el.addEventListener("input", updateSubmitState);
+    if (el) el.addEventListener("input", applyToaster);
   });
   if (phoneCC) phoneCC.addEventListener("change", updateSubmitState);
 
@@ -793,7 +827,7 @@ if (orderForm) {
     lines.push("");
     lines.push(`Total: ${money(total)}`);
     lines.push("");
-    const timeLabel = selectedTimeLabel() || "—";
+    const timeLabel = isToaster() ? "Toast fridge" : selectedTimeLabel() || "—";
     lines.push(`Collection: ${prettyDate(data.get("date"))} at ${timeLabel}`);
     lines.push(`Pick-up: ${currentSlot().where}`);
     return lines.join("\n");
@@ -819,7 +853,7 @@ if (orderForm) {
       items: items.map((i) => ({ id: i.name.toLowerCase(), qty: i.qty })),
       date: data.get("date"),
       dateLabel: prettyDate(data.get("date")),
-      time: selectedTimeLabel(),
+      time: isToaster() ? "Toast fridge" : selectedTimeLabel(),
       slot: (slotInputs.find((r) => r.checked) || {}).value || "daytime",
       name: contactName(),
       phone: contactPhone(),
