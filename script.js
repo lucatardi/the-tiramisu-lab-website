@@ -996,6 +996,12 @@ if (orderForm) {
         tyMaps.href = data.maps;
         tyMaps.hidden = false;
       }
+      if (data.fridge) {
+        const tyNote = document.getElementById("tyNote");
+        if (tyNote)
+          tyNote.innerHTML =
+            "🧊 It’ll be waiting for you in the fridge in the Local at the office — ready whenever you are on the day. 🤎";
+      }
       if (data.name)
         setText(
           "tyHeading",
