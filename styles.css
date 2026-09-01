@@ -705,8 +705,9 @@ textarea { resize: vertical; min-height: 90px; }
   display: flex;
   gap: 0.5rem;
 }
-/* Toaster mode: no pick-up time to choose (it waits in the Toast fridge) */
-.time-toggle--off {
+/* Toast mode: pick-up time + place are fixed (it waits in the Local fridge) */
+.time-toggle--off,
+.slot-options--off {
   opacity: 0.45;
   pointer-events: none;
   filter: grayscale(1);

@@ -500,14 +500,32 @@ if (orderForm) {
   const contactOk = () =>
     contactName().length > 0 && contactLocal().replace(/\D/g, "").length >= 7;
 
-  /* ---- "Toaster" mode ----
-     Colleagues at Toast put "Toaster" in their name. Their tiramisù is left in
-     the Toast fridge, so there's no pick-up time to choose — we disable the time
-     field and show a note instead. (The 10% colleague discount is gated on the
-     same keyword server-side.) */
-  const isToaster = () => /toaster/i.test(contactName());
+  /* ---- "Toast" mode ----
+     Colleagues at Toast put "Toast"/"Toaster" in their name. Their tiramisù is
+     left in the Local fridge for collection at St Stephen's Green, so there's no
+     pick-up time or place to choose — we lock the location to daytime (St
+     Stephen's Green) and disable both the place and time fields, showing a note
+     instead. (The 10% colleague discount is gated on the same keyword
+     server-side.) */
+  const isToaster = () => /toast/i.test(contactName());
   function applyToaster() {
     const on = isToaster();
+
+    /* Place: default + lock to St Stephen's Green (daytime). */
+    if (on) {
+      const day = slotInputs.find((r) => r.value === "daytime");
+      if (day && !day.checked) {
+        day.checked = true;
+        syncSlot();
+      }
+    }
+    slotInputs.forEach((r) => {
+      r.disabled = on;
+    });
+    const slotBox = document.querySelector(".slot-options");
+    if (slotBox) slotBox.classList.toggle("slot-options--off", on);
+
+    /* Time: none — it waits in the Local fridge. */
     if (timeToggle) {
       timeToggle.classList.toggle("time-toggle--off", on);
       timeToggle.querySelectorAll("input").forEach((r) => {
@@ -521,7 +539,7 @@ if (orderForm) {
           note.id = "toasterNote";
           note.className = "hint toaster-note";
           note.textContent =
-            "🧊 The tiramisù will be in the Toast fridge waiting for you to be collected.";
+            "🧊 The tiramisù will be in the Local fridge waiting for you to be collected.";
           field.appendChild(note);
         }
         note.hidden = !on;
@@ -827,7 +845,7 @@ if (orderForm) {
     lines.push("");
     lines.push(`Total: ${money(total)}`);
     lines.push("");
-    const timeLabel = isToaster() ? "Toast fridge" : selectedTimeLabel() || "—";
+    const timeLabel = isToaster() ? "Local fridge" : selectedTimeLabel() || "—";
     lines.push(`Collection: ${prettyDate(data.get("date"))} at ${timeLabel}`);
     lines.push(`Pick-up: ${currentSlot().where}`);
     return lines.join("\n");
@@ -853,8 +871,10 @@ if (orderForm) {
       items: items.map((i) => ({ id: i.name.toLowerCase(), qty: i.qty })),
       date: data.get("date"),
       dateLabel: prettyDate(data.get("date")),
-      time: isToaster() ? "Toast fridge" : selectedTimeLabel(),
-      slot: (slotInputs.find((r) => r.checked) || {}).value || "daytime",
+      time: isToaster() ? "Local fridge" : selectedTimeLabel(),
+      slot: isToaster()
+        ? "daytime"
+        : (slotInputs.find((r) => r.checked) || {}).value || "daytime",
       name: contactName(),
       phone: contactPhone(),
     };
