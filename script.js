@@ -507,7 +507,7 @@ if (orderForm) {
      Stephen's Green) and disable both the place and time fields, showing a note
      instead. (The 10% colleague discount is gated on the same keyword
      server-side.) */
-  const isToaster = () => /toast/i.test(contactName());
+  const isToaster = () => /toaster/i.test(contactName());
   function applyToaster() {
     const on = isToaster();
 
