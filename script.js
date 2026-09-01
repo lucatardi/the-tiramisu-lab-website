@@ -508,6 +508,10 @@ if (orderForm) {
      instead. (The 10% colleague discount is gated on the same keyword
      server-side.) */
   const isToaster = () => /toaster/i.test(contactName());
+  const SLOT_HINT_DEFAULT =
+    "We’ll send the exact meeting point in your confirmation, right after payment.";
+  const SLOT_HINT_TOASTER =
+    "Your tiramisù will be ready to be collected waiting for you in the fridge in the Local at the office.";
   function applyToaster() {
     const on = isToaster();
 
@@ -524,6 +528,8 @@ if (orderForm) {
     });
     const slotBox = document.querySelector(".slot-options");
     if (slotBox) slotBox.classList.toggle("slot-options--off", on);
+    const slotHint = document.querySelector(".slot-options + .hint");
+    if (slotHint) slotHint.textContent = on ? SLOT_HINT_TOASTER : SLOT_HINT_DEFAULT;
 
     /* Time: none — it waits in the Local fridge. */
     if (timeToggle) {
@@ -717,9 +723,8 @@ if (orderForm) {
     const note = document.getElementById("submitNote");
     if (note) note.hidden = true;
     const slotHint = document.querySelector(".slot-options + .hint");
-    if (slotHint)
-      slotHint.textContent =
-        "We’ll send the exact meeting point in your confirmation, right after payment.";
+    if (slotHint) slotHint.textContent = SLOT_HINT_DEFAULT;
+    applyToaster(); // re-apply after resetting the hint (handles a restored Toaster name)
   }
 
   orderForm.validateCollection = () => {
