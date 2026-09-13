@@ -132,8 +132,8 @@ if (orderForm) {
   const firstNameInput = document.getElementById("firstName");
   const phoneInput = document.getElementById("phone");
   const phoneCC = document.getElementById("phoneCC");
-  const modeInputs = Array.from(document.querySelectorAll('input[name="ordermode"]'));
-  const isGift = () => ((modeInputs.find((r) => r.checked) || {}).value === "gift");
+  const giftToggle = document.getElementById("giftToggle");
+  const isGift = () => !!(giftToggle && giftToggle.checked);
 
   /* Local-time yyyy-mm-dd (toISOString would shift us to UTC) */
   const localISO = (d) =>
@@ -725,13 +725,12 @@ if (orderForm) {
   });
   if (phoneCC) phoneCC.addEventListener("change", updateSubmitState);
 
-  /* Order-type toggle (for me / gift) + deep-link ?gift=1. applyMode() itself is
+  /* "Make it a present" checkbox + deep-link ?gift=1. applyMode() itself is
      called after the CHECKOUT_API relabel below, so it isn't overwritten. */
-  modeInputs.forEach((r) => r.addEventListener("change", applyMode));
+  if (giftToggle) giftToggle.addEventListener("change", applyMode);
   try {
-    if (new URLSearchParams(location.search).get("gift") === "1") {
-      const g = modeInputs.find((r) => r.value === "gift");
-      if (g) g.checked = true;
+    if (new URLSearchParams(location.search).get("gift") === "1" && giftToggle) {
+      giftToggle.checked = true;
     }
   } catch (e) {}
 
