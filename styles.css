@@ -121,6 +121,13 @@ a { color: var(--caramel-dk); }
   text-decoration: none;
   color: var(--espresso);
 }
+/* Header logo: the round SVG mark (same as the favicon) */
+.brand-mark {
+  width: 48px;
+  height: 48px;
+  display: block;
+  border-radius: 50%;
+}
 .brand .mark {
   width: 36px; height: 36px;
   display: grid; place-items: center;
