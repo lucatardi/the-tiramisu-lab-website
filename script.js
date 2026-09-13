@@ -132,6 +132,8 @@ if (orderForm) {
   const firstNameInput = document.getElementById("firstName");
   const phoneInput = document.getElementById("phone");
   const phoneCC = document.getElementById("phoneCC");
+  const modeInputs = Array.from(document.querySelectorAll('input[name="ordermode"]'));
+  const isGift = () => ((modeInputs.find((r) => r.checked) || {}).value === "gift");
 
   /* Local-time yyyy-mm-dd (toISOString would shift us to UTC) */
   const localISO = (d) =>
@@ -560,8 +562,38 @@ if (orderForm) {
      who's collecting. */
   function updateSubmitState() {
     if (!submitBtn) return;
+    if (isGift()) {
+      /* A gift just needs at least one tiramisù — no date/time/collector. */
+      submitBtn.disabled = !(cartQty() > 0);
+      return;
+    }
     const timeOk = isToaster() || !!selectedTime();
     submitBtn.disabled = !(cartQty() > 0 && !!selectedISO() && timeOk && contactOk());
+  }
+
+  /* Switch the form between "for me" and "gift": hide the collection sections,
+     show the gift-details section, and relabel the summary + button. */
+  function applyMode() {
+    const gift = isGift();
+    document.querySelectorAll(".collect-only").forEach((el) => {
+      el.hidden = gift;
+    });
+    document.querySelectorAll(".gift-only").forEach((el) => {
+      el.hidden = !gift;
+    });
+    const heading = document.querySelector(".summary h3");
+    if (heading) heading.textContent = gift ? "Your gift" : "Your order";
+    if (submitBtn) submitBtn.textContent = gift ? "Buy gift 🎁" : "Continue to payment";
+    const note = document.getElementById("submitNote");
+    if (note && CHECKOUT_API) {
+      note.hidden = false;
+      note.textContent = gift
+        ? "You’ll get the gift card by email to forward on. It’s redeemed at checkout — worth exactly what you pick here, spendable on any flavours. One-time use."
+        : "";
+      if (!gift) note.hidden = true;
+    }
+    recalc();
+    updateSubmitState();
   }
 
   function syncSlot() {
@@ -693,6 +725,16 @@ if (orderForm) {
   });
   if (phoneCC) phoneCC.addEventListener("change", updateSubmitState);
 
+  /* Order-type toggle (for me / gift) + deep-link ?gift=1. applyMode() itself is
+     called after the CHECKOUT_API relabel below, so it isn't overwritten. */
+  modeInputs.forEach((r) => r.addEventListener("change", applyMode));
+  try {
+    if (new URLSearchParams(location.search).get("gift") === "1") {
+      const g = modeInputs.find((r) => r.value === "gift");
+      if (g) g.checked = true;
+    }
+  } catch (e) {}
+
 
   /* Re-check the saved time now that syncSlot/fillTimes has rendered the
      radios for the restored slot. */
@@ -726,6 +768,7 @@ if (orderForm) {
     if (slotHint) slotHint.textContent = SLOT_HINT_DEFAULT;
     applyToaster(); // re-apply after resetting the hint (handles a restored Toaster name)
   }
+  applyMode(); // after the relabel above, so gift mode keeps its button label
 
   orderForm.validateCollection = () => {
     const okDate = validateDate(true);
@@ -863,14 +906,49 @@ if (orderForm) {
     checkoutError.hidden = !msg;
     checkoutError.textContent = msg || "";
   };
-  const savedLabel = submitBtn ? submitBtn.textContent : "";
+  const restLabel = () =>
+    isGift() ? "Buy gift 🎁" : CHECKOUT_API ? "Continue to payment" : "Send order on WhatsApp";
   const setBusy = (b) => {
     if (!submitBtn) return;
     submitBtn.disabled = b;
-    submitBtn.textContent = b ? "Redirecting…" : savedLabel;
+    submitBtn.textContent = b ? "Redirecting…" : restLabel();
   };
 
+  /* Gift checkout: no date/slot/collector — the gift is worth the cart total and
+     the recipient chooses collection when they redeem the code. */
+  async function startGiftCheckout(items) {
+    const val = (id) => {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : "";
+    };
+    const payload = {
+      items: items.map((i) => ({ id: i.name.toLowerCase(), qty: i.qty })),
+      recipient: val("giftRecipient"),
+      from: val("giftFrom"),
+      message: val("giftMessage"),
+    };
+    setCheckoutError("");
+    setBusy(true);
+    try {
+      const res = await fetch(CHECKOUT_API + "/gift-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("gift checkout failed");
+      const { url } = await res.json();
+      if (!url) throw new Error("no url");
+      window.location = url;
+    } catch (err) {
+      setBusy(false);
+      setCheckoutError(
+        "Something went wrong starting checkout. Please try again, or message us on Instagram."
+      );
+    }
+  }
+
   async function startCheckout(items) {
+    if (isGift()) return startGiftCheckout(items);
     const data = new FormData(orderForm);
     const payload = {
       items: items.map((i) => ({ id: i.name.toLowerCase(), qty: i.qty })),
@@ -923,16 +1001,21 @@ if (orderForm) {
       alert(`We can take up to ${MAX_ORDER} pots per order. For a bigger order, message us on WhatsApp.`);
       return;
     }
-    const okCollection = orderForm.validateCollection ? orderForm.validateCollection() : true;
+    /* A gift skips the collection checks (no date/time/collector). */
+    const okCollection = isGift()
+      ? true
+      : orderForm.validateCollection
+      ? orderForm.validateCollection()
+      : true;
     if (!orderForm.checkValidity()) {
       orderForm.reportValidity();
       return;
     }
     if (!okCollection) return;
 
-    saveContact(); // remember name/phone for their next visit
+    if (!isGift()) saveContact(); // remember name/phone for their next visit
 
-    if (CHECKOUT_API) {
+    if (CHECKOUT_API || isGift()) {
       startCheckout(items);
       return;
     }
