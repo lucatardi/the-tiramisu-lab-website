@@ -717,66 +717,6 @@ textarea { resize: vertical; min-height: 90px; }
   font-weight: 600;
   color: var(--cocoa);
 }
-
-/* "Make it a present" checkbox — flips the order into gift mode */
-.gift-check {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.7rem;
-  padding: 0.85rem 1rem;
-  margin: 0 0 1.4rem;
-  background: var(--cream);
-  border: 1.5px solid var(--line);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease;
-}
-.gift-check:hover {
-  border-color: var(--caramel);
-}
-.gift-check input {
-  width: 1.25rem;
-  height: 1.25rem;
-  margin: 0.05rem 0 0;
-  flex: none;
-  accent-color: var(--caramel);
-  cursor: pointer;
-}
-.gift-check:has(input:checked) {
-  border-color: var(--caramel);
-  background: var(--white);
-  box-shadow: 0 0 0 3px rgba(201, 138, 75, 0.16);
-}
-.gift-check-txt {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-}
-.gift-check-title {
-  font-weight: 700;
-  color: var(--cocoa);
-}
-.gift-check-sub {
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-textarea.gift-msg {
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 76px;
-  resize: vertical;
-  font: inherit;
-  padding: 0.7rem 0.8rem;
-  border: 1.5px solid var(--line);
-  border-radius: 10px;
-  background: var(--cream);
-  color: var(--cocoa);
-}
-textarea.gift-msg:focus {
-  border-color: var(--caramel);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(201, 138, 75, 0.18);
-}
 .time-opt {
   position: relative;
   flex: 1;

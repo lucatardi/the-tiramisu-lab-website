@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=108" />
+  <link rel="stylesheet" href="styles.css?v=109" />
 </head>
 <body>
 
@@ -48,6 +48,7 @@
         <li><a href="index.html#reviews">Reviews</a></li>
         <li><a href="numbers.html">Numbers</a></li>
         <li><a class="active" href="order.html">Order &amp; collect</a></li>
+        <li><a href="gift-card.html">Gift card</a></li>
         <li class="nav-ig-item"><a class="nav-ig" href="https://instagram.com/the_tiramisulab" target="_blank" rel="noopener" aria-label="The Tiramisu Lab on Instagram">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect x="2" y="2" width="20" height="20" rx="5.5"/>
@@ -135,17 +136,8 @@
           <p class="cart-note" id="flavourCap" hidden></p>
         </fieldset>
 
-        <!-- Make it a present -->
-        <label class="gift-check" for="giftToggle">
-          <input type="checkbox" id="giftToggle" />
-          <span class="gift-check-txt">
-            <span class="gift-check-title">🎁 Make it a present</span>
-            <span class="gift-check-sub">We’ll email you a gift card to pass on — no date or pick-up needed.</span>
-          </span>
-        </label>
-
         <!-- When -->
-        <fieldset class="collect-only">
+        <fieldset>
           <legend>When would you like it?</legend>
 
           <p class="when-intro">We keep batches small so every pot is at its best. Made the evening before and collected Tuesday to Friday — lovely on the day, and the day after too.</p>
@@ -160,7 +152,7 @@
         </fieldset>
 
         <!-- Where -->
-        <fieldset class="collect-only">
+        <fieldset>
           <legend>Where should we meet?</legend>
 
           <div class="slot-options" role="radiogroup" aria-label="Collection point">
@@ -185,7 +177,7 @@
         </fieldset>
 
         <!-- Who -->
-        <fieldset class="collect-only">
+        <fieldset>
           <legend>Who’s collecting?</legend>
           <div class="field">
             <label for="firstName">Name</label>
@@ -234,24 +226,6 @@
             </div>
           </div>
           <p class="when-foot" style="margin-top:-0.5rem">So we can WhatsApp you your collection details and any updates.</p>
-        </fieldset>
-
-        <!-- Gift details (gift mode only) -->
-        <fieldset class="gift-only" hidden>
-          <legend>Make it personal <span style="font-weight:400;color:var(--muted)">(optional)</span></legend>
-          <div class="field">
-            <label for="giftRecipient">Who’s it for?</label>
-            <input type="text" id="giftRecipient" autocomplete="off" placeholder="e.g. Silenzio" maxlength="60" />
-          </div>
-          <div class="field">
-            <label for="giftFrom">From</label>
-            <input type="text" id="giftFrom" autocomplete="name" placeholder="e.g. Bruno" maxlength="60" />
-          </div>
-          <div class="field">
-            <label for="giftMessage">A little message</label>
-            <textarea id="giftMessage" class="gift-msg" maxlength="300" placeholder="Life’s short — eat the tiramisù 🤎"></textarea>
-          </div>
-          <p class="when-foot" style="margin-top:-0.2rem">We’ll email you the gift card to forward on — the recipient picks their date &amp; pick-up when they redeem.</p>
         </fieldset>
 
       </div>
@@ -331,6 +305,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=108"></script>
+  <script src="script.js?v=109"></script>
 </body>
 </html>
