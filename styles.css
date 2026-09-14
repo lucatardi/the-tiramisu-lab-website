@@ -121,6 +121,21 @@ a { color: var(--caramel-dk); }
   text-decoration: none;
   color: var(--espresso);
 }
+/* Brand logo image (nav + footer) */
+.brand-logo {
+  width: 52px;
+  height: 52px;
+  display: block;
+  flex: 0 0 auto;
+}
+/* Hero logo image */
+.hero-logo-img {
+  display: block;
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+  margin: 0 auto;
+}
 .brand .mark {
   width: 36px; height: 36px;
   display: grid; place-items: center;
