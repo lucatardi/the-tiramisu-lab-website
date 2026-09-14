@@ -95,9 +95,36 @@ if (orderForm) {
   const flavourCap = document.getElementById("flavourCap");
   const cutleryOpt = document.getElementById("cutleryOpt");
   const cutleryBox = document.getElementById("cutlery");
+  const giftBoxOpt = document.getElementById("giftBoxOpt");
+  const giftBoxBox = document.getElementById("giftBox");
+  const giftBoxLock = document.getElementById("giftBoxLock");
   /* Disposable spoon + napkin, priced per pot. */
   const CUTLERY_EUR = 0.2;
-  const cutleryOn = () => !!(cutleryBox && cutleryBox.checked && !isToaster());
+  /* Gift box: flat €7, only for a whole order of one of these sizes. Includes
+     cutlery + a topping kit (the sachets that match the flavours chosen). */
+  const GIFT_BOX_SIZES = [5, 6, 12];
+  const GIFT_BOX_EUR = 7;
+  const TOPPINGS = {
+    Classic: "cocoa",
+    Pistachio: "crushed pistachio",
+    Biscoff: "Biscoff crumb",
+    Nutella: "crushed hazelnut",
+  };
+  const giftBoxEligible = () =>
+    GIFT_BOX_SIZES.indexOf(cartQty()) !== -1 && !isToaster();
+  const giftBoxOn = () => !!(giftBoxBox && giftBoxBox.checked && giftBoxEligible());
+  /* Cutlery is off when a gift box is on (the box already includes it). */
+  const cutleryOn = () =>
+    !!(cutleryBox && cutleryBox.checked && !isToaster() && !giftBoxOn());
+  /* Distinct topping sachets for the flavours in the cart, e.g. "cocoa, pistachio". */
+  const boxToppings = (items) => {
+    const seen = [];
+    items.forEach((i) => {
+      const t = TOPPINGS[i.name];
+      if (t && seen.indexOf(t) === -1) seen.push(t);
+    });
+    return seen.join(", ");
+  };
   /* True only right after a "+" tap that couldn't add (order already at the
      day's remaining or the per-order max). Drives the cap explanation. */
   let blockedAdd = false;
@@ -556,15 +583,13 @@ if (orderForm) {
         note.hidden = !on;
       }
     }
-    /* Cutlery: not offered for fridge orders (eaten later at a desk). Hide the
-       card and clear any tick so it isn't charged or sent. */
-    if (cutleryOpt) {
-      cutleryOpt.hidden = on;
-      if (on && cutleryBox && cutleryBox.checked) {
-        cutleryBox.checked = false;
-        recalc();
-      }
+    /* Cutlery + gift box aren't offered for fridge orders (eaten later at a
+       desk). Clear any ticks; recalc re-hides the cards and refreshes totals. */
+    if (on && ((cutleryBox && cutleryBox.checked) || (giftBoxBox && giftBoxBox.checked))) {
+      if (cutleryBox) cutleryBox.checked = false;
+      if (giftBoxBox) giftBoxBox.checked = false;
     }
+    recalc();
 
     if (on) showError(timeError, "");
     updateSubmitState();
@@ -614,6 +639,7 @@ if (orderForm) {
           cc: contactDial(),
           phone: contactLocal(),
           cutlery: !!(cutleryBox && cutleryBox.checked),
+          giftBox: !!(giftBoxBox && giftBoxBox.checked),
         })
       );
     } catch (e) {
@@ -635,6 +661,7 @@ if (orderForm) {
     }
     if (s.date && dateInput) dateInput.value = s.date;
     if (s.cutlery && cutleryBox) cutleryBox.checked = true;
+    if (s.giftBox && giftBoxBox) giftBoxBox.checked = true;
     if (s.name && firstNameInput) firstNameInput.value = s.name;
     if (s.cc && phoneCC) phoneCC.value = s.cc;
     if (s.phone && phoneInput) phoneInput.value = s.phone;
@@ -710,6 +737,7 @@ if (orderForm) {
   });
   if (phoneCC) phoneCC.addEventListener("change", updateSubmitState);
   if (cutleryBox) cutleryBox.addEventListener("change", recalc);
+  if (giftBoxBox) giftBoxBox.addEventListener("change", recalc);
 
   /* Re-check the saved time now that syncSlot/fillTimes has rendered the
      radios for the restored slot. */
@@ -808,11 +836,30 @@ if (orderForm) {
     }
 
     let total = items.reduce((s, i) => s + i.line, 0);
-
-    /* Cutlery: one spoon + napkin per pot, shown only when ticked and there's
-       something in the cart. Keep the card's description in sync (.on class). */
-    if (cutleryOpt) cutleryOpt.classList.toggle("on", !!(cutleryBox && cutleryBox.checked));
     const potCount = cartQty();
+    const toaster = isToaster();
+
+    /* ---- Gift box: whole-order upgrade, only at 5/6/12 pots ---- */
+    const boxElig = GIFT_BOX_SIZES.indexOf(potCount) !== -1 && !toaster;
+    if (giftBoxOpt) {
+      giftBoxOpt.hidden = toaster; // not offered for fridge orders
+      giftBoxOpt.classList.toggle("off", !boxElig);
+      if (giftBoxBox) giftBoxBox.disabled = !boxElig;
+      /* An uncheck when it no longer fits (e.g. the count dropped below 5). */
+      if (!boxElig && giftBoxBox && giftBoxBox.checked) giftBoxBox.checked = false;
+      /* Show the "5, 6 or 12" nudge only once there are pots but the wrong count. */
+      if (giftBoxLock) giftBoxLock.hidden = boxElig || potCount === 0;
+      giftBoxOpt.classList.toggle("on", !!(giftBoxBox && giftBoxBox.checked && boxElig));
+    }
+    const boxOn = !!(giftBoxBox && giftBoxBox.checked && boxElig);
+
+    /* ---- Cutlery: hidden when a box covers it, or for fridge orders ---- */
+    if (cutleryOpt) {
+      cutleryOpt.hidden = toaster || boxOn;
+      cutleryOpt.classList.toggle("on", !!(cutleryBox && cutleryBox.checked));
+    }
+
+    /* Cutlery line — one spoon + napkin per pot (skipped when a box is on). */
     if (cutleryOn() && potCount > 0) {
       const cutleryLine = potCount * CUTLERY_EUR;
       total += cutleryLine;
@@ -822,6 +869,22 @@ if (orderForm) {
       left.innerHTML = `Cutlery <small>disposable spoon + napkin · ${potCount} × €0.20</small>`;
       const right = document.createElement("span");
       right.textContent = "+" + money(cutleryLine);
+      li.append(left, right);
+      summaryLines.appendChild(li);
+    }
+
+    /* Gift box line — flat €7, with the topping kit listed from the flavours. */
+    if (boxOn) {
+      total += GIFT_BOX_EUR;
+      const tops = boxToppings(items);
+      const li = document.createElement("li");
+      li.className = "giftbox-line";
+      const left = document.createElement("span");
+      left.innerHTML = `Gift box <small>cutlery + topping kit${
+        tops ? " · " + tops : ""
+      }</small>`;
+      const right = document.createElement("span");
+      right.textContent = "+" + money(GIFT_BOX_EUR);
       li.append(left, right);
       summaryLines.appendChild(li);
     }
@@ -918,6 +981,7 @@ if (orderForm) {
       name: contactName(),
       phone: contactPhone(),
       cutlery: cutleryOn(),
+      giftBox: giftBoxOn(),
     };
     setCheckoutError("");
     setBusy(true);
@@ -1015,6 +1079,8 @@ if (orderForm) {
       setText("tyItems", data.items || "—");
       const tyCutRow = document.getElementById("tyCutleryRow");
       if (tyCutRow && data.cutlery) tyCutRow.hidden = false;
+      const tyBoxRow = document.getElementById("tyGiftBoxRow");
+      if (tyBoxRow && data.giftBox) tyBoxRow.hidden = false;
       setText(
         "tyTotal",
         data.total != null ? "€" + Number(data.total).toFixed(2) : "—"

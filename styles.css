@@ -863,6 +863,33 @@ textarea { resize: vertical; min-height: 90px; }
 .cutlery-hint { font-weight: 500; color: var(--caramel-dk); font-size: 0.85rem; margin-left: 0.15rem; }
 .cutlery-s { font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem; display: none; }
 .cutlery-opt.on .cutlery-s { display: block; }
+/* The display rules above beat the browser's [hidden]{display:none}, so restore
+   it explicitly for the cards + lock hint we toggle via the hidden attribute. */
+.cutlery-opt[hidden], .giftbox-opt[hidden], .giftbox-lock[hidden] { display: none; }
+
+/* Gift-box add-on card, under the cutlery option. Same neutral-until-ticked
+   look, plus the box photo. Greyed (.off) when the cart isn't 5, 6 or 12 —
+   the lock hint then explains why. */
+.giftbox-opt {
+  display: flex; align-items: center; gap: 0.9rem;
+  margin: 0.7rem 0 0; padding: 0.85rem 1rem;
+  background: var(--white); border: 1.5px solid var(--line);
+  border-radius: 12px; cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.giftbox-opt.on { border-color: var(--caramel); box-shadow: 0 0 0 3px rgba(201,138,75,0.14); }
+.giftbox-opt.off { opacity: 0.6; cursor: not-allowed; }
+.giftbox-opt input { width: 1.25rem; height: 1.25rem; margin: 0; accent-color: var(--caramel); flex: none; }
+.giftbox-opt.off input { pointer-events: none; }
+.giftbox-thumb { width: 60px; height: 60px; border-radius: 9px; object-fit: cover; flex: none; background: var(--mascarpone); }
+.giftbox-txt { flex: 1; }
+.giftbox-t { font-weight: 700; color: var(--cocoa); }
+.giftbox-hint { font-weight: 500; color: var(--caramel-dk); font-size: 0.85rem; margin-left: 0.15rem; }
+.giftbox-s { display: block; font-size: 0.82rem; color: var(--muted); margin-top: 0.15rem; }
+.giftbox-lock { display: block; font-size: 0.82rem; color: var(--caramel-dk); font-weight: 500; margin-top: 0.15rem; }
+/* Summary line for the box. */
+.summary-lines li.giftbox-line { color: var(--gold); }
+.summary-lines li.giftbox-line small { display: block; color: rgba(244,233,216,0.55); font-size: 0.72rem; }
 .summary-total {
   display: flex; justify-content: space-between;
   font-family: var(--serif); font-size: 1.5rem;
