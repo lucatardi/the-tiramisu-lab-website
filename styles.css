@@ -841,6 +841,25 @@ textarea { resize: vertical; min-height: 90px; }
   font-size: 0.95rem;
 }
 .summary-lines .empty { color: rgba(244,233,216,0.6); border: 0; justify-content: flex-start; }
+/* Cutlery line in the summary: a subtle gold accent so it reads as an add-on. */
+.summary-lines li.cutlery-line { color: var(--gold); }
+.summary-lines li.cutlery-line small { display: block; color: rgba(244,233,216,0.55); font-size: 0.72rem; }
+
+/* Cutlery add-on card, under the flavours. Compact by default — the
+   description only shows once the box is ticked (class .on, set in JS), so it
+   never takes extra space when unchecked. Hidden entirely for fridge orders. */
+.cutlery-opt {
+  display: flex; align-items: flex-start; gap: 0.7rem;
+  margin: 1rem 0 0; padding: 0.9rem 1rem;
+  background: var(--white); border: 1.5px solid var(--caramel);
+  border-radius: 12px; box-shadow: 0 0 0 3px rgba(201,138,75,0.14);
+  cursor: pointer;
+}
+.cutlery-opt input { width: 1.25rem; height: 1.25rem; margin: 0.05rem 0 0; accent-color: var(--caramel); flex: none; }
+.cutlery-t { font-weight: 700; color: var(--cocoa); }
+.cutlery-hint { font-weight: 500; color: var(--caramel-dk); font-size: 0.85rem; margin-left: 0.15rem; }
+.cutlery-s { font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem; display: none; }
+.cutlery-opt.on .cutlery-s { display: block; }
 .summary-total {
   display: flex; justify-content: space-between;
   font-family: var(--serif); font-size: 1.5rem;

@@ -93,6 +93,11 @@ if (orderForm) {
   const summaryLines = document.getElementById("summaryLines");
   const summaryTotal = document.getElementById("summaryTotal");
   const flavourCap = document.getElementById("flavourCap");
+  const cutleryOpt = document.getElementById("cutleryOpt");
+  const cutleryBox = document.getElementById("cutlery");
+  /* Disposable spoon + napkin, priced per pot. */
+  const CUTLERY_EUR = 0.2;
+  const cutleryOn = () => !!(cutleryBox && cutleryBox.checked && !isToaster());
   /* True only right after a "+" tap that couldn't add (order already at the
      day's remaining or the per-order max). Drives the cap explanation. */
   let blockedAdd = false;
@@ -551,6 +556,16 @@ if (orderForm) {
         note.hidden = !on;
       }
     }
+    /* Cutlery: not offered for fridge orders (eaten later at a desk). Hide the
+       card and clear any tick so it isn't charged or sent. */
+    if (cutleryOpt) {
+      cutleryOpt.hidden = on;
+      if (on && cutleryBox && cutleryBox.checked) {
+        cutleryBox.checked = false;
+        recalc();
+      }
+    }
+
     if (on) showError(timeError, "");
     updateSubmitState();
   }
@@ -598,6 +613,7 @@ if (orderForm) {
           name: contactName(),
           cc: contactDial(),
           phone: contactLocal(),
+          cutlery: !!(cutleryBox && cutleryBox.checked),
         })
       );
     } catch (e) {
@@ -618,6 +634,7 @@ if (orderForm) {
       if (r) r.checked = true;
     }
     if (s.date && dateInput) dateInput.value = s.date;
+    if (s.cutlery && cutleryBox) cutleryBox.checked = true;
     if (s.name && firstNameInput) firstNameInput.value = s.name;
     if (s.cc && phoneCC) phoneCC.value = s.cc;
     if (s.phone && phoneInput) phoneInput.value = s.phone;
@@ -692,6 +709,7 @@ if (orderForm) {
     if (el) el.addEventListener("input", applyToaster);
   });
   if (phoneCC) phoneCC.addEventListener("change", updateSubmitState);
+  if (cutleryBox) cutleryBox.addEventListener("change", recalc);
 
   /* Re-check the saved time now that syncSlot/fillTimes has rendered the
      radios for the restored slot. */
@@ -789,7 +807,25 @@ if (orderForm) {
       });
     }
 
-    const total = items.reduce((s, i) => s + i.line, 0);
+    let total = items.reduce((s, i) => s + i.line, 0);
+
+    /* Cutlery: one spoon + napkin per pot, shown only when ticked and there's
+       something in the cart. Keep the card's description in sync (.on class). */
+    if (cutleryOpt) cutleryOpt.classList.toggle("on", !!(cutleryBox && cutleryBox.checked));
+    const potCount = cartQty();
+    if (cutleryOn() && potCount > 0) {
+      const cutleryLine = potCount * CUTLERY_EUR;
+      total += cutleryLine;
+      const li = document.createElement("li");
+      li.className = "cutlery-line";
+      const left = document.createElement("span");
+      left.innerHTML = `Cutlery <small>disposable spoon + napkin · ${potCount} × €0.20</small>`;
+      const right = document.createElement("span");
+      right.textContent = "+" + money(cutleryLine);
+      li.append(left, right);
+      summaryLines.appendChild(li);
+    }
+
     summaryTotal.textContent = money(total);
 
     /* Cap banner (below the flavours): shown whenever the order has hit the
@@ -881,6 +917,7 @@ if (orderForm) {
         : (slotInputs.find((r) => r.checked) || {}).value || "daytime",
       name: contactName(),
       phone: contactPhone(),
+      cutlery: cutleryOn(),
     };
     setCheckoutError("");
     setBusy(true);
@@ -976,6 +1013,8 @@ if (orderForm) {
       try { sessionStorage.removeItem("tl_order_v1"); } catch (e) {}
       setText("tyOrderId", data.orderId ? "#" + data.orderId : "—");
       setText("tyItems", data.items || "—");
+      const tyCutRow = document.getElementById("tyCutleryRow");
+      if (tyCutRow && data.cutlery) tyCutRow.hidden = false;
       setText(
         "tyTotal",
         data.total != null ? "€" + Number(data.total).toFixed(2) : "—"
