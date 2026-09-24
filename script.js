@@ -543,7 +543,7 @@ if (orderForm) {
   const SLOT_HINT_DEFAULT =
     "We’ll send the exact meeting point in your confirmation, right after payment.";
   const SLOT_HINT_TOASTER =
-    "Your tiramisù will be ready to be collected waiting for you in the fridge in the Local at the office.";
+    "Your tiramisù will be ready to be collected waiting for you in the fridge in the mini kitchen on the third floor.";
   function applyToaster() {
     const on = isToaster();
 
@@ -577,7 +577,7 @@ if (orderForm) {
           note.id = "toasterNote";
           note.className = "hint toaster-note";
           note.textContent =
-            "🧊 The tiramisù will be in the Local fridge waiting for you to be collected.";
+            "🧊 The tiramisù will be in the fridge in the mini kitchen on the third floor waiting for you to be collected.";
           field.appendChild(note);
         }
         note.hidden = !on;
@@ -1104,7 +1104,7 @@ if (orderForm) {
         const tyNote = document.getElementById("tyNote");
         if (tyNote)
           tyNote.innerHTML =
-            "🧊 It’ll be waiting for you in the fridge in the Local at the office — ready whenever you are on the day. 🤎";
+            "🧊 It’ll be waiting for you in the fridge in the mini kitchen on the third floor — ready whenever you are on the day. 🤎";
       }
       if (data.name)
         setText(
