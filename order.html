@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=117" />
+  <link rel="stylesheet" href="styles.css?v=118" />
 </head>
 <body>
 
@@ -72,11 +72,16 @@
         <fieldset>
           <legend>Choose your tiramisu</legend>
 
-          <div class="product" data-name="Classic" data-price="6.5">
+          <div class="product" data-name="Classic" data-id-single="classic" data-id-large="classic_l" data-price-single="6.5" data-price-large="26">
             <img class="p-thumb" src="images/classic.jpg" alt="" loading="lazy" />
-            <div>
+            <div class="p-mid">
               <div class="p-name">Classic</div>
-              <div class="p-price">€6.50</div>
+              <div class="p-price"><span data-price>€6.50</span></div>
+              <div class="p-serves" data-serves>Single portion - 230ml</div>
+              <div class="size-seg" role="group" aria-label="Classic size">
+                <button type="button" data-size="single" class="on">230ml</button>
+                <button type="button" data-size="large">1l</button>
+              </div>
             </div>
             <div class="qty" data-qty>
               <button type="button" data-step="-1" aria-label="Decrease Classic">−</button>
@@ -85,11 +90,16 @@
             </div>
           </div>
 
-          <div class="product" data-name="Pistachio" data-price="7.5">
+          <div class="product" data-name="Pistachio" data-id-single="pistachio" data-id-large="pistachio_l" data-price-single="7.5" data-price-large="30">
             <img class="p-thumb" src="images/pistachio.jpg" alt="" loading="lazy" />
-            <div>
+            <div class="p-mid">
               <div class="p-name">Pistachio</div>
-              <div class="p-price">€7.50</div>
+              <div class="p-price"><span data-price>€7.50</span></div>
+              <div class="p-serves" data-serves>Single portion - 230ml</div>
+              <div class="size-seg" role="group" aria-label="Pistachio size">
+                <button type="button" data-size="single" class="on">230ml</button>
+                <button type="button" data-size="large">1l</button>
+              </div>
             </div>
             <div class="qty" data-qty>
               <button type="button" data-step="-1" aria-label="Decrease Pistachio">−</button>
@@ -98,11 +108,16 @@
             </div>
           </div>
 
-          <div class="product" data-name="Biscoff" data-price="7.5">
+          <div class="product" data-name="Biscoff" data-id-single="biscoff" data-id-large="biscoff_l" data-price-single="7.5" data-price-large="30">
             <img class="p-thumb" src="images/biscoff.jpg" alt="" loading="lazy" />
-            <div>
+            <div class="p-mid">
               <div class="p-name">Biscoff</div>
-              <div class="p-price">€7.50</div>
+              <div class="p-price"><span data-price>€7.50</span></div>
+              <div class="p-serves" data-serves>Single portion - 230ml</div>
+              <div class="size-seg" role="group" aria-label="Biscoff size">
+                <button type="button" data-size="single" class="on">230ml</button>
+                <button type="button" data-size="large">1l</button>
+              </div>
             </div>
             <div class="qty" data-qty>
               <button type="button" data-step="-1" aria-label="Decrease Biscoff">−</button>
@@ -111,11 +126,16 @@
             </div>
           </div>
 
-          <div class="product" data-name="Nutella" data-price="7.5">
+          <div class="product" data-name="Nutella" data-id-single="nutella" data-id-large="nutella_l" data-price-single="7.5" data-price-large="30">
             <img class="p-thumb" src="images/nutella.jpg" alt="" loading="lazy" />
-            <div>
+            <div class="p-mid">
               <div class="p-name">Nutella</div>
-              <div class="p-price">€7.50</div>
+              <div class="p-price"><span data-price>€7.50</span></div>
+              <div class="p-serves" data-serves>Single portion - 230ml</div>
+              <div class="size-seg" role="group" aria-label="Nutella size">
+                <button type="button" data-size="single" class="on">230ml</button>
+                <button type="button" data-size="large">1l</button>
+              </div>
             </div>
             <div class="qty" data-qty>
               <button type="button" data-step="-1" aria-label="Decrease Nutella">−</button>
@@ -305,6 +325,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=117"></script>
+  <script src="script.js?v=118"></script>
 </body>
 </html>

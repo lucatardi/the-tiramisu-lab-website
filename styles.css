@@ -781,6 +781,19 @@ textarea { resize: vertical; min-height: 90px; }
 .product .p-name { font-weight: 800; color: var(--espresso); }
 .product .p-desc { font-size: 0.85rem; color: var(--muted); }
 .product .p-price { font-weight: 700; color: var(--caramel-dk); }
+.product .p-serves { font-size: 0.78rem; color: var(--muted); margin-top: 0.05rem; }
+/* Per-flavour size toggle: 230 ml (single) ⇄ 1 L (serves 5). */
+.size-seg {
+  display: inline-flex; margin-top: 0.4rem;
+  border: 1.5px solid var(--line); border-radius: 999px;
+  background: var(--white); overflow: hidden;
+}
+.size-seg button {
+  border: 0; background: transparent; cursor: pointer;
+  font: inherit; font-size: 0.78rem; font-weight: 700; color: var(--muted);
+  padding: 0.28rem 0.7rem; line-height: 1;
+}
+.size-seg button.on { background: var(--caramel); color: var(--espresso); }
 .qty {
   display: inline-flex;
   align-items: center;

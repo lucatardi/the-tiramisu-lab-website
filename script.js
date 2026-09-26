@@ -84,11 +84,47 @@ const orderForm = document.getElementById("orderForm");
 if (orderForm) {
   const money = (n) => CURRENCY + n.toFixed(2);
 
-  const products = Array.from(document.querySelectorAll(".product")).map((el) => ({
-    name: el.dataset.name,
-    price: parseFloat(el.dataset.price),
-    input: el.querySelector('input[type="number"]'),
-  }));
+  /* Two sizes per flavour, chosen by the card's toggle. 230 ml = 1 portion,
+     1 L = 4 (drives capacity + recipe). The 1 L pot costs 4× and comes with
+     5 cutlery sets. Size lives on the card's data-size ("single" | "large"). */
+  const LARGE_PORTIONS = 4;
+  const CUTLERY_SETS_LARGE = 5;
+  const SERVES = {
+    single: "Single portion - 230ml",
+    large: "Serves 5 people - 1l",
+  };
+  const products = Array.from(document.querySelectorAll(".product")).map((el) => {
+    el.dataset.size = "single";
+    return {
+      el,
+      name: el.dataset.name,
+      idSingle: el.dataset.idSingle,
+      idLarge: el.dataset.idLarge,
+      priceSingle: parseFloat(el.dataset.priceSingle),
+      priceLarge: parseFloat(el.dataset.priceLarge),
+      input: el.querySelector('input[type="number"]'),
+    };
+  });
+  const prodLarge = (p) => p.el.dataset.size === "large";
+  const prodPrice = (p) => (prodLarge(p) ? p.priceLarge : p.priceSingle);
+  const prodPortions = (p) => (prodLarge(p) ? LARGE_PORTIONS : 1);
+  const prodId = (p) => (prodLarge(p) ? p.idLarge : p.idSingle);
+  const prodName = (p) => (prodLarge(p) ? p.name + " 1L" : p.name);
+  const prodSets = (p) => (prodLarge(p) ? CUTLERY_SETS_LARGE : 1);
+  const qtyOf = (p) => parseInt(p.input.value, 10) || 0;
+  /* Set a flavour's size and sync its toggle + shown price/descriptor. */
+  const applySize = (p, size) => {
+    p.el.dataset.size = size === "large" ? "large" : "single";
+    const seg = p.el.querySelector(".size-seg");
+    if (seg)
+      seg.querySelectorAll("button").forEach((b) =>
+        b.classList.toggle("on", b.dataset.size === p.el.dataset.size)
+      );
+    const priceEl = p.el.querySelector("[data-price]");
+    if (priceEl) priceEl.textContent = money(prodPrice(p));
+    const servesEl = p.el.querySelector("[data-serves]");
+    if (servesEl) servesEl.textContent = SERVES[p.el.dataset.size];
+  };
 
   const summaryLines = document.getElementById("summaryLines");
   const summaryTotal = document.getElementById("summaryTotal");
@@ -110,8 +146,10 @@ if (orderForm) {
     Biscoff: "Biscoff crumb",
     Nutella: "crushed hazelnut",
   };
+  /* Gift box: singles only (a 1 L pot won't fit the window box), and a whole
+     order of exactly 5/6/12 single pots. */
   const giftBoxEligible = () =>
-    GIFT_BOX_SIZES.indexOf(cartQty()) !== -1 && !isToaster();
+    !cartHasLarge() && GIFT_BOX_SIZES.indexOf(cartSingles()) !== -1 && !isToaster();
   const giftBoxOn = () => !!(giftBoxBox && giftBoxBox.checked && giftBoxEligible());
   /* Cutlery is off when a gift box is on (the box already includes it). */
   const cutleryOn = () =>
@@ -129,15 +167,25 @@ if (orderForm) {
      day's remaining or the per-order max). Drives the cap explanation. */
   let blockedAdd = false;
 
-  /* Most pots we'll take in one order — bigger jobs go through WhatsApp. */
+  /* Most we'll take in one order, in portion-equivalents (a 1 L pot = 4) —
+     bigger jobs go through WhatsApp. */
   const MAX_ORDER = 20;
-  /* Pots currently in the cart, optionally ignoring one input (the one
-     being edited), so we can work out how much room is left. */
+  /* Physical pots in the cart (optionally ignoring one input being edited). */
   const cartQty = (except) =>
+    products.reduce((s, p) => s + (p.input === except ? 0 : qtyOf(p)), 0);
+  /* Portion-equivalents — a 1 L pot counts as 4. Capacity + the per-order cap
+     are measured in PE, so a large pot eats four of the day's slots. */
+  const cartUnits = (except) =>
     products.reduce(
-      (s, p) => s + (p.input === except ? 0 : parseInt(p.input.value, 10) || 0),
+      (s, p) => s + (p.input === except ? 0 : qtyOf(p) * prodPortions(p)),
       0
     );
+  const cartSingles = () =>
+    products.reduce((s, p) => s + (prodLarge(p) ? 0 : qtyOf(p)), 0);
+  const cartHasLarge = () => products.some((p) => prodLarge(p) && qtyOf(p) > 0);
+  /* Cutlery sets across the cart — 1 per single pot, 5 per 1 L pot. */
+  const cartCutlerySets = () =>
+    products.reduce((s, p) => s + qtyOf(p) * prodSets(p), 0);
 
   /* ---- Collection: weekdays only, LEAD_DAYS notice, location depends on slot ----
      Mobile date/time pickers ignore min/max, so we validate on change too. */
@@ -223,19 +271,20 @@ if (orderForm) {
     if (left != null && left < MAX_ORDER) return { limit: left, reason: "day" };
     return { limit: MAX_ORDER, reason: "max" };
   }
-  /* Trim the cart down so it never exceeds `limit` (used when the day changes
-     to one with less room). Reduces from the last flavour upward. */
+  /* Trim the cart (in PE) so it never exceeds `limit` (used when the day changes
+     to one with less room). Reduces from the last flavour upward; each large pot
+     removed frees four PE. */
   function clampCart() {
-    let over = cartQty() - orderLimit().limit;
+    let over = cartUnits() - orderLimit().limit;
     if (over <= 0) return false;
     for (let i = products.length - 1; i >= 0 && over > 0; i--) {
-      const inp = products[i].input;
-      const v = parseInt(inp.value, 10) || 0;
-      const cut = Math.min(v, over);
-      if (cut) {
-        inp.value = v - cut;
-        over -= cut;
-      }
+      const p = products[i];
+      const v = qtyOf(p);
+      if (!v) continue;
+      const per = prodPortions(p);
+      const cut = Math.min(v, Math.ceil(over / per));
+      p.input.value = v - cut;
+      over -= cut * per;
     }
     return true;
   }
@@ -350,7 +399,7 @@ if (orderForm) {
   function fillDates() {
     if (!dateInput || !dateList) return;
     const keep = dateInput.value;
-    const need = cartQty();
+    const need = cartUnits(); // portion-equivalents the cart needs to fit
 
     const mondayOf = (d) => {
       const x = new Date(d);
@@ -483,9 +532,7 @@ if (orderForm) {
       const show = need > 0 && anyTight;
       cartNote.hidden = !show;
       if (show)
-        cartNote.innerHTML = `You’ve picked <strong>${need} pot${
-          need === 1 ? "" : "s"
-        }</strong> — days that can’t fit are greyed out.`;
+        cartNote.innerHTML = `Some days can’t fit your order — they’re greyed out. Pick another day, or trim the order.`;
     }
 
     if (soldOutNotice) soldOutNotice.hidden = openIsos.length > 0;
@@ -624,14 +671,17 @@ if (orderForm) {
   function saveState() {
     try {
       const qty = {};
+      const sizes = {};
       products.forEach((p) => {
         const v = parseInt(p.input.value, 10) || 0;
         if (v) qty[p.name] = v;
+        if (prodLarge(p)) sizes[p.name] = "large";
       });
       sessionStorage.setItem(
         ORDER_STATE_KEY,
         JSON.stringify({
           qty,
+          sizes,
           slot: (slotInputs.find((r) => r.checked) || {}).value || "",
           date: dateInput ? dateInput.value : "",
           time: selectedTime(),
@@ -654,6 +704,7 @@ if (orderForm) {
       return null;
     }
     if (!s) return null;
+    if (s.sizes) products.forEach((p) => { if (s.sizes[p.name]) applySize(p, s.sizes[p.name]); });
     if (s.qty) products.forEach((p) => { if (s.qty[p.name]) p.input.value = s.qty[p.name]; });
     if (s.slot) {
       const r = slotInputs.find((x) => x.value === s.slot);
@@ -778,17 +829,21 @@ if (orderForm) {
     return okDate && okTime && contactOk();
   };
 
-  /* Quantity steppers */
+  /* Quantity steppers. Room is measured in PE, so one more of a flavour is only
+     addable when its portions (1 for a single, 4 for a 1 L) fit what's left. */
   document.querySelectorAll("[data-qty]").forEach((qty) => {
     const input = qty.querySelector("input");
+    const prod = products.find((pr) => pr.input === input);
+    const maxAddable = () => {
+      const roomPE = orderLimit().limit - cartUnits(input);
+      return Math.max(0, Math.floor(roomPE / (prod ? prodPortions(prod) : 1)));
+    };
     qty.querySelectorAll("button").forEach((btn) => {
       btn.addEventListener("click", () => {
         const step = parseInt(btn.dataset.step, 10);
         const cur = parseInt(input.value, 10) || 0;
-        const room = orderLimit().limit - cartQty(input); // room left for this flavour
-        const next = Math.max(0, Math.min(room, cur + step));
-        /* Only flag a hit when they actually tried to add and couldn't — so
-           landing exactly on the day's remaining count stays quiet. */
+        const next = Math.max(0, Math.min(maxAddable(), cur + step));
+        /* Only flag a hit when they actually tried to add and couldn't. */
         blockedAdd = step > 0 && next === cur;
         input.value = next;
         recalc();
@@ -797,18 +852,39 @@ if (orderForm) {
     input.addEventListener("input", () => {
       let v = parseInt(input.value, 10);
       if (isNaN(v) || v < 0) v = 0;
-      const room = orderLimit().limit - cartQty(input); // room left for this flavour
-      if (v > room) v = room;
+      const cap = maxAddable();
+      if (v > cap) v = cap;
       input.value = v;
       recalc();
+    });
+  });
+
+  /* Per-flavour size toggle: 230 ml single ⇄ 1 L (serves 5). Switching updates
+     the shown price + descriptor and re-totals; a switch to 1 L may overflow the
+     day/order limit, so clamp afterwards. */
+  products.forEach((p) => {
+    const seg = p.el.querySelector(".size-seg");
+    if (!seg) return;
+    seg.querySelectorAll("button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applySize(p, btn.dataset.size);
+        clampCart();
+        recalc();
+      });
     });
   });
 
   function currentItems() {
     return products
       .map((p) => {
-        const qty = parseInt(p.input.value, 10) || 0;
-        return { name: p.name, qty, line: qty * p.price };
+        const qty = qtyOf(p);
+        return {
+          id: prodId(p),
+          name: prodName(p),
+          large: prodLarge(p),
+          qty,
+          line: qty * prodPrice(p),
+        };
       })
       .filter((i) => i.qty > 0);
   }
@@ -836,19 +912,19 @@ if (orderForm) {
     }
 
     let total = items.reduce((s, i) => s + i.line, 0);
-    const potCount = cartQty();
+    const usedPE = cartUnits();
     const toaster = isToaster();
 
-    /* ---- Gift box: whole-order upgrade, only at 5/6/12 pots ---- */
-    const boxElig = GIFT_BOX_SIZES.indexOf(potCount) !== -1 && !toaster;
+    /* ---- Gift box: singles-only whole-order upgrade at 5/6/12 pots ---- */
+    const boxElig = giftBoxEligible();
     if (giftBoxOpt) {
       giftBoxOpt.hidden = toaster; // not offered for fridge orders
       giftBoxOpt.classList.toggle("off", !boxElig);
       if (giftBoxBox) giftBoxBox.disabled = !boxElig;
-      /* An uncheck when it no longer fits (e.g. the count dropped below 5). */
+      /* An uncheck when it no longer qualifies (count changed, or a 1 L added). */
       if (!boxElig && giftBoxBox && giftBoxBox.checked) giftBoxBox.checked = false;
-      /* Show the "5, 6 or 12" nudge only once there are pots but the wrong count. */
-      if (giftBoxLock) giftBoxLock.hidden = boxElig || potCount === 0;
+      /* Show the "5, 6 or 12" nudge only once there are pots but they don't qualify. */
+      if (giftBoxLock) giftBoxLock.hidden = boxElig || cartQty() === 0;
       giftBoxOpt.classList.toggle("on", !!(giftBoxBox && giftBoxBox.checked && boxElig));
     }
     const boxOn = !!(giftBoxBox && giftBoxBox.checked && boxElig);
@@ -859,18 +935,21 @@ if (orderForm) {
       cutleryOpt.classList.toggle("on", !!(cutleryBox && cutleryBox.checked));
     }
 
-    /* Cutlery line — one spoon + napkin per pot (skipped when a box is on). */
-    if (cutleryOn() && potCount > 0) {
-      const cutleryLine = potCount * CUTLERY_EUR;
-      total += cutleryLine;
-      const li = document.createElement("li");
-      li.className = "cutlery-line";
-      const left = document.createElement("span");
-      left.innerHTML = `Cutlery <small>disposable spoon + napkin · ${potCount} × €0.20</small>`;
-      const right = document.createElement("span");
-      right.textContent = "+" + money(cutleryLine);
-      li.append(left, right);
-      summaryLines.appendChild(li);
+    /* Cutlery line — 1 set per single pot, 5 per 1 L (skipped when a box is on). */
+    if (cutleryOn()) {
+      const sets = cartCutlerySets();
+      if (sets > 0) {
+        const cutleryLine = sets * CUTLERY_EUR;
+        total += cutleryLine;
+        const li = document.createElement("li");
+        li.className = "cutlery-line";
+        const left = document.createElement("span");
+        left.innerHTML = `Cutlery <small>disposable spoon + napkin · ${sets} × €0.20</small>`;
+        const right = document.createElement("span");
+        right.textContent = "+" + money(cutleryLine);
+        li.append(left, right);
+        summaryLines.appendChild(li);
+      }
     }
 
     /* Gift box line — flat €7, with the topping kit listed from the flavours. */
@@ -895,31 +974,30 @@ if (orderForm) {
        limit for what you can still add — the selected day's remaining pots, or
        our per-order max. Cleared as soon as the order drops below it. */
     const { limit, reason } = orderLimit();
-    const n = cartQty();
-    const showCap = n > 0 && n >= limit;
+    const showCap = cartQty() > 0 && usedPE >= limit;
     const capMsg = !showCap
       ? ""
       : reason === "day"
-      ? `You’ve picked ${n} pot${n === 1 ? "" : "s"} — that’s all we have left for ${prettyDate(
+      ? `That’s all we can fit for ${prettyDate(
           selectedISO()
         )}. Pick another day for more.`
-      : `You’ve picked ${MAX_ORDER} pots — that’s the most we take per order. For a bigger order, just <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`;
+      : `That’s the most we can take per order. For a bigger order, just <a href="https://wa.me/353899525318" target="_blank" rel="noopener">message us on WhatsApp</a>.`;
     if (flavourCap) {
       flavourCap.hidden = !showCap;
       if (showCap) flavourCap.innerHTML = capMsg;
     }
 
     /* Grey out the steppers at their edges: − when a flavour is at 0, and +
-       once the whole order has reached the limit (the day's pots or the max). */
-    const atLimit = cartQty() >= limit;
+       when one more of THAT flavour won't fit the remaining PE (a 1 L needs 4). */
+    const freePE = limit - usedPE;
     products.forEach((p) => {
       const box = p.input.closest("[data-qty]");
       if (!box) return;
-      const v = parseInt(p.input.value, 10) || 0;
+      const v = qtyOf(p);
       const minus = box.querySelector('[data-step="-1"]');
       const plus = box.querySelector('[data-step="1"]');
       if (minus) minus.disabled = v <= 0;
-      if (plus) plus.disabled = atLimit;
+      if (plus) plus.disabled = freePE < prodPortions(p);
     });
 
     /* Keep the date picker in sync: days that can't fit the current cart get
@@ -971,7 +1049,7 @@ if (orderForm) {
   async function startCheckout(items) {
     const data = new FormData(orderForm);
     const payload = {
-      items: items.map((i) => ({ id: i.name.toLowerCase(), qty: i.qty })),
+      items: items.map((i) => ({ id: i.id, qty: i.qty })),
       date: data.get("date"),
       dateLabel: prettyDate(data.get("date")),
       time: isToaster() ? "Local fridge" : selectedTimeLabel(),
@@ -1019,8 +1097,8 @@ if (orderForm) {
       alert("Please add at least one tiramisu to your order.");
       return;
     }
-    if (cartQty() > MAX_ORDER) {
-      alert(`We can take up to ${MAX_ORDER} pots per order. For a bigger order, message us on WhatsApp.`);
+    if (cartUnits() > MAX_ORDER) {
+      alert("That's a big order — for something this size, message us on WhatsApp and we'll sort it.");
       return;
     }
     const okCollection = orderForm.validateCollection ? orderForm.validateCollection() : true;
