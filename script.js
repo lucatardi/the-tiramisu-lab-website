@@ -146,10 +146,21 @@ if (orderForm) {
     Biscoff: "Biscoff crumb",
     Nutella: "crushed hazelnut",
   };
-  /* Gift box: singles only (a 1 L pot won't fit the window box), and a whole
-     order of exactly 5/6/12 single pots. */
+  /* Gift box: evening collection only (boxes can't be carried into the Office),
+     singles only (a 1 L pot won't fit the window box), and a whole order of
+     exactly 5/6/12 single pots. */
   const giftBoxEligible = () =>
-    !cartHasLarge() && GIFT_BOX_SIZES.indexOf(cartSingles()) !== -1 && !isToaster();
+    !usesOffice() &&
+    !cartHasLarge() &&
+    GIFT_BOX_SIZES.indexOf(cartSingles()) !== -1 &&
+    !isToaster();
+  /* Why the gift box isn't available right now — shown on the greyed card. */
+  const giftBoxLockMsg = () =>
+    usesOffice()
+      ? "Gift boxes are for evening collection in Clongriffin only."
+      : cartHasLarge()
+      ? "Gift boxes hold the 230ml pots only."
+      : "Gift boxes come in 5, 6 or 12 — adjust your order to add one.";
   const giftBoxOn = () => !!(giftBoxBox && giftBoxBox.checked && giftBoxEligible());
   /* Cutlery is off when a gift box is on (the box already includes it). */
   const cutleryOn = () =>
@@ -1000,8 +1011,11 @@ if (orderForm) {
       if (giftBoxBox) giftBoxBox.disabled = !boxElig;
       /* An uncheck when it no longer qualifies (count changed, or a 1 L added). */
       if (!boxElig && giftBoxBox && giftBoxBox.checked) giftBoxBox.checked = false;
-      /* Show the "5, 6 or 12" nudge only once there are pots but they don't qualify. */
-      if (giftBoxLock) giftBoxLock.hidden = boxElig || cartQty() === 0;
+      /* Show why it's unavailable only once there are pots but they don't qualify. */
+      if (giftBoxLock) {
+        giftBoxLock.hidden = boxElig || cartQty() === 0;
+        if (!giftBoxLock.hidden) giftBoxLock.textContent = giftBoxLockMsg();
+      }
       giftBoxOpt.classList.toggle("on", !!(giftBoxBox && giftBoxBox.checked && boxElig));
     }
     const boxOn = !!(giftBoxBox && giftBoxBox.checked && boxElig);
