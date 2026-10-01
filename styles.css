@@ -727,6 +727,12 @@ textarea { resize: vertical; min-height: 90px; }
   pointer-events: none;
   filter: grayscale(1);
 }
+/* Office (daytime) pick-up full on the chosen day — greyed, evening still open. */
+.slot--full {
+  opacity: 0.45;
+  pointer-events: none;
+  filter: grayscale(1);
+}
 .toaster-note {
   margin-top: 0.6rem;
   font-weight: 600;

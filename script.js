@@ -261,14 +261,40 @@ if (orderForm) {
     if (dailyCap == null) return null; // capacity unknown → don't restrict
     return capLeft[iso] != null ? capLeft[iso] : dailyCap;
   };
+  /* Office (daytime, St Stephen's Green — fridge orders too) room per day, from
+     the Worker. A limit inside the day's: e.g. 10 office + 10 evening. */
+  let officeCap = null;
+  const officeLeftMap = {};
+  const officeLeft = (iso) => {
+    if (officeCap == null) return null;
+    return officeLeftMap[iso] != null ? officeLeftMap[iso] : officeCap;
+  };
+  /* Does this order go to the Office? (daytime chosen, or a fridge order.) */
+  const usesOffice = () =>
+    isToaster() || ((slotInputs.find((r) => r.checked) || {}).value || "daytime") === "daytime";
+  /* Room on a day for this order: the day's room, and for Office pickups the
+     office room too — whichever is smaller. */
+  const roomOn = (iso, office) => {
+    const day = potsLeft(iso);
+    const off = office ? officeLeft(iso) : null;
+    if (day == null) return off;
+    if (off == null) return day;
+    return Math.min(day, off);
+  };
 
-  /* How many pots this order can still add: the smaller of our per-order cap
-     and whatever's left on the chosen day. With no day picked yet (or no
-     capacity data), only the per-order cap applies. */
+  /* How many portions this order can still add: the smaller of our per-order
+     cap and whatever's left on the chosen day (for its pick-up point). With no
+     day picked yet (or no capacity data), only the per-order cap applies. */
   const selectedISO = () => (dateInput && dateInput.value) || "";
   function orderLimit() {
-    const left = selectedISO() ? potsLeft(selectedISO()) : null;
-    if (left != null && left < MAX_ORDER) return { limit: left, reason: "day" };
+    const iso = selectedISO();
+    const office = usesOffice();
+    const left = iso ? roomOn(iso, office) : null;
+    if (left != null && left < MAX_ORDER) {
+      const day = potsLeft(iso);
+      const officeBound = office && officeLeft(iso) === left && (day == null || left < day);
+      return { limit: left, reason: officeBound ? "office" : "day" };
+    }
     return { limit: MAX_ORDER, reason: "max" };
   }
   /* Trim the cart (in PE) so it never exceeds `limit` (used when the day changes
@@ -330,6 +356,8 @@ if (orderForm) {
       (data.full || []).forEach((iso) => soldOutDates.add(iso));
       if (typeof data.cap === "number") dailyCap = data.cap;
       if (data.left) Object.assign(capLeft, data.left);
+      if (typeof data.officeCap === "number") officeCap = data.officeCap;
+      if (data.officeLeft) Object.assign(officeLeftMap, data.officeLeft);
     } catch (e) {
       /* fail open */
     }
@@ -415,7 +443,10 @@ if (orderForm) {
       const iso = localISO(d);
       const past = iso < earliestISO;
       const manual = isSoldOut(iso) || isClosedDay(d);
-      const left = past || manual ? null : potsLeft(iso);
+      /* Fridge orders can only go to the Office, so their room is capped by the
+         office limit too. Everyone else can still pick evening, so a day stays
+         open while the day itself has room (the Office option greys out instead). */
+      const left = past || manual ? null : roomOn(iso, isToaster());
       const full = left != null && left <= 0;
       const tooSmall = left != null && left > 0 && need > 0 && need > left;
       let state = "open";
@@ -661,6 +692,43 @@ if (orderForm) {
     updateSubmitState();
   }
 
+  /* ---- Office limit ----
+     On the chosen day, grey out the Office (daytime) option when it can't fit
+     this order (or is already full), and move the order to evening if it was on
+     daytime. Fridge orders are locked to the Office — for them the date picker
+     already hides days without office room, so nothing to do here. */
+  const officeNotice = document.getElementById("officeNotice");
+  function syncOffice() {
+    const day = slotInputs.find((r) => r.value === "daytime");
+    const eve = slotInputs.find((r) => r.value === "evening");
+    if (!day || !eve || isToaster()) {
+      if (officeNotice) officeNotice.hidden = true;
+      const card = day && day.closest(".slot");
+      if (card) card.classList.remove("slot--full");
+      return;
+    }
+    const iso = selectedISO();
+    const off = iso ? officeLeft(iso) : null;
+    const full = off != null && off < Math.max(1, cartUnits());
+    day.disabled = full;
+    const card = day.closest(".slot");
+    if (card) card.classList.toggle("slot--full", full);
+    if (full && day.checked) {
+      eve.checked = true;
+      syncSlot();
+    }
+    if (officeNotice) {
+      officeNotice.hidden = !full;
+      if (full)
+        officeNotice.textContent =
+          off > 0
+            ? `🏢 Office pickups only have room for ${off} more portion${
+                off === 1 ? "" : "s"
+              } on ${prettyDate(iso)} — evening collection in Clongriffin is still available.`
+            : `🏢 Office pickups are full on ${prettyDate(iso)} — evening collection in Clongriffin is still available.`;
+    }
+  }
+
   /* ---- Keep the selection across a Stripe round-trip ----
      We hand off to Stripe with a full-page navigation, so hitting "back"
      reloads this page fresh and would otherwise wipe the order. Stash the
@@ -764,7 +832,8 @@ if (orderForm) {
       if (!card || card.disabled || !card.dataset.iso) return;
       dateInput.value = card.dataset.iso;
       validateDate(true);
-      clampCart(); // trim the order if the new day has less room
+      syncOffice(); // if the Office can't fit it that day, switch to evening first…
+      clampCart(); // …then trim the order only if the day itself has less room
       recalc(); // re-renders the cards (selection) + summary
     });
   }
@@ -777,7 +846,14 @@ if (orderForm) {
       updateSubmitState();
     });
   }
-  slotInputs.forEach((r) => r.addEventListener("change", syncSlot));
+  /* The pick-up point changes how much fits (Office has its own limit), so
+     re-total after switching. */
+  slotInputs.forEach((r) =>
+    r.addEventListener("change", () => {
+      syncSlot();
+      recalc();
+    })
+  );
   syncSlot();
   applyToaster(); // in case a "Toaster" name was restored
 
@@ -891,6 +967,7 @@ if (orderForm) {
 
   /* Recalculate the summary panel */
   function recalc() {
+    syncOffice(); // may move the order to evening if the Office can't fit it
     const items = currentItems();
     summaryLines.innerHTML = "";
 
@@ -977,6 +1054,14 @@ if (orderForm) {
     const showCap = cartQty() > 0 && usedPE >= limit;
     const capMsg = !showCap
       ? ""
+      : reason === "office"
+      ? isToaster()
+        ? `That’s all the office room left on ${prettyDate(
+            selectedISO()
+          )}. Pick another day for more.`
+        : `That’s all the room left for office pickups on ${prettyDate(
+            selectedISO()
+          )} — choose evening collection in Clongriffin for more.`
       : reason === "day"
       ? `That’s all we can fit for ${prettyDate(
           selectedISO()
@@ -1070,9 +1155,17 @@ if (orderForm) {
         body: JSON.stringify(payload),
       });
       if (res.status === 409) {
+        let err = {};
+        try {
+          err = await res.json();
+        } catch (e) {}
         setBusy(false);
-        setCheckoutError("Sorry — that date just sold out. Please pick another.");
-        loadFullDates().then(fillDates);
+        setCheckoutError(
+          err.error === "office_full"
+            ? "Sorry — office pickups just filled up for that date. Please choose evening collection or another day."
+            : "Sorry — that date just sold out. Please pick another."
+        );
+        loadFullDates().then(recalc);
         return;
       }
       if (!res.ok) throw new Error("checkout failed");
