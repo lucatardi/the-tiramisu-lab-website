@@ -733,10 +733,10 @@ if (orderForm) {
       if (full)
         officeNotice.textContent =
           off > 0
-            ? `🏢 Office pickups only have room for ${off} more portion${
+            ? `📍 St Stephen’s Green pick-ups only have room for ${off} more portion${
                 off === 1 ? "" : "s"
               } on ${prettyDate(iso)} — evening collection in Clongriffin is still available.`
-            : `🏢 Office pickups are full on ${prettyDate(iso)} — evening collection in Clongriffin is still available.`;
+            : `📍 St Stephen’s Green pick-ups are full on ${prettyDate(iso)} — evening collection in Clongriffin is still available.`;
     }
   }
 
@@ -1070,10 +1070,10 @@ if (orderForm) {
       ? ""
       : reason === "office"
       ? isToaster()
-        ? `That’s all the office room left on ${prettyDate(
+        ? `That’s all we can fit on ${prettyDate(
             selectedISO()
           )}. Pick another day for more.`
-        : `That’s all the room left for office pickups on ${prettyDate(
+        : `That’s all the room left for St Stephen’s Green pick-ups on ${prettyDate(
             selectedISO()
           )} — choose evening collection in Clongriffin for more.`
       : reason === "day"
@@ -1176,7 +1176,7 @@ if (orderForm) {
         setBusy(false);
         setCheckoutError(
           err.error === "office_full"
-            ? "Sorry — office pickups just filled up for that date. Please choose evening collection or another day."
+            ? "Sorry — St Stephen’s Green pick-ups just filled up for that date. Please choose evening collection in Clongriffin or another day."
             : "Sorry — that date just sold out. Please pick another."
         );
         loadFullDates().then(recalc);
