@@ -1266,6 +1266,13 @@ if (orderForm) {
       if (tyCutRow && data.cutlery) tyCutRow.hidden = false;
       const tyBoxRow = document.getElementById("tyGiftBoxRow");
       if (tyBoxRow && data.giftBox) tyBoxRow.hidden = false;
+      /* Loyalty card progress / a free-Classic code just earned (when the order
+         has already been logged by the time this page loads). */
+      const tyLoyalty = document.getElementById("tyLoyalty");
+      if (tyLoyalty && Array.isArray(data.loyalty) && data.loyalty.length) {
+        tyLoyalty.textContent = data.loyalty.join(" ");
+        tyLoyalty.hidden = false;
+      }
       setText(
         "tyTotal",
         data.total != null ? "€" + Number(data.total).toFixed(2) : "—"
