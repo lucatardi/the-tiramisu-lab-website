@@ -3,29 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gift a tiramisù — The Tiramisu Lab</title>
+  <title>How we use your details — The Tiramisu Lab</title>
   <link rel="icon" href="favicon.svg?v=3" type="image/svg+xml" />
-  <meta name="description" content="Give the gift of tiramisù. Choose an amount, add a message, and we’ll email you a Tiramisu Lab gift card to pass on." />
+  <meta name="description" content="What The Tiramisu Lab keeps when you order, why, for how long, and how to have it removed." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="styles.css?v=124" />
-  <style>
-    .gift-layout{max-width:560px;margin:0 auto}
-    .cust{position:relative}
-    .cust .cur{position:absolute;left:1rem;top:50%;transform:translateY(-50%);font-weight:700;color:var(--muted);font-size:1.15rem}
-    .cust input{width:100%;box-sizing:border-box;padding:.9rem 1rem .9rem 2.15rem;border:1.5px solid var(--line);border-radius:12px;background:var(--white);font:inherit;font-size:1.2rem;font-weight:700;color:var(--cocoa)}
-    .cust input:focus{border-color:var(--caramel);outline:none;box-shadow:0 0 0 3px rgba(201,138,75,.18)}
-    .example{margin:.9rem 0 0;padding:1rem 1.1rem;background:var(--mascarpone);border-radius:12px;text-align:center}
-    .ex-pots{font-size:1.5rem;letter-spacing:.25rem;margin:0 0 .35rem;min-height:1.5rem}
-    .ex-main{margin:0;font-size:1.05rem;color:var(--cocoa);font-weight:600}
-    .ex-main b{color:var(--caramel-dk)}
-    .ex-sub{margin:.35rem 0 0;font-size:.85rem;color:var(--muted)}
-    textarea.gift-msg{width:100%;box-sizing:border-box;min-height:76px;resize:vertical;font:inherit;padding:.7rem .8rem;border:1.5px solid var(--line);border-radius:10px;background:var(--white);color:var(--cocoa)}
-    textarea.gift-msg:focus{border-color:var(--caramel);outline:none;box-shadow:0 0 0 3px rgba(201,138,75,.18)}
-  </style>
 </head>
 <body>
 
@@ -53,7 +39,7 @@
         <li><a href="index.html#reviews">Reviews</a></li>
         <li><a href="numbers.html">Numbers</a></li>
         <li><a href="order.html">Order</a></li>
-        <li><a class="active" href="gift-card.html">Gift card</a></li>
+        <li><a href="gift-card.html">Gift card</a></li>
         <li class="nav-ig-item"><a class="nav-ig" href="https://instagram.com/the_tiramisulab" target="_blank" rel="noopener" aria-label="The Tiramisu Lab on Instagram">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect x="2" y="2" width="20" height="20" rx="5.5"/>
@@ -71,46 +57,57 @@
   <!-- ============ Page hero ============ -->
   <section class="page-hero">
     <div class="wrap">
-      <p class="eyebrow">Treat someone 🤎</p>
-      <h1>Gift a tiramisù</h1>
-      <p>Choose an amount, add a little message, and we’ll email you a gift card to pass on.</p>
+      <p class="eyebrow">Privacy</p>
+      <h1>How we use your details</h1>
+      <p>The short version: we keep what we need to make your order and run your tiramisù card, and you can ask us to remove it.</p>
     </div>
   </section>
 
-  <!-- ============ Gift form ============ -->
+  <!-- ============ Privacy ============ -->
   <div class="wrap">
-    <form id="giftForm" class="gift-layout" novalidate>
+    <article class="legal">
 
-      <fieldset>
-        <legend>How much would you like to gift?</legend>
-        <div class="cust">
-          <span class="cur">€</span>
-          <input type="text" id="giftAmount" value="20" inputmode="decimal" autocomplete="off" aria-label="Gift amount in euro" />
-        </div>
-        <div class="example" id="giftExample" aria-live="polite"></div>
-      </fieldset>
+      <h2>What we keep</h2>
+      <ul>
+        <li><strong>Your name and WhatsApp number</strong>, which you type on the order form.</li>
+        <li><strong>Your email address</strong>, which you enter on the payment page.</li>
+        <li><strong>Your orders</strong>: what you ordered, when and where you collected, and what you paid.</li>
+        <li><strong>Your tiramisù card</strong>: how many tiramisù you’ve bought, and any free-tiramisù codes you’ve earned.</li>
+        <li><strong>Gift cards</strong>: the buyer’s email, plus the names and message written on the card.</li>
+      </ul>
+      <p>We never see or store your card details. Payments are handled entirely by Stripe.</p>
 
-      <fieldset>
-        <legend>Make it personal <span style="font-weight:400;color:var(--muted)">(optional)</span></legend>
-        <div class="field">
-          <label for="giftRecipient">Who’s it for?</label>
-          <input type="text" id="giftRecipient" autocomplete="off" placeholder="e.g. Silenzio" maxlength="60" />
-        </div>
-        <div class="field">
-          <label for="giftFrom">From</label>
-          <input type="text" id="giftFrom" autocomplete="name" placeholder="e.g. Bruno" maxlength="60" />
-        </div>
-        <div class="field">
-          <label for="giftMessage">A little message</label>
-          <textarea id="giftMessage" class="gift-msg" maxlength="300" placeholder="Life’s short — eat the tiramisù 🤎"></textarea>
-        </div>
-      </fieldset>
+      <h2>Why we keep it</h2>
+      <ul>
+        <li>To make your order and hand it to the right person.</li>
+        <li>To send your confirmation, collection details and a reminder on the day, by email and WhatsApp.</li>
+        <li>To run the tiramisù card, so that every 10th tiramisù is free.</li>
+        <li>To keep the sales records a business is required to keep.</li>
+      </ul>
+      <p>We don’t sell your details or pass them to anyone for advertising.</p>
 
-      <button type="submit" class="btn btn-primary" id="giftSubmit" style="width:100%">Buy gift 🎁</button>
-      <p class="field-error" id="giftError" hidden></p>
-      <p class="note">You’ll get the gift card by email to forward on. It’s redeemed at checkout and spendable on any flavours. One-time use.</p>
+      <h2>Who helps us handle it</h2>
+      <ul>
+        <li><strong>Stripe</strong> takes the payment.</li>
+        <li><strong>Cloudflare</strong> hosts the ordering system and stores the order records.</li>
+        <li><strong>Resend</strong> delivers our emails.</li>
+        <li><strong>WhatsApp</strong> carries the messages we send you.</li>
+      </ul>
+      <p>This site has no advertising or tracking cookies. To save you retyping, your browser remembers your name and number on your own device; clearing this site’s data in your browser removes them. Our fonts are loaded from Google Fonts.</p>
 
-    </form>
+      <h2>How long we keep it</h2>
+      <ul>
+        <li><strong>Your tiramisù card and order history</strong>: for as long as you’re a customer, or until you ask us to remove them.</li>
+        <li><strong>The details of an upcoming order</strong>: until a week after you collect it.</li>
+        <li><strong>Payment and sales records</strong>: for as long as tax law requires, which in Ireland is six years.</li>
+      </ul>
+
+      <h2>Your choices</h2>
+      <p>You can ask us at any time for a copy of what we hold about you, to correct it, or to remove it. Removing it deletes your tiramisù card and order history, including any tiramisù you’ve collected towards a free one. We keep only the payment records the law requires.</p>
+      <p>To ask, message us on <a href="https://wa.me/353899525318" target="_blank" rel="noopener">WhatsApp</a> or email <a href="mailto:info@thetiramisulab.ie">info@thetiramisulab.ie</a>. If you’re not happy with how we’ve handled your details, you can also contact the <a href="https://www.dataprotection.ie" target="_blank" rel="noopener">Data Protection Commission</a>.</p>
+
+      <p class="legal-foot">The Tiramisu Lab, Dublin · Last updated 6 October 2026</p>
+    </article>
   </div>
 
   <!-- ============ Footer ============ -->
@@ -162,77 +159,6 @@
     </div>
   </footer>
 
-  <script>
-    (function () {
-      var API = "https://tiramisu-lab.thetiramisulab.workers.dev";
-      var CLASSIC = 6.5, PREMIUM = 7.5, MIN = 6.5, MAX = 130;
-      var amt = document.getElementById("giftAmount");
-      var ex = document.getElementById("giftExample");
-      var submit = document.getElementById("giftSubmit");
-      var form = document.getElementById("giftForm");
-      var errEl = document.getElementById("giftError");
-
-      function value() {
-        var v = parseFloat((amt.value || "").replace(",", ".").replace(/[^0-9.]/g, ""));
-        return isNaN(v) ? 0 : v;
-      }
-      function money(n) { return "€" + n.toFixed(2).replace(/\.00$/, ""); }
-      function refresh() {
-        var v = value();
-        if (v < MIN || v > MAX) {
-          ex.innerHTML =
-            '<p class="ex-main">' +
-            (v > MAX ? "The most we can gift is " + money(MAX) + "." : v > 0 ? "Minimum gift is " + money(MIN) + " (one tiramisù)." : "Enter an amount to gift.") +
-            "</p>";
-          return;
-        }
-        var n = Math.floor(v / CLASSIC);
-        var pots = "";
-        for (var i = 0; i < Math.min(n, 8); i++) pots += "🍮 ";
-        if (n > 8) pots += "…";
-        ex.innerHTML =
-          '<div class="ex-pots">' + pots.trim() + "</div>" +
-          '<p class="ex-main">That’s about <b>' + n + " tiramisù" + (n === 1 ? "" : "s") + "</b> to enjoy</p>" +
-          '<p class="ex-sub">' + n + " Classic (" + money(n * CLASSIC) + ") — or mix in Pistachio · Biscoff · Nutella at €7.50 each</p>";
-      }
-      amt.addEventListener("input", function () { setErr(""); refresh(); });
-      refresh();
-
-      var setErr = function (m) { errEl.hidden = !m; errEl.textContent = m || ""; };
-      var busy = function (b) { submit.disabled = b; submit.textContent = b ? "Redirecting…" : "Buy gift 🎁"; };
-
-      form.addEventListener("submit", function (e) {
-        e.preventDefault();
-        var v = value();
-        if (v < MIN || v > MAX) {
-          setErr(v > MAX ? "Please choose an amount up to " + money(MAX) + "." : "Please choose at least " + money(MIN) + ".");
-          amt.focus();
-          return;
-        }
-        setErr("");
-        busy(true);
-        fetch(API + "/gift-checkout", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            amount: v,
-            recipient: document.getElementById("giftRecipient").value.trim(),
-            from: document.getElementById("giftFrom").value.trim(),
-            message: document.getElementById("giftMessage").value.trim(),
-          }),
-        })
-          .then(function (r) { if (!r.ok) throw new Error("checkout"); return r.json(); })
-          .then(function (d) { if (!d.url) throw new Error("no url"); window.location = d.url; })
-          .catch(function () { busy(false); setErr("Sorry — something went wrong starting checkout. Please try again."); });
-      });
-
-      var t = document.querySelector(".nav-toggle"), links = document.querySelector(".nav-links");
-      if (t && links) t.addEventListener("click", function () {
-        var open = links.classList.toggle("open");
-        t.setAttribute("aria-expanded", open ? "true" : "false");
-      });
-      var y = document.getElementById("year"); if (y) y.textContent = new Date().getFullYear();
-    })();
-  </script>
+  <script src="script.js?v=124"></script>
 </body>
 </html>

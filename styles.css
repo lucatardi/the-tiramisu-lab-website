@@ -553,6 +553,17 @@ section { padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
   color: rgba(244,233,216,0.6);
   display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.6rem;
 }
+.footer-bottom a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.footer-bottom a:hover { color: var(--cream); }
+
+/* Plain-text pages (privacy) */
+.legal { max-width: 68ch; margin: 0 auto 4rem; }
+.legal h2 { font-family: var(--serif); font-size: 1.45rem; color: var(--espresso); margin: 2.2rem 0 0.7rem; }
+.legal p, .legal li { color: var(--cocoa); line-height: 1.65; }
+.legal ul { padding-left: 1.2rem; margin: 0 0 1rem; }
+.legal li { margin-bottom: 0.4rem; }
+.legal a { color: var(--caramel-dk); }
+.legal-foot { margin-top: 2.4rem; font-size: 0.85rem; color: var(--muted); }
 
 /* ===========================================================
    Order page
@@ -1102,3 +1113,5 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
   padding: 1.1rem; color: var(--muted); font-weight: 800; text-transform: uppercase;
   letter-spacing: 0.06em; font-size: 0.8rem;
 }
+
+.when-foot a { color: var(--caramel-dk); }
