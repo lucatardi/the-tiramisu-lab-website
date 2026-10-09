@@ -28,6 +28,11 @@
 
 * { box-sizing: border-box; }
 
+/* `hidden` must always win. Any class that sets `display` (.btn, flex rows,
+   cards…) otherwise overrides the browser's own [hidden] rule and the element
+   shows anyway — e.g. a Maps button with no link on fridge orders. */
+[hidden] { display: none !important; }
+
 html { scroll-behavior: smooth; }
 
 body {
