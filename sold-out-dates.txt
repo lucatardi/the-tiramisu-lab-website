@@ -1,28 +1,9 @@
 # ─────────────────────────────────────────────────────────────
-#  The Tiramisu Lab — SOLD OUT DATES
+#  The Tiramisu Lab — SOLD OUT DATES (no longer used)
 # ─────────────────────────────────────────────────────────────
-#  Add a line here to mark a date as SOLD OUT in the "Order &
-#  collect" picker (holidays, or days you're already full).
-#  Sold-out dates still show in the list, but greyed out and
-#  labelled "Sold out" so they can't be picked.
-#
-#  How to add a date:
-#    • One day:   14-08-2026
-#    • A range:   10-08-2026..20-08-2026   (both days included)
-#
-#  Dates are DAY-MONTH-YEAR. Put each on its own line.
-#  Lines starting with #  are ignored (like these notes).
-#  Blank lines are fine. A typo is simply skipped.
-#
-#  After you save/commit this file on GitHub, the website
-#  updates within about a minute.
-#
-#  Examples — delete the # to switch one on:
-# 14-08-2026
-# 10-08-2026..20-08-2026
+#  Sold-out days are now managed from the dashboard:
+#    Dashboard → Sold-out days
+#  Leave this file empty. Dates added here would still be
+#  greyed out on the order form, but could NOT be reopened
+#  from the dashboard.
 # ─────────────────────────────────────────────────────────────
-
-03-08-2026
-10-08-2026..14-08-2026
-29-07-2026
-27-10-2026
