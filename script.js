@@ -174,7 +174,7 @@ if (orderForm) {
 
   /* Most we'll take in one order, in portion-equivalents (a 1 L pot = 4) —
      bigger jobs go through WhatsApp. */
-  const MAX_ORDER = 20;
+  const MAX_ORDER = 25;
   /* Physical pots in the cart (optionally ignoring one input being edited). */
   const cartQty = (except) =>
     products.reduce((s, p) => s + (p.input === except ? 0 : qtyOf(p)), 0);
