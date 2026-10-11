@@ -17,22 +17,16 @@ const CHECKOUT_API = "https://tiramisu-lab.thetiramisulab.workers.dev";
    Kept here for later — the QR review banner is currently removed. */
 const REVIEW_URL = "https://g.page/r/CcqYdAoQnAT0EAE/review";
 
-/* Minimum days' notice for collection.
-   After the evening cut-off it's too late to start prep for a collection
-   two days out, so the earliest jumps from 2 days to 3 days ahead.
-   The cut-off is measured in Dublin time, not the visitor's own timezone. */
-const ORDER_CUTOFF_HOUR = 18; // 6pm Dublin time
+/* Days' notice for collection. A day closes at midnight (Dublin time) three
+   days ahead: on any date, that day and the next two can't be booked. So at
+   midnight on Sunday night, Monday to Wednesday close. The server enforces the
+   same rule and sends the first open date with the capacity data. */
+const LEAD_DAYS = 3;
 
-/* Current hour (0–23) in Dublin, whatever timezone the visitor is in. */
-function dublinHour() {
-  const h = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Europe/Dublin",
-    hour: "numeric",
-    hourCycle: "h23",
-  }).format(new Date());
-  return parseInt(h, 10) || 0;
+/* Today's date in Dublin as yyyy-mm-dd, whatever timezone the visitor is in. */
+function dublinTodayISO() {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Dublin" }).format(new Date());
 }
-const LEAD_DAYS = dublinHour() >= ORDER_CUTOFF_HOUR ? 3 : 2;
 
 /* ---- Footer year (all pages) ---- */
 const yearEl = document.getElementById("year");
@@ -234,12 +228,16 @@ if (orderForm) {
   const CLOSED_WEEKDAYS = new Set([1]);
   const isClosedDay = (d) => CLOSED_WEEKDAYS.has(d.getDay());
 
-  /* Earliest = LEAD_DAYS away, rolled forward past the weekend */
-  const earliest = new Date();
-  earliest.setHours(0, 0, 0, 0);
+  /* Earliest = LEAD_DAYS after today's Dublin date, rolled forward past the
+     weekend. Replaced by the server's own figure once the capacity data loads. */
+  const rollPastWeekend = (iso) => {
+    const d = new Date(iso + "T00:00:00");
+    while (isWeekend(d)) d.setDate(d.getDate() + 1);
+    return localISO(d);
+  };
+  const earliest = new Date(dublinTodayISO() + "T00:00:00");
   earliest.setDate(earliest.getDate() + LEAD_DAYS);
-  while (isWeekend(earliest)) earliest.setDate(earliest.getDate() + 1);
-  const earliestISO = localISO(earliest);
+  let earliestISO = rollPastWeekend(localISO(earliest));
 
   /* No fixed booking window — the picker simply shows the next DATE_CARDS
      available dates, however far out they fall. This is only a safety cap so
@@ -367,6 +365,7 @@ if (orderForm) {
       (data.full || []).forEach((iso) => soldOutDates.add(iso));
       if (typeof data.cap === "number") dailyCap = data.cap;
       if (data.left) Object.assign(capLeft, data.left);
+      if (/^\d{4}-\d{2}-\d{2}$/.test(data.earliest || "")) earliestISO = rollPastWeekend(data.earliest);
       if (typeof data.officeCap === "number") officeCap = data.officeCap;
       if (data.officeLeft) Object.assign(officeLeftMap, data.officeLeft);
     } catch (e) {
@@ -1177,6 +1176,8 @@ if (orderForm) {
         setCheckoutError(
           err.error === "office_full"
             ? "Sorry — St Stephen’s Green pick-ups just filled up for that date. Please choose evening collection in Clongriffin or another day."
+            : err.error === "too_late"
+            ? "Sorry — orders for that date have just closed. Please pick a later day."
             : "Sorry — that date just sold out. Please pick another."
         );
         loadFullDates().then(recalc);
