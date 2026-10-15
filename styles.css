@@ -772,6 +772,7 @@ textarea { resize: vertical; min-height: 90px; }
   transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
 .time-opt input { position: absolute; opacity: 0; width: 0; height: 0; }
+.time-opt--off { opacity: 0.4; text-decoration: line-through; pointer-events: none; background: transparent; }
 .time-opt:hover { border-color: var(--caramel); }
 .time-opt.on {
   border-color: var(--caramel);

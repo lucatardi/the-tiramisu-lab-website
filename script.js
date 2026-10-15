@@ -274,6 +274,9 @@ if (orderForm) {
      the Worker. A limit inside the day's: e.g. 10 office + 10 evening. */
   let officeCap = null;
   const officeLeftMap = {};
+  /* Collection slots closed on particular days (by time label, e.g. "6pm"). */
+  const closedSlots = {};
+  const isSlotClosed = (iso, label) => !!iso && (closedSlots[iso] || []).indexOf(label) !== -1;
   const officeLeft = (iso) => {
     if (officeCap == null) return null;
     return officeLeftMap[iso] != null ? officeLeftMap[iso] : officeCap;
@@ -368,6 +371,7 @@ if (orderForm) {
       if (/^\d{4}-\d{2}-\d{2}$/.test(data.earliest || "")) earliestISO = rollPastWeekend(data.earliest);
       if (typeof data.officeCap === "number") officeCap = data.officeCap;
       if (data.officeLeft) Object.assign(officeLeftMap, data.officeLeft);
+      if (data.closedSlots) Object.assign(closedSlots, data.closedSlots);
     } catch (e) {
       /* fail open */
     }
@@ -583,14 +587,17 @@ if (orderForm) {
   function fillTimes() {
     if (!timeToggle) return;
     const keep = selectedTime();
-    const times = slotTimes(currentSlot());
+    const iso = selectedISO();
+    /* Times closed for the chosen day are shown but can't be picked. */
+    const times = slotTimes(currentSlot()).map((t) => Object.assign(t, { shut: isSlotClosed(iso, t.label) }));
+    const openTimes = times.filter((t) => !t.shut);
     /* If there's only one time, pre-select it so there's nothing to tap */
-    const preselect = times.length === 1 ? times[0].value : keep;
+    const preselect = openTimes.length === 1 ? openTimes[0].value : openTimes.some((t) => t.value === keep) ? keep : "";
     timeToggle.innerHTML = times
       .map((t) => {
-        const on = t.value === preselect;
-        return `<label class="time-opt${on ? " on" : ""}">
-            <input type="radio" name="time" value="${t.value}" data-label="${t.label}"${on ? " checked" : ""} />
+        const on = !t.shut && t.value === preselect;
+        return `<label class="time-opt${on ? " on" : ""}${t.shut ? " time-opt--off" : ""}">
+            <input type="radio" name="time" value="${t.value}" data-label="${t.label}"${on ? " checked" : ""}${t.shut ? " disabled" : ""} />
             <span>${t.label}</span>
           </label>`;
       })
@@ -720,16 +727,36 @@ if (orderForm) {
     const iso = selectedISO();
     const off = iso ? officeLeft(iso) : null;
     const full = off != null && off < Math.max(1, cartUnits());
-    day.disabled = full;
+    /* A pick-up point is unavailable when every one of its times is closed that day. */
+    const allShut = (slot) => !!iso && slotTimes(slot).every((t) => isSlotClosed(iso, t.label));
+    const dayShut = allShut(SLOTS.daytime);
+    const eveShut = allShut(SLOTS.evening);
+    const dayOff = (full || dayShut) && !eveShut;
+    const eveOff = eveShut && !dayShut;
+    day.disabled = dayOff;
+    eve.disabled = eveOff;
     const card = day.closest(".slot");
-    if (card) card.classList.toggle("slot--full", full);
-    if (full && day.checked) {
+    if (card) card.classList.toggle("slot--full", dayOff);
+    const eveCard = eve.closest(".slot");
+    if (eveCard) eveCard.classList.toggle("slot--full", eveOff);
+    if (dayOff && day.checked) {
       eve.checked = true;
       syncSlot();
+    } else if (eveOff && eve.checked) {
+      day.checked = true;
+      syncSlot();
+    } else {
+      fillTimes(); // the chosen day may have closed times
+      validateTime();
+      updateSubmitState();
     }
     if (officeNotice) {
-      officeNotice.hidden = !full;
-      if (full)
+      officeNotice.hidden = !(dayOff || eveOff);
+      if (eveOff)
+        officeNotice.textContent = `📍 Evening collection in Clongriffin isn’t available on ${prettyDate(iso)} — St Stephen’s Green pick-up is.`;
+      else if (dayShut)
+        officeNotice.textContent = `📍 St Stephen’s Green pick-up isn’t available on ${prettyDate(iso)} — evening collection in Clongriffin is.`;
+      else if (full)
         officeNotice.textContent =
           off > 0
             ? `📍 St Stephen’s Green pick-ups only have room for ${off} more portion${
@@ -1178,6 +1205,8 @@ if (orderForm) {
             ? "Sorry — St Stephen’s Green pick-ups just filled up for that date. Please choose evening collection in Clongriffin or another day."
             : err.error === "too_late"
             ? "Sorry — orders for that date have just closed. Please pick a later day."
+            : err.error === "slot_closed"
+            ? "Sorry — that collection time isn’t available that day. Please pick another time."
             : "Sorry — that date just sold out. Please pick another."
         );
         loadFullDates().then(recalc);
