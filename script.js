@@ -751,12 +751,9 @@ if (orderForm) {
       updateSubmitState();
     }
     if (officeNotice) {
-      officeNotice.hidden = !(dayOff || eveOff);
-      if (eveOff)
-        officeNotice.textContent = `📍 Evening collection in Clongriffin isn’t available on ${prettyDate(iso)} — St Stephen’s Green pick-up is.`;
-      else if (dayShut)
-        officeNotice.textContent = `📍 St Stephen’s Green pick-up isn’t available on ${prettyDate(iso)} — evening collection in Clongriffin is.`;
-      else if (full)
+      /* Closed slots just grey out quietly; only the Office limit gets a note. */
+      officeNotice.hidden = !(full && !dayShut && !eveShut);
+      if (!officeNotice.hidden)
         officeNotice.textContent =
           off > 0
             ? `📍 St Stephen’s Green pick-ups only have room for ${off} more portion${
