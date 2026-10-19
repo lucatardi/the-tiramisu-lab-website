@@ -298,15 +298,10 @@ if (orderForm) {
      cap and whatever's left on the chosen day (for its pick-up point). With no
      day picked yet (or no capacity data), only the per-order cap applies. */
   const selectedISO = () => (dateInput && dateInput.value) || "";
+  /* Flavours come first: the order is only capped by the per-order max. The
+     date picker then greys the days that can't fit it (and drops a chosen day
+     that no longer fits), instead of the day blocking the + buttons. */
   function orderLimit() {
-    const iso = selectedISO();
-    const office = usesOffice();
-    const left = iso ? roomOn(iso, office) : null;
-    if (left != null && left < MAX_ORDER) {
-      const day = potsLeft(iso);
-      const officeBound = office && officeLeft(iso) === left && (day == null || left < day);
-      return { limit: left, reason: officeBound ? "office" : "day" };
-    }
     return { limit: MAX_ORDER, reason: "max" };
   }
   /* Trim the cart (in PE) so it never exceeds `limit` (used when the day changes
@@ -332,8 +327,8 @@ if (orderForm) {
       const res = await fetch("sold-out-dates.txt?t=" + Date.now(), { cache: "no-store" });
       if (!res.ok) return;
       const text = await res.text();
-      soldOutDates.clear();
-      soldOutRanges.length = 0;
+      /* No clear() here: this runs alongside loadFullDates, which adds the
+         full days to the same set — clearing could wipe them if it lands first. */
       /* File uses DD-MM-YYYY; convert to YYYY-MM-DD internally for comparison */
       const toISO = (dmy) => {
         const [d, m, y] = dmy.split("-");
@@ -865,8 +860,7 @@ if (orderForm) {
       if (!card || card.disabled || !card.dataset.iso) return;
       dateInput.value = card.dataset.iso;
       validateDate(true);
-      syncOffice(); // if the Office can't fit it that day, switch to evening first…
-      clampCart(); // …then trim the order only if the day itself has less room
+      syncOffice(); // if the Office can't fit it that day, switch to evening
       recalc(); // re-renders the cards (selection) + summary
     });
   }
