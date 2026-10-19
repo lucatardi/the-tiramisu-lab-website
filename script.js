@@ -932,6 +932,9 @@ if (orderForm) {
     applyToaster(); // re-apply after resetting the hint (handles a restored Toaster name)
   }
 
+  /* For the page layout script: is this time closed on that day? */
+  orderForm.slotClosed = (iso, label) => isSlotClosed(iso, label);
+
   orderForm.validateCollection = () => {
     const okDate = validateDate(true);
     const okTime = validateTime(true);
@@ -1291,7 +1294,13 @@ if (orderForm) {
       const prev = card.querySelector(".slot-prev");
       if (on && timeField.parentNode !== card.querySelector(".slot-times"))
         card.querySelector(".slot-times").appendChild(timeField);
-      if (prev) prev.hidden = on;
+      if (prev) {
+        prev.hidden = on;
+        /* Grey the preview times that are closed on the chosen day. */
+        prev.querySelectorAll("[data-t]").forEach((t) =>
+          t.classList.toggle("off", !!(form.slotClosed && form.slotClosed(dateInput.value, t.dataset.t)))
+        );
+      }
     });
   }
   slotCards.forEach((card) =>
@@ -1299,6 +1308,7 @@ if (orderForm) {
       const radio = card.querySelector('input[name="slot"]');
       if (radio.disabled || e.target.closest(".time-opt") || e.target.closest(".slot-head")) return;
       const t = e.target.closest("[data-t]");
+      if (t && t.classList.contains("off")) return;
       if (!radio.checked) {
         radio.checked = true;
         radio.dispatchEvent(new Event("change", { bubbles: true }));

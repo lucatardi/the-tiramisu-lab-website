@@ -1145,7 +1145,7 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
 .ol2 .p-pic { display: block; overflow: hidden; aspect-ratio: 4 / 3; background: #1a0d03; }
 .ol2 .p-thumb { width: 100%; height: 100%; border-radius: 0; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
 /* 1 L chosen: the pot "grows" */
-.ol2 .product[data-size="large"] .p-thumb { transform: scale(1.4); }
+.ol2 .product[data-size="large"] .p-thumb { transform: scale(1.68); }
 @media (prefers-reduced-motion: reduce) { .ol2 .p-thumb { transition: none; } }
 .ol2 .p-mid { padding: 0.7rem 0.8rem 0; }
 .ol2 .product .p-name { font-family: var(--serif); font-weight: 900; font-size: 1.2rem; line-height: 1.1; }
@@ -1186,6 +1186,7 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
 .ol2 .slot-times .field { margin: 0; }
 .ol2 .slot-prev { display: flex; gap: 0.4rem; }
 .ol2 .slot-prev[hidden] { display: none; }
+.ol2 .slot-prev span.off { opacity: 0.4; text-decoration: line-through; background: transparent; }
 .ol2 .slot-prev span { flex: 1; text-align: center; padding: 0.6rem 0.2rem; border-radius: 12px; background: var(--mascarpone); font-weight: 700; font-size: 0.9rem; color: var(--cocoa); }
 .ol2 .time-toggle { gap: 0.4rem; }
 .ol2 .time-opt { padding: 0.6rem 0.2rem; font-size: 0.9rem; }
