@@ -1178,9 +1178,17 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
 .ol2 .daychip.sel .wd, .ol2 .daychip.sel .num small, .ol2 .daychip.sel .st { color: var(--gold); }
 .ol2 .daychip.off { opacity: 0.4; box-shadow: none; }
 .ol2 .slot-options { grid-template-columns: 1fr 1fr; gap: 0.7rem; margin-bottom: 0.8rem; }
-.ol2 .slot { display: flex; justify-content: space-between; align-items: baseline; border: 2px solid transparent; border-radius: 16px; background: var(--white); box-shadow: 0 2px 8px rgba(58,39,27,0.07); padding: 0.9rem 1rem; }
+.ol2 .slot { display: block; border: 2px solid transparent; border-radius: 16px; background: var(--white); box-shadow: 0 2px 8px rgba(58,39,27,0.07); padding: 0.9rem 0.9rem 0.8rem; }
 .ol2 .slot--on, .ol2 .slot:focus-within { border-color: var(--espresso); box-shadow: 0 2px 8px rgba(58,39,27,0.07); background: var(--white); }
+.ol2 .slot-head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; cursor: pointer; }
 .ol2 .slot-where { margin: 0; font-size: 0.8rem; }
+.ol2 .slot-times { margin-top: 0.7rem; }
+.ol2 .slot-times .field { margin: 0; }
+.ol2 .slot-prev { display: flex; gap: 0.4rem; }
+.ol2 .slot-prev[hidden] { display: none; }
+.ol2 .slot-prev span { flex: 1; text-align: center; padding: 0.6rem 0.2rem; border-radius: 12px; background: var(--mascarpone); font-weight: 700; font-size: 0.9rem; color: var(--cocoa); }
+.ol2 .time-toggle { gap: 0.4rem; }
+.ol2 .time-opt { padding: 0.6rem 0.2rem; font-size: 0.9rem; }
 .ol2 .time-opt { border: 0; border-radius: 12px; background: var(--mascarpone); }
 .ol2 .time-opt.on { background: var(--espresso); color: var(--cream); box-shadow: none; }
 .ol2 .field { margin-bottom: 0.6rem; }
@@ -1269,9 +1277,7 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
   .ol2-step, .ol2-step fieldset { min-width: 0; max-width: 100%; }
   .ol2 .datelist { display: flex; flex-direction: row; overflow-x: auto; gap: 0.5rem; padding-bottom: 0.2rem; }
   .ol2 .daychip { flex: none; width: 64px; }
-  .ol2 .slot-options { grid-template-columns: 1fr 1fr; }
-  .ol2 .slot { flex-direction: column; align-items: flex-start; gap: 0.1rem; padding: 0.8rem 0.9rem; }
-  .ol2 .slot-name { font-size: 0.92rem; white-space: nowrap; }
+  .ol2 .slot-options { grid-template-columns: 1fr; }
   .ol2 .datelist { scrollbar-width: none; }
   .ol2 .datelist::-webkit-scrollbar { display: none; }
   .ol2-who { grid-template-columns: 1fr; }

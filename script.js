@@ -1280,6 +1280,39 @@ if (orderForm) {
   const cutIncl = document.getElementById("cutIncluded");
   const back = form.querySelector(".ol2-back");
   let step = 1;
+  const timeField = timeToggle ? timeToggle.closest(".field") : null;
+  const slotCards = Array.from(form.querySelectorAll(".slot-options .slot"));
+  /* The time buttons live inside the chosen place's card; the other card
+     shows its times as a preview (tapping one picks that place and time). */
+  function placeTimes() {
+    if (!timeField) return;
+    slotCards.forEach((card) => {
+      const on = card.querySelector('input[name="slot"]').checked;
+      const prev = card.querySelector(".slot-prev");
+      if (on && timeField.parentNode !== card.querySelector(".slot-times"))
+        card.querySelector(".slot-times").appendChild(timeField);
+      if (prev) prev.hidden = on;
+    });
+  }
+  slotCards.forEach((card) =>
+    card.addEventListener("click", (e) => {
+      const radio = card.querySelector('input[name="slot"]');
+      if (radio.disabled || e.target.closest(".time-opt") || e.target.closest(".slot-head")) return;
+      const t = e.target.closest("[data-t]");
+      if (!radio.checked) {
+        radio.checked = true;
+        radio.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      placeTimes();
+      if (t) {
+        const inp = timeToggle.querySelector(`input[data-label="${t.dataset.t}"]`);
+        if (inp && !inp.disabled) {
+          inp.checked = true;
+          inp.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      }
+    })
+  );
 
   const pots = () => qtyInputs.reduce((n, i) => n + (parseInt(i.value, 10) || 0), 0);
   const timeOff = () => !!(timeToggle && timeToggle.classList.contains("time-toggle--off"));
@@ -1301,6 +1334,7 @@ if (orderForm) {
   };
 
   function sync() {
+    placeTimes();
     const n = pots();
     form.querySelectorAll(".product").forEach((p) => {
       const v = parseInt(p.querySelector("input[type=number]").value, 10) || 0;

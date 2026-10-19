@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=134" />
+  <link rel="stylesheet" href="styles.css?v=135" />
 </head>
 <body>
 
@@ -157,20 +157,26 @@
               </div>
               <div class="ol2-place">
                 <div class="slot-options" role="radiogroup" aria-label="Collection point">
-                  <label class="slot">
-                    <input type="radio" name="slot" value="daytime" checked />
-                    <span class="slot-name">St Stephen’s Green</span>
-                    <span class="slot-where">D2</span>
-                  </label>
-                  <label class="slot">
-                    <input type="radio" name="slot" value="evening" />
-                    <span class="slot-name">Clongriffin</span>
-                    <span class="slot-where">D13</span>
-                  </label>
+                  <div class="slot">
+                    <label class="slot-head">
+                      <input type="radio" name="slot" value="daytime" checked />
+                      <span class="slot-name">St Stephen’s Green</span>
+                      <span class="slot-where">D2</span>
+                    </label>
+                    <div class="slot-times"><span class="slot-prev"><span data-t="9am">9am</span><span data-t="1:30pm">1:30pm</span><span data-t="6pm">6pm</span></span></div>
+                  </div>
+                  <div class="slot">
+                    <label class="slot-head">
+                      <input type="radio" name="slot" value="evening" />
+                      <span class="slot-name">Clongriffin</span>
+                      <span class="slot-where">D13</span>
+                    </label>
+                    <div class="slot-times"><span class="slot-prev"><span data-t="9pm">9pm</span><span data-t="9:30pm">9:30pm</span><span data-t="10pm">10pm</span></span></div>
+                  </div>
                 </div>
                 <p class="hint"></p>
                 <p class="field-notice" id="officeNotice" hidden></p>
-                <div class="field">
+                <div class="field ol2-times">
                   <div class="time-toggle" id="timeToggle" role="radiogroup" aria-label="Collection time"></div>
                 </div>
                 <p class="field-error" id="timeError" hidden></p>
@@ -327,6 +333,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=134"></script>
+  <script src="script.js?v=135"></script>
 </body>
 </html>
