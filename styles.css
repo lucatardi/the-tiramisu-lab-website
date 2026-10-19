@@ -1162,9 +1162,10 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
 /* 2 · dates + place/time */
 .ol2-ww { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.2rem; align-items: start; }
 .ol2-ww > * { min-width: 0; }
-.ol2 .datelist { gap: 0.8rem; }
-.ol2 .week-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
-.ol2 .week-days { grid-template-columns: repeat(2, 72px); gap: 0.5rem; }
+/* One plain set of date tiles: the script's week groups and headings are flattened. */
+.ol2 .datelist { display: grid; grid-template-columns: repeat(3, 72px); gap: 0.5rem; }
+.ol2 .week, .ol2 .week-days { display: contents; }
+.ol2 .week-head, .ol2 .week-empty { display: none; }
 .ol2 .daychip { border: 0; border-radius: 16px; background: var(--white); box-shadow: 0 2px 8px rgba(58,39,27,0.07); padding: 0.55rem 0.2rem; }
 .ol2 .daychip .num { font-family: var(--serif); font-weight: 900; font-size: 1.5rem; display: flex; flex-direction: column; align-items: center; line-height: 1.05; }
 .ol2 .daychip .num small { margin: 0; font-family: var(--sans); font-size: 0.7rem; }
@@ -1172,7 +1173,6 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
 .ol2 .daychip.sel { background: var(--espresso); color: var(--cream); }
 .ol2 .daychip.sel .wd, .ol2 .daychip.sel .num small, .ol2 .daychip.sel .st { color: var(--gold); }
 .ol2 .daychip.off { opacity: 0.4; box-shadow: none; }
-.ol2 .week-empty { border: 0; background: var(--white); border-radius: 16px; }
 .ol2 .slot-options { grid-template-columns: 1fr 1fr; gap: 0.7rem; margin-bottom: 0.8rem; }
 .ol2 .slot { display: flex; justify-content: space-between; align-items: baseline; border: 2px solid transparent; border-radius: 16px; background: var(--white); box-shadow: 0 2px 8px rgba(58,39,27,0.07); padding: 0.9rem 1rem; }
 .ol2 .slot--on, .ol2 .slot:focus-within { border-color: var(--espresso); box-shadow: 0 2px 8px rgba(58,39,27,0.07); background: var(--white); }
@@ -1263,10 +1263,8 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
   .ol2 .product .p-name { font-size: 1.1rem; }
   .ol2-ww { grid-template-columns: minmax(0, 1fr); gap: 0.9rem; }
   .ol2-step, .ol2-step fieldset { min-width: 0; max-width: 100%; }
-  .ol2 .datelist { flex-direction: row; overflow-x: auto; gap: 0.8rem; padding-bottom: 0.2rem; }
-  .ol2 .week { flex: none; }
-  .ol2 .week-days { grid-template-columns: repeat(4, 64px); }
-  .ol2 .week-empty { padding: 0.9rem 1.2rem; }
+  .ol2 .datelist { display: flex; flex-direction: row; overflow-x: auto; gap: 0.5rem; padding-bottom: 0.2rem; }
+  .ol2 .daychip { flex: none; width: 64px; }
   .ol2 .slot-options { grid-template-columns: 1fr 1fr; }
   .ol2 .slot { flex-direction: column; align-items: flex-start; gap: 0.1rem; padding: 0.8rem 0.9rem; }
   .ol2 .slot-name { font-size: 0.92rem; white-space: nowrap; }
