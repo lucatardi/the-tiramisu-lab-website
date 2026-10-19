@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=131" />
+  <link rel="stylesheet" href="styles.css?v=132" />
 </head>
 <body>
 
@@ -54,226 +54,227 @@
     </div>
   </header>
 
-  <!-- ============ Page hero ============ -->
-  <section class="page-hero">
-    <div class="wrap">
-      <p class="eyebrow">Order ahead · Two pick-up points</p>
-      <h1>Order &amp; collect</h1>
-      <p>Choose your flavours, pay securely online, and we’ll have your tiramisu made fresh for collection.</p>
-    </div>
-  </section>
-
-  <!-- ============ Order form ============ -->
+  <!-- ============ Order (3 steps on mobile, one screen on desktop) ============ -->
   <div class="wrap">
-    <form id="orderForm" class="order-layout" novalidate>
+    <form id="orderForm" class="ol2" data-step="1" novalidate>
 
-      <div class="order-form">
-        <!-- Flavours -->
-        <fieldset>
-          <legend>Choose your tiramisu</legend>
+      <div class="ol2-prog">
+        <button type="button" class="ol2-back" aria-label="Back">‹</button>
+        <span class="ol2-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      </div>
+      <h1 class="ol2-h1">Order &amp; collect</h1>
 
-          <div class="product" data-name="Classic" data-id-single="classic" data-id-large="classic_l" data-price-single="6.5" data-price-large="26">
-            <img class="p-thumb" src="images/classic.jpg" alt="" loading="lazy" />
-            <div class="p-mid">
-              <div class="p-name">Classic</div>
-              <div class="p-price"><span data-price>€6.50</span></div>
-              <div class="p-serves" data-serves>Single portion - 230ml</div>
-              <div class="size-seg" role="group" aria-label="Classic size">
-                <button type="button" data-size="single" class="on">230ml</button>
-                <button type="button" data-size="large">1l</button>
+      <div class="ol2-main">
+        <!-- 1 · Flavours -->
+        <section class="ol2-step" data-s="1">
+          <fieldset>
+            <legend><i>1</i>Pick your tiramisù</legend>
+            <div class="ol2-grid">
+            <div class="product" data-name="Classic" data-id-single="classic" data-id-large="classic_l" data-price-single="6.5" data-price-large="26">
+              <img class="p-thumb" src="images/classic.jpg" alt="" loading="lazy" />
+              <div class="p-mid">
+                <div class="p-name">Classic</div>
+                <div class="p-price"><span data-price>€6.50</span></div>
+                <div class="p-serves" data-serves></div>
+                <div class="size-seg" role="group" aria-label="Classic size">
+                  <button type="button" data-size="single" class="on">230 ml</button>
+                  <button type="button" data-size="large">1 L</button>
+                </div>
+              </div>
+              <div class="qty" data-qty>
+                <button type="button" data-step="-1" aria-label="Decrease Classic">−</button>
+                <input type="number" name="qty_classic" value="0" min="0" max="99" inputmode="numeric" readonly tabindex="-1" aria-label="Classic quantity" />
+                <button type="button" data-step="1" aria-label="Increase Classic">+</button>
               </div>
             </div>
-            <div class="qty" data-qty>
-              <button type="button" data-step="-1" aria-label="Decrease Classic">−</button>
-              <input type="number" name="qty_classic" value="0" min="0" max="99" inputmode="numeric" readonly tabindex="-1" aria-label="Classic quantity" />
-              <button type="button" data-step="1" aria-label="Increase Classic">+</button>
-            </div>
-          </div>
-
-          <div class="product" data-name="Pistachio" data-id-single="pistachio" data-id-large="pistachio_l" data-price-single="7.5" data-price-large="30">
-            <img class="p-thumb" src="images/pistachio.jpg" alt="" loading="lazy" />
-            <div class="p-mid">
-              <div class="p-name">Pistachio</div>
-              <div class="p-price"><span data-price>€7.50</span></div>
-              <div class="p-serves" data-serves>Single portion - 230ml</div>
-              <div class="size-seg" role="group" aria-label="Pistachio size">
-                <button type="button" data-size="single" class="on">230ml</button>
-                <button type="button" data-size="large">1l</button>
+            <div class="product" data-name="Pistachio" data-id-single="pistachio" data-id-large="pistachio_l" data-price-single="7.5" data-price-large="30">
+              <img class="p-thumb" src="images/pistachio.jpg" alt="" loading="lazy" />
+              <div class="p-mid">
+                <div class="p-name">Pistachio</div>
+                <div class="p-price"><span data-price>€7.50</span></div>
+                <div class="p-serves" data-serves></div>
+                <div class="size-seg" role="group" aria-label="Pistachio size">
+                  <button type="button" data-size="single" class="on">230 ml</button>
+                  <button type="button" data-size="large">1 L</button>
+                </div>
+              </div>
+              <div class="qty" data-qty>
+                <button type="button" data-step="-1" aria-label="Decrease Pistachio">−</button>
+                <input type="number" name="qty_pistachio" value="0" min="0" max="99" inputmode="numeric" readonly tabindex="-1" aria-label="Pistachio quantity" />
+                <button type="button" data-step="1" aria-label="Increase Pistachio">+</button>
               </div>
             </div>
-            <div class="qty" data-qty>
-              <button type="button" data-step="-1" aria-label="Decrease Pistachio">−</button>
-              <input type="number" name="qty_pistachio" value="0" min="0" max="99" inputmode="numeric" readonly tabindex="-1" aria-label="Pistachio quantity" />
-              <button type="button" data-step="1" aria-label="Increase Pistachio">+</button>
-            </div>
-          </div>
-
-          <div class="product" data-name="Biscoff" data-id-single="biscoff" data-id-large="biscoff_l" data-price-single="7.5" data-price-large="30">
-            <img class="p-thumb" src="images/biscoff.jpg" alt="" loading="lazy" />
-            <div class="p-mid">
-              <div class="p-name">Biscoff</div>
-              <div class="p-price"><span data-price>€7.50</span></div>
-              <div class="p-serves" data-serves>Single portion - 230ml</div>
-              <div class="size-seg" role="group" aria-label="Biscoff size">
-                <button type="button" data-size="single" class="on">230ml</button>
-                <button type="button" data-size="large">1l</button>
+            <div class="product" data-name="Biscoff" data-id-single="biscoff" data-id-large="biscoff_l" data-price-single="7.5" data-price-large="30">
+              <img class="p-thumb" src="images/biscoff.jpg" alt="" loading="lazy" />
+              <div class="p-mid">
+                <div class="p-name">Biscoff</div>
+                <div class="p-price"><span data-price>€7.50</span></div>
+                <div class="p-serves" data-serves></div>
+                <div class="size-seg" role="group" aria-label="Biscoff size">
+                  <button type="button" data-size="single" class="on">230 ml</button>
+                  <button type="button" data-size="large">1 L</button>
+                </div>
+              </div>
+              <div class="qty" data-qty>
+                <button type="button" data-step="-1" aria-label="Decrease Biscoff">−</button>
+                <input type="number" name="qty_biscoff" value="0" min="0" max="99" inputmode="numeric" readonly tabindex="-1" aria-label="Biscoff quantity" />
+                <button type="button" data-step="1" aria-label="Increase Biscoff">+</button>
               </div>
             </div>
-            <div class="qty" data-qty>
-              <button type="button" data-step="-1" aria-label="Decrease Biscoff">−</button>
-              <input type="number" name="qty_biscoff" value="0" min="0" max="99" inputmode="numeric" readonly tabindex="-1" aria-label="Biscoff quantity" />
-              <button type="button" data-step="1" aria-label="Increase Biscoff">+</button>
-            </div>
-          </div>
-
-          <div class="product" data-name="Nutella" data-id-single="nutella" data-id-large="nutella_l" data-price-single="7.5" data-price-large="30">
-            <img class="p-thumb" src="images/nutella.jpg" alt="" loading="lazy" />
-            <div class="p-mid">
-              <div class="p-name">Nutella</div>
-              <div class="p-price"><span data-price>€7.50</span></div>
-              <div class="p-serves" data-serves>Single portion - 230ml</div>
-              <div class="size-seg" role="group" aria-label="Nutella size">
-                <button type="button" data-size="single" class="on">230ml</button>
-                <button type="button" data-size="large">1l</button>
+            <div class="product" data-name="Nutella" data-id-single="nutella" data-id-large="nutella_l" data-price-single="7.5" data-price-large="30">
+              <img class="p-thumb" src="images/nutella.jpg" alt="" loading="lazy" />
+              <div class="p-mid">
+                <div class="p-name">Nutella</div>
+                <div class="p-price"><span data-price>€7.50</span></div>
+                <div class="p-serves" data-serves></div>
+                <div class="size-seg" role="group" aria-label="Nutella size">
+                  <button type="button" data-size="single" class="on">230 ml</button>
+                  <button type="button" data-size="large">1 L</button>
+                </div>
+              </div>
+              <div class="qty" data-qty>
+                <button type="button" data-step="-1" aria-label="Decrease Nutella">−</button>
+                <input type="number" name="qty_nutella" value="0" min="0" max="99" inputmode="numeric" readonly tabindex="-1" aria-label="Nutella quantity" />
+                <button type="button" data-step="1" aria-label="Increase Nutella">+</button>
               </div>
             </div>
-            <div class="qty" data-qty>
-              <button type="button" data-step="-1" aria-label="Decrease Nutella">−</button>
-              <input type="number" name="qty_nutella" value="0" min="0" max="99" inputmode="numeric" readonly tabindex="-1" aria-label="Nutella quantity" />
-              <button type="button" data-step="1" aria-label="Increase Nutella">+</button>
             </div>
-          </div>
+            <p class="cart-note" id="flavourCap" hidden></p>
+          </fieldset>
+        </section>
 
-          <p class="cart-note" id="flavourCap" hidden></p>
-
-          <label class="cutlery-opt" id="cutleryOpt">
-            <input type="checkbox" id="cutlery" name="cutlery" />
-            <span class="cutlery-txt">
-              <span class="cutlery-t">🍴 Add cutlery <span class="cutlery-hint">+€0.20 each</span></span>
-              <span class="cutlery-s">A disposable spoon and napkin with each tiramisù</span>
-            </span>
-          </label>
-
-          <label class="giftbox-opt" id="giftBoxOpt">
-            <input type="checkbox" id="giftBox" name="giftBox" />
-            <img class="giftbox-thumb" src="images/gift-box.png" alt="Gift box" width="60" height="60" loading="lazy" />
-            <span class="giftbox-txt">
-              <span class="giftbox-t">🎁 Make it a gift box <span class="giftbox-hint">+€7.00</span></span>
-              <span class="giftbox-s">Kraft window box with ribbon · cutlery + topping kit included</span>
-              <span class="giftbox-lock" id="giftBoxLock" hidden>Gift boxes come in 5, 6 or 12 — adjust your order to add one.</span>
-            </span>
-          </label>
-        </fieldset>
-
-        <!-- When -->
-        <fieldset>
-          <legend>When would you like it?</legend>
-
-          <p class="when-intro">We keep batches small so every pot is at its best. Made the evening before and collected Tuesday to Friday — lovely on the day, and the day after too.</p>
-          <p class="cart-note" id="cartNote" hidden></p>
-
-          <input type="hidden" id="date" name="date" value="" />
-          <div class="datelist" id="dateList" role="radiogroup" aria-label="Collection date"></div>
-
-          <p class="field-error" id="dateError" hidden></p>
-          <p class="field-notice" id="soldOutNotice" hidden>All our dates are sold out right now — please check back soon, or message us on Instagram.</p>
-        </fieldset>
-
-        <!-- Where -->
-        <fieldset>
-          <legend>Where should we meet?</legend>
-
-          <div class="slot-options" role="radiogroup" aria-label="Collection point">
-            <label class="slot">
-              <input type="radio" name="slot" value="daytime" checked />
-              <span class="slot-name">St Stephen’s Green · D2</span>
-              <span class="slot-where">Daytime</span>
-            </label>
-            <label class="slot">
-              <input type="radio" name="slot" value="evening" />
-              <span class="slot-name">Clongriffin · D13</span>
-              <span class="slot-where">Evening</span>
-            </label>
-          </div>
-          <p class="hint" style="margin-top:-0.6rem;margin-bottom:1.3rem">We’ll send the exact meeting point with your payment link.</p>
-          <p class="field-notice" id="officeNotice" hidden></p>
-
-          <div class="field">
-            <label>Pick-up time</label>
-            <div class="time-toggle" id="timeToggle" role="radiogroup" aria-label="Collection time"></div>
-          </div>
-          <p class="field-error" id="timeError" hidden></p>
-        </fieldset>
-
-        <!-- Who -->
-        <fieldset>
-          <legend>Who’s collecting?</legend>
-          <div class="field">
-            <label for="firstName">Name</label>
-            <input type="text" id="firstName" name="firstName" autocomplete="name" autocapitalize="words" placeholder="e.g. Silenzio Bruno" maxlength="60" />
-          </div>
-          <div class="field">
-            <label for="phone">WhatsApp number</label>
-            <div class="phone-group">
-              <select id="phoneCC" aria-label="Country code" autocomplete="tel-country-code">
-                <option value="+353" selected>🇮🇪 +353</option>
-                <option value="+44">🇬🇧 +44</option>
-                <option value="+1">🇺🇸 +1</option>
-                <option value="+61">🇦🇺 +61</option>
-                <option value="+43">🇦🇹 +43</option>
-                <option value="+32">🇧🇪 +32</option>
-                <option value="+55">🇧🇷 +55</option>
-                <option value="+1">🇨🇦 +1</option>
-                <option value="+86">🇨🇳 +86</option>
-                <option value="+420">🇨🇿 +420</option>
-                <option value="+45">🇩🇰 +45</option>
-                <option value="+358">🇫🇮 +358</option>
-                <option value="+33">🇫🇷 +33</option>
-                <option value="+49">🇩🇪 +49</option>
-                <option value="+30">🇬🇷 +30</option>
-                <option value="+36">🇭🇺 +36</option>
-                <option value="+91">🇮🇳 +91</option>
-                <option value="+39">🇮🇹 +39</option>
-                <option value="+371">🇱🇻 +371</option>
-                <option value="+370">🇱🇹 +370</option>
-                <option value="+52">🇲🇽 +52</option>
-                <option value="+31">🇳🇱 +31</option>
-                <option value="+64">🇳🇿 +64</option>
-                <option value="+234">🇳🇬 +234</option>
-                <option value="+47">🇳🇴 +47</option>
-                <option value="+48">🇵🇱 +48</option>
-                <option value="+351">🇵🇹 +351</option>
-                <option value="+40">🇷🇴 +40</option>
-                <option value="+34">🇪🇸 +34</option>
-                <option value="+46">🇸🇪 +46</option>
-                <option value="+41">🇨🇭 +41</option>
-                <option value="+90">🇹🇷 +90</option>
-                <option value="+380">🇺🇦 +380</option>
-                <option value="+971">🇦🇪 +971</option>
-              </select>
-              <input type="tel" id="phone" name="phone" autocomplete="tel-national" inputmode="tel" placeholder="85 123 4567" maxlength="24" />
+        <!-- 2 · When & where -->
+        <section class="ol2-step" data-s="2">
+          <fieldset>
+            <legend><i>2</i>When &amp; where</legend>
+            <p class="cart-note" id="cartNote" hidden></p>
+            <div class="ol2-ww">
+              <div class="ol2-days">
+                <input type="hidden" id="date" name="date" value="" />
+                <div class="datelist" id="dateList" role="radiogroup" aria-label="Collection date"></div>
+                <p class="field-error" id="dateError" hidden></p>
+                <p class="field-notice" id="soldOutNotice" hidden>All our dates are sold out right now — please check back soon, or message us on Instagram.</p>
+              </div>
+              <div class="ol2-place">
+                <div class="slot-options" role="radiogroup" aria-label="Collection point">
+                  <label class="slot">
+                    <input type="radio" name="slot" value="daytime" checked />
+                    <span class="slot-name">St Stephen’s Green</span>
+                    <span class="slot-where">D2</span>
+                  </label>
+                  <label class="slot">
+                    <input type="radio" name="slot" value="evening" />
+                    <span class="slot-name">Clongriffin</span>
+                    <span class="slot-where">D13</span>
+                  </label>
+                </div>
+                <p class="hint"></p>
+                <p class="field-notice" id="officeNotice" hidden></p>
+                <div class="field">
+                  <div class="time-toggle" id="timeToggle" role="radiogroup" aria-label="Collection time"></div>
+                </div>
+                <p class="field-error" id="timeError" hidden></p>
+              </div>
             </div>
-          </div>
-          <p class="when-foot" style="margin-top:-0.5rem">We use your number to WhatsApp you your collection details, and to keep your tiramisù card: buy 10 and your next one is free. <a href="privacy.html">How we use your details</a></p>
-        </fieldset>
+          </fieldset>
+        </section>
 
+        <!-- 3 · Who -->
+        <section class="ol2-step" data-s="3">
+          <fieldset>
+            <legend><i>3</i>Who’s collecting?</legend>
+            <div class="ol2-who">
+              <div class="field">
+                <label for="firstName">Name</label>
+                <input type="text" id="firstName" name="firstName" autocomplete="name" autocapitalize="words" placeholder="e.g. Silenzio Bruno" maxlength="60" />
+              </div>
+              <div class="field">
+                <label for="phone">WhatsApp</label>
+                <div class="phone-group">
+                  <select id="phoneCC" aria-label="Country code" autocomplete="tel-country-code">
+                    <option value="+353" selected>🇮🇪 +353</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+61">🇦🇺 +61</option>
+                    <option value="+43">🇦🇹 +43</option>
+                    <option value="+32">🇧🇪 +32</option>
+                    <option value="+55">🇧🇷 +55</option>
+                    <option value="+1">🇨🇦 +1</option>
+                    <option value="+86">🇨🇳 +86</option>
+                    <option value="+420">🇨🇿 +420</option>
+                    <option value="+45">🇩🇰 +45</option>
+                    <option value="+358">🇫🇮 +358</option>
+                    <option value="+33">🇫🇷 +33</option>
+                    <option value="+49">🇩🇪 +49</option>
+                    <option value="+30">🇬🇷 +30</option>
+                    <option value="+36">🇭🇺 +36</option>
+                    <option value="+91">🇮🇳 +91</option>
+                    <option value="+39">🇮🇹 +39</option>
+                    <option value="+371">🇱🇻 +371</option>
+                    <option value="+370">🇱🇹 +370</option>
+                    <option value="+52">🇲🇽 +52</option>
+                    <option value="+31">🇳🇱 +31</option>
+                    <option value="+64">🇳🇿 +64</option>
+                    <option value="+234">🇳🇬 +234</option>
+                    <option value="+47">🇳🇴 +47</option>
+                    <option value="+48">🇵🇱 +48</option>
+                    <option value="+351">🇵🇹 +351</option>
+                    <option value="+40">🇷🇴 +40</option>
+                    <option value="+34">🇪🇸 +34</option>
+                    <option value="+46">🇸🇪 +46</option>
+                    <option value="+41">🇨🇭 +41</option>
+                    <option value="+90">🇹🇷 +90</option>
+                    <option value="+380">🇺🇦 +380</option>
+                    <option value="+971">🇦🇪 +971</option>
+                  </select>
+                  <input type="tel" id="phone" name="phone" autocomplete="tel-national" inputmode="tel" placeholder="85 123 4567" maxlength="24" />
+                </div>
+              </div>
+            </div>
+            <p class="ol2-privacy"><a href="privacy.html">How we use your details</a></p>
+          </fieldset>
+        </section>
       </div>
 
-      <!-- Summary -->
-      <aside class="summary" aria-live="polite">
+      <!-- Your order -->
+      <aside class="summary ol2-sum" aria-live="polite">
         <h3>Your order</h3>
-        <ul class="summary-lines" id="summaryLines">
-          <li class="empty">Nothing added yet — pick a tiramisu to start.</li>
-        </ul>
-        <div class="summary-total">
-          <span>Total</span>
-          <span id="summaryTotal">€0.00</span>
+        <div class="ol2-sum-body">
+          <ul class="summary-lines" id="summaryLines">
+            <li class="empty">Nothing added yet — pick a tiramisu to start.</li>
+          </ul>
+          <p class="ol2-when" id="sumWhen" hidden></p>
+
+          <div class="ol2-extras">
+            <label class="giftbox-opt" id="giftBoxOpt">
+              <span class="ol2-tg"><span class="giftbox-t">🎁 Gift box <span class="giftbox-hint">+€7.00</span></span><input type="checkbox" id="giftBox" name="giftBox" class="ol2-sw" /></span>
+              <span class="ol2-gb">
+                <img class="giftbox-thumb" src="images/gift-box.png" alt="Gift box" width="84" height="84" />
+                <span class="giftbox-s">Kraft window box with ribbon, cutlery and topping kit</span>
+              </span>
+              <span class="giftbox-lock" id="giftBoxLock" hidden>Gift boxes come in 5, 6 or 12 — adjust your order to add one.</span>
+            </label>
+            <label class="cutlery-opt" id="cutleryOpt">
+              <span class="ol2-tg"><span class="cutlery-t">🍴 Cutlery <span class="cutlery-hint">+€0.20 each</span></span><input type="checkbox" id="cutlery" name="cutlery" class="ol2-sw" /></span>
+            </label>
+            <div class="ol2-incl" id="cutIncluded" hidden><span>🍴 Cutlery</span><b>Included</b></div>
+          </div>
+
+          <div class="summary-total">
+            <span>Total</span>
+            <span id="summaryTotal">€0.00</span>
+          </div>
+          <button type="submit" class="btn btn-primary">Send order on WhatsApp</button>
+          <p class="field-error" id="checkoutError" hidden></p>
+          <p class="note" id="submitNote">This opens WhatsApp with your order ready to send. We’ll confirm we can make it for your date, agree a collection time, then send you a payment link. Nothing is charged here. <a href="privacy.html">How we use your details</a>.</p>
         </div>
-        <button type="submit" class="btn btn-primary">Send order on WhatsApp</button>
-        <p class="field-error" id="checkoutError" hidden></p>
-        <p class="note" id="submitNote">This opens WhatsApp with your order ready to send. We’ll confirm we can make it for your date, agree a collection time, then send you a payment link. Nothing is charged here. <a href="privacy.html">How we use your details</a>.</p>
       </aside>
 
+      <!-- Phone: total + next step, always in reach -->
+      <div class="ol2-bar">
+        <div class="ol2-bar-l"><small id="barSub">0 tiramisù</small><b id="barTotal">€0.00</b></div>
+        <button type="button" class="ol2-next" id="barNext">Next →</button>
+      </div>
     </form>
   </div>
 
@@ -326,6 +327,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=131"></script>
+  <script src="script.js?v=132"></script>
 </body>
 </html>

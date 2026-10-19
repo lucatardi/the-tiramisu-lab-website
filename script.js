@@ -84,8 +84,8 @@ if (orderForm) {
   const LARGE_PORTIONS = 4;
   const CUTLERY_SETS_LARGE = 5;
   const SERVES = {
-    single: "Single portion - 230ml",
-    large: "Serves 5 people - 1l",
+    single: "",
+    large: "Serves 5",
   };
   const products = Array.from(document.querySelectorAll(".product")).map((el) => {
     el.dataset.size = "single";
@@ -635,8 +635,7 @@ if (orderForm) {
      instead. (The 10% colleague discount is gated on the same keyword
      server-side.) */
   const isToaster = () => /toast/i.test(contactName());
-  const SLOT_HINT_DEFAULT =
-    "We’ll send the exact meeting point in your confirmation, right after payment.";
+  const SLOT_HINT_DEFAULT = "";
   const SLOT_HINT_TOASTER =
     "Your tiramisù will be ready to be collected waiting for you in the fridge in the mini kitchen on the third floor.";
   function applyToaster() {
@@ -1257,6 +1256,100 @@ if (orderForm) {
   /* Initial paint */
   recalc();
 }
+
+/* ===========================================================
+   Order page layout: three steps on a phone (flavours → when & where →
+   who + pay) with a bottom bar for the total and the next step; on a wide
+   screen every step shows at once beside the "Your order" card. Reads the
+   form's own state only — all order rules live in the block above.
+   =========================================================== */
+(function () {
+  const form = document.getElementById("orderForm");
+  if (!form || !form.classList.contains("ol2")) return;
+  const mq = window.matchMedia("(max-width: 860px)");
+  const qtyInputs = Array.from(form.querySelectorAll(".product input[type=number]"));
+  const dateInput = document.getElementById("date");
+  const timeToggle = document.getElementById("timeToggle");
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const barNext = document.getElementById("barNext");
+  const barSub = document.getElementById("barSub");
+  const barTotal = document.getElementById("barTotal");
+  const total = document.getElementById("summaryTotal");
+  const sumWhen = document.getElementById("sumWhen");
+  const giftOpt = document.getElementById("giftBoxOpt");
+  const cutIncl = document.getElementById("cutIncluded");
+  const back = form.querySelector(".ol2-back");
+  let step = 1;
+
+  const pots = () => qtyInputs.reduce((n, i) => n + (parseInt(i.value, 10) || 0), 0);
+  const timeOff = () => !!(timeToggle && timeToggle.classList.contains("time-toggle--off"));
+  const timeInput = () => form.querySelector('input[name="time"]:checked');
+  const slot = () => (form.querySelector('input[name="slot"]:checked') || {}).value || "daytime";
+  const shortDay = (iso) =>
+    new Date(iso + "T00:00:00").toLocaleDateString("en-IE", { weekday: "short", day: "numeric", month: "short" });
+  const whenText = () => {
+    if (!dateInput.value) return "";
+    const t = timeOff() ? "Fridge" : timeInput() ? timeInput().dataset.label : "";
+    return shortDay(dateInput.value) + (t ? " · " + t : "");
+  };
+  const say = (id, msg) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.hidden = !msg;
+      el.textContent = msg || "";
+    }
+  };
+
+  function sync() {
+    const n = pots();
+    form.querySelectorAll(".product").forEach((p) => {
+      const v = parseInt(p.querySelector("input[type=number]").value, 10) || 0;
+      p.dataset.count = v;
+    });
+    const w = whenText();
+    sumWhen.hidden = !w;
+    if (w)
+      sumWhen.innerHTML = `<b>${w}</b><span>${slot() === "evening" ? "Clongriffin" : "St Stephen’s Green"}</span>`;
+    cutIncl.hidden = !(giftOpt && !giftOpt.hidden && giftOpt.classList.contains("on"));
+    barTotal.textContent = total.textContent;
+    barSub.textContent = step === 3 ? "Total" : step === 2 && w ? w : `${n} tiramisù`;
+    if (step === 3) {
+      barNext.textContent = submitBtn.textContent;
+      barNext.disabled = submitBtn.disabled;
+    } else {
+      barNext.textContent = "Next →";
+      barNext.disabled = step === 1 ? n === 0 : false;
+    }
+  }
+  function go(s) {
+    step = s;
+    form.dataset.step = String(s);
+    sync();
+    if (mq.matches) window.scrollTo({ top: form.getBoundingClientRect().top + window.scrollY - 80 });
+  }
+  barNext.addEventListener("click", () => {
+    if (step === 1) {
+      if (pots()) go(2);
+    } else if (step === 2) {
+      const noDate = !dateInput.value;
+      const noTime = !timeOff() && !timeInput();
+      if (noDate) say("dateError", "Please choose a date.");
+      if (noTime) say("timeError", "Please choose a time.");
+      if (!noDate && !noTime) go(3);
+    } else {
+      /* A name change (e.g. Toast mode) can drop the chosen day — send them back. */
+      if (!dateInput.value || (!timeOff() && !timeInput())) return go(2);
+      if (form.requestSubmit) form.requestSubmit(submitBtn);
+      else submitBtn.click();
+    }
+  });
+  back.addEventListener("click", () => go(Math.max(1, step - 1)));
+  ["click", "change", "input"].forEach((ev) => form.addEventListener(ev, () => setTimeout(sync, 0)));
+  new MutationObserver(sync).observe(total, { childList: true, characterData: true, subtree: true });
+  new MutationObserver(sync).observe(submitBtn, { childList: true, attributes: true });
+  if (giftOpt) new MutationObserver(sync).observe(giftOpt, { attributes: true });
+  sync();
+})();
 
 /* ===========================================================
    Thank-you page — reveal the paid order + collection spot
