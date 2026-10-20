@@ -494,7 +494,7 @@ if (orderForm) {
       const attrs = open
         ? `type="button" data-iso="${day.iso}" role="radio" aria-checked="${selected ? "true" : "false"}"`
         : `aria-hidden="true"`;
-      return `<${tag} class="${cls}" ${attrs}><span class="wd">${day.wd}</span><span class="num">${day.num}<small>${day.mon}</small></span><span class="st">${label}</span></${tag}>`;
+      return `<${tag} class="${cls}" data-state="${day.state}" ${attrs}><span class="wd">${day.wd}</span><span class="num">${day.num}<small>${day.mon}</small></span><span class="st">${label}</span></${tag}>`;
     };
 
     const today0 = new Date();
@@ -564,6 +564,11 @@ if (orderForm) {
     }
 
     dateList.innerHTML = html;
+    /* Sold-out (or past) days before the first one with room aren't shown. */
+    for (const c of dateList.querySelectorAll(".daychip")) {
+      if (c.dataset.state === "open" || c.dataset.state === "tight") break;
+      c.classList.add("lead-out");
+    }
 
     /* Drop the selection if the chosen day is no longer bookable. */
     if (openIsos.indexOf(keep) === -1) dateInput.value = "";
