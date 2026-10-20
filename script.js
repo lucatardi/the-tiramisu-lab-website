@@ -1304,27 +1304,27 @@ if (orderForm) {
       }
     });
   }
+  /* Only the times are tappable: a time in the other card switches the place
+     to that card and picks the time; the card itself isn't a button. */
   slotCards.forEach((card) =>
     card.addEventListener("click", (e) => {
+      const t = e.target.closest(".slot-prev [data-t]");
+      if (!t || t.classList.contains("off")) return;
       const radio = card.querySelector('input[name="slot"]');
-      if (radio.disabled || e.target.closest(".time-opt") || e.target.closest(".slot-head")) return;
-      if (e.target.closest(".slot-map")) return; // the Map link just opens Maps
-      const t = e.target.closest("[data-t]");
-      if (t && t.classList.contains("off")) return;
+      if (radio.disabled) return;
       if (!radio.checked) {
         radio.checked = true;
         radio.dispatchEvent(new Event("change", { bubbles: true }));
       }
       placeTimes();
-      if (t) {
-        const inp = timeToggle.querySelector(`input[data-label="${t.dataset.t}"]`);
-        if (inp && !inp.disabled) {
-          inp.checked = true;
-          inp.dispatchEvent(new Event("change", { bubbles: true }));
-        }
+      const inp = timeToggle.querySelector(`input[data-label="${t.dataset.t}"]`);
+      if (inp && !inp.disabled) {
+        inp.checked = true;
+        inp.dispatchEvent(new Event("change", { bubbles: true }));
       }
     })
   );
+
 
   const pots = () => qtyInputs.reduce((n, i) => n + (parseInt(i.value, 10) || 0), 0);
   const timeOff = () => !!(timeToggle && timeToggle.classList.contains("time-toggle--off"));
@@ -1360,7 +1360,9 @@ if (orderForm) {
     const w = whenText();
     sumWhen.hidden = !w;
     if (w)
-      sumWhen.innerHTML = `<b>${w}</b><span>${slot() === "evening" ? "Clongriffin" : "St Stephen’s Green"}</span>`;
+      sumWhen.innerHTML = `<b>${w}</b>${
+        timeOff() || timeInput() ? `<span>${slot() === "evening" ? "Clongriffin" : "St Stephen’s Green"}</span>` : ""
+      }`;
     cutIncl.hidden = !(giftOpt && !giftOpt.hidden && giftOpt.classList.contains("on"));
     barTotal.textContent = total.textContent;
     barSub.textContent = w || `${n} tiramisù`;
