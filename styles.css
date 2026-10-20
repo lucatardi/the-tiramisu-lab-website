@@ -1264,18 +1264,9 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
   .ol2-sum h3 { font-size: 1.1rem; padding: 0.8rem 1.1rem; }
   .ol2-sum .btn-primary { display: none; }
 
-  /* Flavours as compact rows: photo | name, price, size | stepper */
-  .ol2-grid { grid-template-columns: 1fr; gap: 0.5rem; }
-  .ol2 .product { display: grid; grid-template-columns: 72px 1fr auto; align-items: center; column-gap: 0.75rem; padding: 0.45rem 0.6rem 0.45rem 0.45rem; border-radius: 16px; }
-  .ol2 .p-pic { width: 72px; height: 72px; aspect-ratio: auto; border-radius: 12px; }
-  .ol2 .p-mid { padding: 0; min-width: 0; }
-  .ol2 .product .p-name { font-size: 1.05rem; }
-  .ol2 .product .p-price { font-size: 0.82rem; }
-  .ol2 .size-seg { margin-top: 0.3rem; width: fit-content; }
-  .ol2 .size-seg button { flex: none; padding: 0.22rem 0.6rem; white-space: nowrap; font-size: 0.72rem; }
-  .ol2 .qty { margin: 0; flex-direction: column-reverse; gap: 0.25rem; }
-  .ol2 .qty input { width: 2rem; height: 1.4rem; }
-  .ol2 .product[data-count]:not([data-count="0"])::before { top: 6px; left: 6px; }
+  /* Flavours: the same photo tiles as desktop, two per row */
+  .ol2-grid { gap: 0.7rem; }
+  .ol2 .product .p-name { font-size: 1.1rem; }
 
   .ol2-ww { grid-template-columns: minmax(0, 1fr); gap: 0.9rem; }
   .ol2 .slot-options { grid-template-columns: 1fr; }
