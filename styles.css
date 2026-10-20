@@ -1185,7 +1185,11 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
 .ol2 .slot { display: block; border: 2px solid transparent; border-radius: 16px; background: var(--white); box-shadow: 0 2px 8px rgba(58,39,27,0.07); padding: 0.9rem 0.9rem 0.8rem; }
 .ol2 .slot--on, .ol2 .slot:focus-within { border-color: var(--espresso); box-shadow: 0 2px 8px rgba(58,39,27,0.07); background: var(--white); }
 .ol2 .slot-head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; cursor: pointer; }
-.ol2 .slot-where { margin: 0; font-size: 0.8rem; }
+.ol2 .slot { position: relative; }
+.ol2 .slot-head { padding-right: 5rem; }
+.ol2 .slot-name small { display: block; font-weight: 500; font-size: 0.8rem; color: var(--muted); margin-top: 0.1rem; }
+.ol2 .slot-map { position: absolute; top: 0.8rem; right: 0.8rem; display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.35rem 0.7rem; border-radius: 999px; background: var(--mascarpone); color: var(--cocoa); font-weight: 800; font-size: 0.8rem; text-decoration: none; }
+.ol2 .slot--on .slot-map { background: var(--espresso); color: var(--cream); }
 .ol2 .slot-times { margin-top: 0.7rem; }
 .ol2 .slot-times .field { margin: 0; }
 .ol2 .slot-prev { display: flex; gap: 0.4rem; }

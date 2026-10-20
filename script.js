@@ -200,7 +200,7 @@ if (orderForm) {
       where: "St Stephen’s Green, D2",
     },
     evening: {
-      label: "Evening", times: ["21:00", "21:30", "22:00"], human: "9pm, 9:30pm or 10pm",
+      label: "Evening", times: ["21:00", "22:00"], human: "9pm or 10pm",
       where: "Clongriffin, D13",
     },
   };
@@ -1306,6 +1306,7 @@ if (orderForm) {
     card.addEventListener("click", (e) => {
       const radio = card.querySelector('input[name="slot"]');
       if (radio.disabled || e.target.closest(".time-opt") || e.target.closest(".slot-head")) return;
+      if (e.target.closest(".slot-map")) return; // the Map link just opens Maps
       const t = e.target.closest("[data-t]");
       if (t && t.classList.contains("off")) return;
       if (!radio.checked) {
