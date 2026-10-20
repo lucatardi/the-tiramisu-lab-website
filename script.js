@@ -1260,15 +1260,15 @@ if (orderForm) {
 }
 
 /* ===========================================================
-   Order page layout: three steps on a phone (flavours → when & where →
-   who + pay) with a bottom bar for the total and the next step; on a wide
-   screen every step shows at once beside the "Your order" card. Reads the
-   form's own state only — all order rules live in the block above.
+   Order page layout: one page. On a phone a bottom bar keeps the total in
+   reach; its button points at the first thing still missing (a tiramisù, a
+   day, a time, your details) and turns into the pay button once the order is
+   complete. Reads the form's own state only — all order rules live in the
+   block above.
    =========================================================== */
 (function () {
   const form = document.getElementById("orderForm");
   if (!form || !form.classList.contains("ol2")) return;
-  const mq = window.matchMedia("(max-width: 860px)");
   const qtyInputs = Array.from(form.querySelectorAll(".product input[type=number]"));
   const dateInput = document.getElementById("date");
   const timeToggle = document.getElementById("timeToggle");
@@ -1280,8 +1280,10 @@ if (orderForm) {
   const sumWhen = document.getElementById("sumWhen");
   const giftOpt = document.getElementById("giftBoxOpt");
   const cutIncl = document.getElementById("cutIncluded");
-  const back = form.querySelector(".ol2-back");
-  let step = 1;
+  const nameInput = document.getElementById("firstName");
+  const phoneInput = document.getElementById("phone");
+  const section = (n) => form.querySelector(`.ol2-step[data-s="${n}"]`);
+
   const timeField = timeToggle ? timeToggle.closest(".field") : null;
   const slotCards = Array.from(form.querySelectorAll(".slot-options .slot"));
   /* The time buttons live inside the chosen place's card; the other card
@@ -1328,6 +1330,8 @@ if (orderForm) {
   const timeOff = () => !!(timeToggle && timeToggle.classList.contains("time-toggle--off"));
   const timeInput = () => form.querySelector('input[name="time"]:checked');
   const slot = () => (form.querySelector('input[name="slot"]:checked') || {}).value || "daytime";
+  const contactOk = () =>
+    !!(nameInput && nameInput.value.trim()) && !!(phoneInput && phoneInput.value.replace(/\D/g, "").length >= 7);
   const shortDay = (iso) =>
     new Date(iso + "T00:00:00").toLocaleDateString("en-IE", { weekday: "short", day: "numeric", month: "short" });
   const whenText = () => {
@@ -1342,13 +1346,16 @@ if (orderForm) {
       el.textContent = msg || "";
     }
   };
+  /* The first thing the order still needs, or "" when it's ready to pay. */
+  const missing = () =>
+    !pots() ? "pots" : !dateInput.value ? "date" : !timeOff() && !timeInput() ? "time" : !contactOk() ? "contact" : "";
+  const LABEL = { pots: "Add a tiramisù", date: "Choose a day ↓", time: "Choose a time ↓", contact: "Your details ↓" };
 
   function sync() {
     placeTimes();
     const n = pots();
     form.querySelectorAll(".product").forEach((p) => {
-      const v = parseInt(p.querySelector("input[type=number]").value, 10) || 0;
-      p.dataset.count = v;
+      p.dataset.count = parseInt(p.querySelector("input[type=number]").value, 10) || 0;
     });
     const w = whenText();
     sumWhen.hidden = !w;
@@ -1356,38 +1363,26 @@ if (orderForm) {
       sumWhen.innerHTML = `<b>${w}</b><span>${slot() === "evening" ? "Clongriffin" : "St Stephen’s Green"}</span>`;
     cutIncl.hidden = !(giftOpt && !giftOpt.hidden && giftOpt.classList.contains("on"));
     barTotal.textContent = total.textContent;
-    barSub.textContent = step === 3 ? "Total" : step === 2 && w ? w : `${n} tiramisù`;
-    if (step === 3) {
-      barNext.textContent = submitBtn.textContent;
-      barNext.disabled = submitBtn.disabled;
-    } else {
-      barNext.textContent = "Next →";
-      barNext.disabled = step === 1 ? n === 0 : false;
-    }
+    barSub.textContent = w || `${n} tiramisù`;
+    const m = missing();
+    barNext.textContent = m ? LABEL[m] : submitBtn.textContent;
+    barNext.disabled = m === "pots" || (!m && submitBtn.disabled);
   }
-  function go(s) {
-    step = s;
-    form.dataset.step = String(s);
-    sync();
-    if (mq.matches) window.scrollTo({ top: form.getBoundingClientRect().top + window.scrollY - 80 });
-  }
+  const jump = (el) => el && window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 80);
   barNext.addEventListener("click", () => {
-    if (step === 1) {
-      if (pots()) go(2);
-    } else if (step === 2) {
-      const noDate = !dateInput.value;
-      const noTime = !timeOff() && !timeInput();
-      if (noDate) say("dateError", "Please choose a date.");
-      if (noTime) say("timeError", "Please choose a time.");
-      if (!noDate && !noTime) go(3);
-    } else {
-      /* A name change (e.g. Toast mode) can drop the chosen day — send them back. */
-      if (!dateInput.value || (!timeOff() && !timeInput())) return go(2);
+    const m = missing();
+    if (m === "date" || m === "time") {
+      if (m === "date") say("dateError", "Please choose a date.");
+      else say("timeError", "Please choose a time.");
+      jump(section(2));
+    } else if (m === "contact") {
+      jump(section(3));
+      setTimeout(() => (nameInput.value.trim() ? phoneInput : nameInput).focus({ preventScroll: true }), 400);
+    } else if (!m) {
       if (form.requestSubmit) form.requestSubmit(submitBtn);
       else submitBtn.click();
     }
   });
-  back.addEventListener("click", () => go(Math.max(1, step - 1)));
   ["click", "change", "input"].forEach((ev) => form.addEventListener(ev, () => setTimeout(sync, 0)));
   new MutationObserver(sync).observe(total, { childList: true, characterData: true, subtree: true });
   new MutationObserver(sync).observe(submitBtn, { childList: true, attributes: true });

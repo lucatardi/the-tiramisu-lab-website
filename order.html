@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=141" />
+  <link rel="stylesheet" href="styles.css?v=143" />
 </head>
 <body>
 
@@ -54,14 +54,10 @@
     </div>
   </header>
 
-  <!-- ============ Order (3 steps on mobile, one screen on desktop) ============ -->
+  <!-- ============ Order (one page; phone adds a bottom bar) ============ -->
   <div class="wrap">
-    <form id="orderForm" class="ol2" data-step="1" novalidate>
+    <form id="orderForm" class="ol2" novalidate>
 
-      <div class="ol2-prog">
-        <button type="button" class="ol2-back" aria-label="Back">‹</button>
-        <span class="ol2-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-      </div>
       <h1 class="ol2-h1">Order &amp; collect</h1>
 
       <div class="ol2-main">
@@ -279,12 +275,12 @@
       <!-- Phone: total + next step, always in reach -->
       <div class="ol2-bar">
         <div class="ol2-bar-l"><small id="barSub">0 tiramisù</small><b id="barTotal">€0.00</b></div>
-        <button type="button" class="ol2-next" id="barNext">Next →</button>
+        <button type="button" class="ol2-next" id="barNext">Add a tiramisù</button>
       </div>
     </form>
   </div>
 
 
-  <script src="script.js?v=141"></script>
+  <script src="script.js?v=143"></script>
 </body>
 </html>
