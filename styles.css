@@ -1035,12 +1035,12 @@ textarea { resize: vertical; min-height: 90px; }
 @media (max-width: 480px) {
   .field-row { grid-template-columns: minmax(0, 1fr); }
 }
-/* Phones: a compact, left-aligned hero — small logo above the title, then
+/* Phones: a compact, left-aligned hero — no big logo (the header has it),
    the copy and a normal-size button. Desktop is untouched. */
 @media (max-width: 560px) {
   .hero { padding: 1.8rem 0 2.6rem; }
   .hero-grid { gap: 0; }
-  .hero-logo-img { order: -1; width: 96px; max-width: 96px; margin: 0 0 1rem; }
+  .hero-logo-img { display: none; } /* the header logo is enough on phones */
   .hero-copy { text-align: left; }
   .hero h1 { font-size: 2.15rem; line-height: 1.06; margin: 0.5rem 0 0.7rem; }
   .hero p.lead { margin-inline: 0; font-size: 1.02rem; max-width: 30ch; }
