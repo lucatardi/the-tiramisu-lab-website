@@ -1298,11 +1298,12 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
 .hm-chip b { color: var(--caramel-dk); }
 .hm-hero h1 { margin: 0.9rem 0 0.6rem; font-size: clamp(2.3rem, 4.2vw, 3.75rem); }
 .hm-lead { color: var(--muted); font-size: 1.12rem; max-width: 32ch; margin: 0; }
-.hm-next { display: flex; align-items: center; justify-content: space-between; gap: 1rem; max-width: 420px; margin-top: 1.4rem; padding: 0.9rem 1.1rem; border-radius: 18px; background: var(--espresso); color: var(--cream); text-decoration: none; transition: transform 0.15s ease; }
-.hm-next:hover { transform: translateY(-1px); }
-.hm-next-l small { display: block; color: var(--gold); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
-.hm-next-l b { font-family: var(--serif); font-weight: 600; font-size: 1.3rem; }
-.hm-next-r { color: var(--gold); font-weight: 800; white-space: nowrap; }
+.hm-cta { display: inline-block; margin-top: 1.4rem; background: var(--cocoa); color: var(--cream); font-weight: 800; font-size: 1.05rem; padding: 0.85rem 1.5rem; border-radius: 14px; text-decoration: none; box-shadow: 0 8px 18px rgba(61, 31, 8, 0.25); }
+.hm-cta:hover { background: var(--espresso); }
+.hm-pots-in { position: relative; display: inline-block; }
+.hm-float { position: absolute; left: -18px; bottom: -22px; background: var(--white); color: var(--espresso); border-radius: 16px; padding: 0.6rem 0.9rem; text-decoration: none; box-shadow: 0 10px 26px rgba(42, 21, 5, 0.18); min-width: 150px; }
+.hm-float small { display: block; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--caramel-dk); }
+.hm-float b { font-family: var(--serif); font-weight: 600; font-size: 1.15rem; }
 .hm-pots { display: flex; justify-content: center; }
 .hm-pots img { width: 330px; max-width: 100%; height: auto; display: block; filter: drop-shadow(0 22px 24px rgba(58, 39, 27, 0.22)); }
 
@@ -1341,6 +1342,9 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
 @media (max-width: 860px) {
   .hm-hero-grid { grid-template-columns: 1fr; gap: 1.2rem; }
   .hm-hero .hm-pots img { width: 225px; }
+  .hm-hero { padding-bottom: 3rem; }
+  .hm-float { left: -6px; bottom: -16px; min-width: 0; padding: 0.5rem 0.75rem; }
+  .hm-float b { font-size: 1rem; }
   .hm-flavours { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; }
   .hm-split { grid-template-columns: 1fr; gap: 1.4rem; }
   .hm-sec { padding: 3rem 0 2.6rem; }
