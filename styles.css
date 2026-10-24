@@ -1287,3 +1287,61 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
   .ol2-next { flex: none; border: 0; border-radius: 14px; background: var(--caramel); color: #fff; font: inherit; font-weight: 800; padding: 0.75rem 1.1rem; cursor: pointer; }
   .ol2-next:disabled { opacity: 0.45; cursor: default; }
 }
+
+/* ===========================================================
+   Home page (2026-10): photo-first hero, flavour tiles with an
+   Ingredients panel, How it works + Made properly, reviews.
+   =========================================================== */
+.hm-hero { padding: clamp(2rem, 5vw, 3.5rem) 0 clamp(2.5rem, 5vw, 4rem); }
+.hm-hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+.hm-chip { display: inline-flex; gap: 0.4rem; align-items: center; background: var(--white); border-radius: 999px; padding: 0.35rem 0.8rem; font-size: 0.82rem; color: var(--espresso); text-decoration: none; box-shadow: var(--shadow-sm); }
+.hm-chip b { color: var(--caramel-dk); }
+.hm-hero h1 { margin: 0.9rem 0 0.6rem; font-size: clamp(2.3rem, 4.2vw, 3.75rem); }
+.hm-lead { color: var(--muted); font-size: 1.12rem; max-width: 32ch; margin: 0; }
+.hm-next { display: flex; align-items: center; justify-content: space-between; gap: 1rem; max-width: 420px; margin-top: 1.4rem; padding: 0.9rem 1.1rem; border-radius: 18px; background: var(--espresso); color: var(--cream); text-decoration: none; transition: transform 0.15s ease; }
+.hm-next:hover { transform: translateY(-1px); }
+.hm-next-l small { display: block; color: var(--gold); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+.hm-next-l b { font-family: var(--serif); font-weight: 600; font-size: 1.3rem; }
+.hm-next-r { color: var(--gold); font-weight: 800; white-space: nowrap; }
+.hm-pots { display: flex; justify-content: center; }
+.hm-pots img { width: 330px; max-width: 100%; height: auto; display: block; filter: drop-shadow(0 22px 24px rgba(58, 39, 27, 0.22)); }
+
+.hm-sec { padding: 4.6rem 0 4rem; }
+.hm-sec h2 { margin-bottom: 1.3rem; }
+.hm-anchor { position: absolute; top: 0; }
+
+.hm-flavours { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; align-items: start; }
+.hm-tile { background: var(--white); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow-sm); }
+.hm-tile img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
+.hm-tile-b { padding: 0.75rem 0.9rem 0.9rem; }
+.hm-tile h3 { margin: 0; font-size: 1.35rem; }
+.hm-top { margin: 0.1rem 0 0; font-size: 0.85rem; color: var(--muted); }
+.hm-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.4rem; margin-top: 0.6rem; }
+.hm-ing summary { cursor: pointer; list-style: none; font-size: 0.82rem; font-weight: 700; color: var(--muted); }
+.hm-ing summary::-webkit-details-marker { display: none; }
+.hm-ing summary::after { content: " ▾"; }
+.hm-ing[open] { order: 2; flex-basis: 100%; }
+.hm-ing[open] summary::after { content: " ▴"; }
+.hm-ing p { margin: 0.45rem 0 0; font-size: 0.8rem; line-height: 1.45; color: var(--muted); }
+.hm-ing p b { color: var(--espresso); }
+
+.hm-split { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.hm-step { display: flex; gap: 0.9rem; align-items: center; background: var(--white); border-radius: 18px; padding: 0.85rem; margin-bottom: 0.6rem; }
+.hm-step i { font-style: normal; width: 44px; height: 44px; border-radius: 14px; background: var(--mascarpone); display: grid; place-items: center; font-size: 1.35rem; flex: none; }
+.hm-step b { display: block; }
+.hm-step span { font-size: 0.85rem; color: var(--muted); }
+.hm-places { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.hm-places div { background: var(--espresso); color: var(--cream); border-radius: 16px; padding: 0.75rem 0.9rem; }
+.hm-places b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.05rem; }
+.hm-places span { font-size: 0.8rem; color: var(--gold); }
+.hm-tick { display: flex; gap: 0.75rem; align-items: center; background: var(--white); border-radius: 14px; padding: 0.7rem 0.9rem; margin-bottom: 0.5rem; font-size: 0.95rem; }
+.hm-tick > span { width: 26px; height: 26px; border-radius: 50%; background: var(--espresso); color: var(--gold); display: grid; place-items: center; font-size: 0.8rem; font-weight: 800; flex: none; }
+.hm-tick em { display: block; font-style: normal; font-size: 0.8rem; color: var(--muted); text-decoration: line-through; }
+
+@media (max-width: 860px) {
+  .hm-hero-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+  .hm-hero .hm-pots img { width: 225px; }
+  .hm-flavours { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; }
+  .hm-split { grid-template-columns: 1fr; gap: 1.4rem; }
+  .hm-sec { padding: 3rem 0 2.6rem; }
+}

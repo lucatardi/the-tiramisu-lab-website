@@ -1260,6 +1260,34 @@ if (orderForm) {
 }
 
 /* ===========================================================
+   Home page: "Earliest available" card — the first Tuesday–Friday from the
+   earliest bookable day that isn't full, from the worker's /full-dates.
+   =========================================================== */
+(function () {
+  const card = document.getElementById("nextAvail");
+  if (!card || typeof CHECKOUT_API === "undefined" || !CHECKOUT_API) return;
+  const out = card.querySelector("[data-next]");
+  fetch(CHECKOUT_API + "/full-dates", { cache: "no-store" })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((d) => {
+      if (!d || !/^\d{4}-\d{2}-\d{2}$/.test(d.earliest || "")) return;
+      const full = new Set(d.full || []);
+      const left = d.left || {};
+      const day = new Date(d.earliest + "T12:00:00");
+      for (let i = 0; i < 60; i++, day.setDate(day.getDate() + 1)) {
+        const wd = day.getDay();
+        if (wd < 2 || wd > 5) continue;
+        const iso = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
+        if (full.has(iso) || (left[iso] != null && left[iso] <= 0)) continue;
+        const part = (o) => day.toLocaleDateString("en-IE", o);
+        out.textContent = `${part({ weekday: "short" })} ${day.getDate()} ${part({ month: "short" })}`;
+        return;
+      }
+    })
+    .catch(() => {});
+})();
+
+/* ===========================================================
    Order page layout: one page. On a phone a bottom bar keeps the total in
    reach; its button points at the first thing still missing (a tiramisù, a
    day, a time, your details) and turns into the pay button once the order is
