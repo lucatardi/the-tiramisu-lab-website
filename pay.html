@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Payment — The Tiramisu Lab</title>
+  <link rel="icon" href="images/logo.png" />
+  <style>
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #FBF5EC; color: #2A1505; font-family: system-ui, sans-serif; text-align: center; }
+    img { width: 84px; height: 84px; border-radius: 50%; }
+    p { margin: 1rem 0 0; color: #7a6553; }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="images/logo.png" alt="The Tiramisu Lab" />
+    <p>Opening secure payment…</p>
+  </main>
+  <script>
+    /* Payment links from the dashboard: hand over to the Worker, which opens
+       Stripe Checkout for that order. */
+    (function () {
+      var t = new URLSearchParams(location.search).get("t") || "";
+      if (/^[a-z0-9]{6,20}$/.test(t)) location.replace("https://tiramisu-lab.thetiramisulab.workers.dev/pay/" + t);
+      else document.querySelector("p").textContent = "This payment link isn’t valid.";
+    })();
+  </script>
+</body>
+</html>
