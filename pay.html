@@ -4,26 +4,165 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex" />
-  <title>Payment — The Tiramisu Lab</title>
-  <link rel="icon" href="images/logo.png" />
+  <title>Your order — The Tiramisu Lab</title>
+  <link rel="icon" href="favicon.svg?v=3" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=153" />
   <style>
-    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #FBF5EC; color: #2A1505; font-family: system-ui, sans-serif; text-align: center; }
-    img { width: 84px; height: 84px; border-radius: 50%; }
-    p { margin: 1rem 0 0; color: #7a6553; }
+    body { background: var(--cream); }
+    .pay { max-width: 460px; margin: 0 auto; padding: 1.6rem 16px 3rem; }
+    .pay-logo { display: block; width: 72px; margin: 0 auto 1.2rem; }
+    .pay-logo img { width: 72px; height: 72px; border-radius: 50%; display: block; }
+    .pay h1 { font-family: var(--serif); font-weight: 600; font-size: 2rem; margin: 0 0 1rem; color: var(--espresso); }
+    .pay-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 1.1rem 1.2rem; margin: 0 0 1.6rem; }
+    .pay-card ul { list-style: none; margin: 0; padding: 0; }
+    .pay-card li { display: flex; gap: 0.6rem; padding: 0.3rem 0; font-weight: 700; color: var(--cocoa); }
+    .pay-card li b { min-width: 2.2rem; color: var(--caramel-dk); }
+    .pay-when { margin: 0.8rem 0 0; padding: 0.8rem 0 0; border-top: 1px solid var(--line); color: var(--cocoa); line-height: 1.6; }
+    .pay-total { display: flex; justify-content: space-between; align-items: baseline; margin: 0.8rem 0 0; padding: 0.8rem 0 0; border-top: 1px solid var(--line); font-weight: 700; }
+    .pay-total b { font-family: var(--serif); font-weight: 600; font-size: 1.5rem; color: var(--espresso); }
+    .pay legend { font-weight: 600; }
+    .pay .btn { width: 100%; justify-content: center; font-size: 1.05rem; }
+    .pay-note { text-align: center; color: var(--muted); }
+    .pay-note a { color: var(--caramel-dk); font-weight: 700; }
+    .pay-priv { text-align: center; font-size: 0.85rem; margin: 1rem 0 0; }
+    .pay-priv a { color: var(--muted); }
   </style>
 </head>
 <body>
-  <main>
-    <img src="images/logo.png" alt="The Tiramisu Lab" />
-    <p>Opening secure payment…</p>
+  <main class="pay">
+    <a class="pay-logo" href="index.html"><img src="images/logo.png" alt="The Tiramisu Lab" /></a>
+    <p class="pay-note" id="payMsg">Loading your order…</p>
+    <form id="payForm" hidden novalidate>
+      <h1>Your order</h1>
+      <section class="pay-card">
+        <ul id="payLines"></ul>
+        <p class="pay-when" id="payWhen"></p>
+        <p class="pay-total"><span>Total</span><b id="payTotal"></b></p>
+      </section>
+      <fieldset>
+        <legend>Who’s collecting?</legend>
+        <div class="field">
+          <label for="firstName">Name</label>
+          <input type="text" id="firstName" autocomplete="name" autocapitalize="words" placeholder="e.g. Silenzio Bruno" maxlength="60" />
+        </div>
+        <div class="field">
+          <label for="phone">WhatsApp</label>
+          <div class="phone-group">
+            <select id="phoneCC" aria-label="Country code" autocomplete="tel-country-code">
+                    <option value="+353" selected>🇮🇪 +353</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+61">🇦🇺 +61</option>
+                    <option value="+43">🇦🇹 +43</option>
+                    <option value="+32">🇧🇪 +32</option>
+                    <option value="+55">🇧🇷 +55</option>
+                    <option value="+1">🇨🇦 +1</option>
+                    <option value="+86">🇨🇳 +86</option>
+                    <option value="+420">🇨🇿 +420</option>
+                    <option value="+45">🇩🇰 +45</option>
+                    <option value="+358">🇫🇮 +358</option>
+                    <option value="+33">🇫🇷 +33</option>
+                    <option value="+49">🇩🇪 +49</option>
+                    <option value="+30">🇬🇷 +30</option>
+                    <option value="+36">🇭🇺 +36</option>
+                    <option value="+91">🇮🇳 +91</option>
+                    <option value="+39">🇮🇹 +39</option>
+                    <option value="+371">🇱🇻 +371</option>
+                    <option value="+370">🇱🇹 +370</option>
+                    <option value="+52">🇲🇽 +52</option>
+                    <option value="+31">🇳🇱 +31</option>
+                    <option value="+64">🇳🇿 +64</option>
+                    <option value="+234">🇳🇬 +234</option>
+                    <option value="+47">🇳🇴 +47</option>
+                    <option value="+48">🇵🇱 +48</option>
+                    <option value="+351">🇵🇹 +351</option>
+                    <option value="+40">🇷🇴 +40</option>
+                    <option value="+34">🇪🇸 +34</option>
+                    <option value="+46">🇸🇪 +46</option>
+                    <option value="+41">🇨🇭 +41</option>
+                    <option value="+90">🇹🇷 +90</option>
+                    <option value="+380">🇺🇦 +380</option>
+                    <option value="+971">🇦🇪 +971</option>
+                  </select>
+            <input type="tel" id="phone" autocomplete="tel-national" inputmode="tel" placeholder="85 123 4567" maxlength="24" />
+          </div>
+        </div>
+      </fieldset>
+      <p class="field-error" id="payErr" hidden></p>
+      <button type="submit" class="btn btn-primary" id="payBtn" disabled>Pay</button>
+      <p class="pay-priv"><a href="privacy.html">How we use your details</a></p>
+    </form>
   </main>
   <script>
-    /* Payment links from the dashboard: hand over to the Worker, which opens
-       Stripe Checkout for that order. */
+    /* Payment links made in the dashboard: show the order, take the name and
+       WhatsApp of whoever's collecting, then open Stripe Checkout. */
     (function () {
+      var API = "https://tiramisu-lab.thetiramisulab.workers.dev";
       var t = new URLSearchParams(location.search).get("t") || "";
-      if (/^[a-z0-9]{6,20}$/.test(t)) location.replace("https://tiramisu-lab.thetiramisulab.workers.dev/pay/" + t);
-      else document.querySelector("p").textContent = "This payment link isn’t valid.";
+      var $ = function (id) { return document.getElementById(id); };
+      var f = $("payForm"), msg = $("payMsg"), btn = $("payBtn"), err = $("payErr");
+      var name = $("firstName"), cc = $("phoneCC"), phone = $("phone");
+      var CONTACT_KEY = "tl_contact_v1";
+      function note(text) { msg.innerHTML = text; msg.hidden = false; f.hidden = true; }
+      var gone = 'Message us on <a href="https://wa.me/353899525318">WhatsApp</a> and we’ll sort it out.';
+      if (!/^[a-z0-9]{6,20}$/.test(t)) return note("This payment link isn’t valid. " + gone);
+      var euro = function (c) { return "€" + (c / 100).toFixed(2); };
+      var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+      var ok = function () { return name.value.trim().length > 0 && phone.value.replace(/\D/g, "").length >= 7; };
+      function sync() { btn.disabled = !ok(); }
+      /* "+353 85 123 4567" → country code + local number. */
+      function setPhone(p) {
+        p = String(p || "").trim();
+        if (p.charAt(0) === "+") {
+          var best = "";
+          [].forEach.call(cc.options, function (o) { if (p.indexOf(o.value) === 0 && o.value.length > best.length) best = o.value; });
+          if (best) { cc.value = best; p = p.slice(best.length).trim(); }
+        }
+        phone.value = p;
+      }
+      fetch(API + "/pay/" + t + "?json=1").then(function (r) { return r.json(); }).then(function (d) {
+        if (d.state === "paid") return location.replace("thankyou.html?session_id=" + encodeURIComponent(d.session));
+        if (d.state === "expired") return note("This link has expired — the collection day has passed. " + gone);
+        if (d.state !== "open") return note("This payment link isn’t valid. " + gone);
+        var li = d.lines.map(function (l) { return "<li><b>" + l.qty + " ×</b>" + esc(l.name) + "</li>"; });
+        if (d.cutlery) li.push("<li><b>🍴</b>Cutlery</li>");
+        if (d.giftBox) li.push("<li><b>🎁</b>Gift box</li>");
+        $("payLines").innerHTML = li.join("");
+        $("payWhen").innerHTML = "📅 " + esc(d.when) + "<br>📍 " + esc(d.where) + (d.time ? " · " + esc(d.time) : "");
+        $("payTotal").textContent = euro(d.total);
+        btn.textContent = "Pay " + euro(d.total);
+        var saved = {};
+        try { saved = JSON.parse(localStorage.getItem(CONTACT_KEY) || "{}") || {}; } catch (e) {}
+        name.value = d.name || saved.name || "";
+        if (d.phone) setPhone(d.phone);
+        else if (saved.phone) { phone.value = saved.phone; if (saved.cc) cc.value = saved.cc; }
+        msg.hidden = true; f.hidden = false; sync();
+      }).catch(function () { note("We couldn’t load your order. Please try again in a minute."); });
+      f.addEventListener("input", sync);
+      f.addEventListener("change", sync);
+      f.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (!ok()) return;
+        var label = btn.textContent;
+        btn.disabled = true; btn.textContent = "Opening payment…"; err.hidden = true;
+        var local = phone.value.trim();
+        try { localStorage.setItem(CONTACT_KEY, JSON.stringify({ name: name.value.trim(), cc: cc.value, phone: local })); } catch (e) {}
+        fetch(API + "/pay/" + t, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: name.value.trim(), phone: cc.value + " " + local })
+        }).then(function (r) { return r.json(); }).then(function (d) {
+          if (d.url) return location.assign(d.url);
+          if (d.state === "paid") return location.replace("thankyou.html?session_id=" + encodeURIComponent(d.session));
+          throw new Error(d.error || "x");
+        }).catch(function () {
+          err.textContent = "Something went wrong opening the payment. Please try again.";
+          err.hidden = false; btn.textContent = label; sync();
+        });
+      });
     })();
   </script>
 </body>
