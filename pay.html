@@ -27,6 +27,12 @@
     .pay .btn { width: 100%; justify-content: center; font-size: 1.05rem; }
     .pay-note { text-align: center; color: var(--muted); }
     .pay-note a { color: var(--caramel-dk); font-weight: 700; }
+    .pay-times { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .pay-times label { position: relative; cursor: pointer; }
+    .pay-times input { position: absolute; opacity: 0; }
+    .pay-times span { display: inline-block; padding: 0.6rem 1.2rem; border-radius: 999px; border: 2px solid var(--line); background: var(--white); font-weight: 700; color: var(--cocoa); }
+    .pay-times input:checked + span { background: var(--cocoa); border-color: var(--cocoa); color: var(--cream); }
+    .pay-times input:focus-visible + span { outline: 2px solid var(--caramel); outline-offset: 2px; }
     .pay-priv { text-align: center; font-size: 0.85rem; margin: 1rem 0 0; }
     .pay-priv a { color: var(--muted); }
   </style>
@@ -42,6 +48,10 @@
         <p class="pay-when" id="payWhen"></p>
         <p class="pay-total"><span>Total</span><b id="payTotal"></b></p>
       </section>
+      <fieldset id="payTimeBox" hidden>
+        <legend>Pick-up time</legend>
+        <div class="pay-times" id="payTimes" role="radiogroup" aria-label="Pick-up time"></div>
+      </fieldset>
       <fieldset>
         <legend>Who’s collecting?</legend>
         <div class="field">
@@ -111,7 +121,9 @@
       if (!/^[a-z0-9]{6,20}$/.test(t)) return note("This payment link isn’t valid. " + gone);
       var euro = function (c) { return "€" + (c / 100).toFixed(2); };
       var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
-      var ok = function () { return name.value.trim().length > 0 && phone.value.replace(/\D/g, "").length >= 7; };
+      var needTime = false;
+      var pickedTime = function () { var r = f.querySelector("input[name=time]:checked"); return r ? r.value : ""; };
+      var ok = function () { return name.value.trim().length > 0 && phone.value.replace(/\D/g, "").length >= 7 && (!needTime || !!pickedTime()); };
       function sync() { btn.disabled = !ok(); }
       /* "+353 85 123 4567" → country code + local number. */
       function setPhone(p) {
@@ -133,6 +145,11 @@
         $("payLines").innerHTML = li.join("");
         $("payWhen").innerHTML = "📅 " + esc(d.when) + "<br>📍 " + esc(d.where) + (d.time ? " · " + esc(d.time) : "");
         $("payTotal").textContent = euro(d.total);
+        if (d.times && d.times.length) {
+          needTime = true;
+          $("payTimes").innerHTML = d.times.map(function (x) { return '<label><input type="radio" name="time" value="' + esc(x) + '" /><span>' + esc(x) + "</span></label>"; }).join("");
+          $("payTimeBox").hidden = false;
+        }
         btn.textContent = "Pay " + euro(d.total);
         var saved = {};
         try { saved = JSON.parse(localStorage.getItem(CONTACT_KEY) || "{}") || {}; } catch (e) {}
@@ -153,7 +170,7 @@
         fetch(API + "/pay/" + t, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: name.value.trim(), phone: cc.value + " " + local })
+          body: JSON.stringify({ name: name.value.trim(), phone: cc.value + " " + local, time: pickedTime() })
         }).then(function (r) { return r.json(); }).then(function (d) {
           if (d.url) return location.assign(d.url);
           if (d.state === "paid") return location.replace("thankyou.html?session_id=" + encodeURIComponent(d.session));
