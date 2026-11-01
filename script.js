@@ -130,6 +130,11 @@ if (orderForm) {
   const giftBoxLock = document.getElementById("giftBoxLock");
   /* Disposable spoon + napkin, priced per pot. */
   const CUTLERY_EUR = 0.2;
+  /* Optional cooler bags — one per 4 tiramisù (a 1 L pot counts as 4), €2.50 each. */
+  const coolerOpt = document.getElementById("coolerOpt");
+  const coolerBox = document.getElementById("coolerBag");
+  const COOLER_EUR = 2.5;
+  const COOLER_HOLDS = 4;
   /* Gift box: flat €7, only for a whole order of one of these sizes. Includes
      cutlery + a topping kit (the sachets that match the flavours chosen). */
   const GIFT_BOX_SIZES = [5, 6, 12];
@@ -159,6 +164,8 @@ if (orderForm) {
   /* Cutlery is off when a gift box is on (the box already includes it). */
   const cutleryOn = () =>
     !!(cutleryBox && cutleryBox.checked && !isToaster() && !giftBoxOn());
+  /* A gift box doesn't go in a cooler bag. */
+  const coolerOn = () => !!(coolerBox && coolerBox.checked && !giftBoxOn());
   /* Distinct topping sachets for the flavours in the cart, e.g. "cocoa, pistachio". */
   const boxToppings = (items) => {
     const seen = [];
@@ -191,6 +198,7 @@ if (orderForm) {
   /* Cutlery sets across the cart — 1 per single pot, 5 per 1 L pot. */
   const cartCutlerySets = () =>
     products.reduce((s, p) => s + qtyOf(p) * prodSets(p), 0);
+  const cartCoolerBags = () => Math.max(1, Math.ceil(cartUnits() / COOLER_HOLDS));
 
   /* ---- Collection: weekdays only, LEAD_DAYS notice, location depends on slot ----
      Mobile date/time pickers ignore min/max, so we validate on change too. */
@@ -791,6 +799,7 @@ if (orderForm) {
           phone: contactLocal(),
           cutlery: !!(cutleryBox && cutleryBox.checked),
           giftBox: !!(giftBoxBox && giftBoxBox.checked),
+          coolerBag: !!(coolerBox && coolerBox.checked),
         })
       );
     } catch (e) {
@@ -814,6 +823,7 @@ if (orderForm) {
     if (s.date && dateInput) dateInput.value = s.date;
     if (s.cutlery && cutleryBox) cutleryBox.checked = true;
     if (s.giftBox && giftBoxBox) giftBoxBox.checked = true;
+    if (s.coolerBag && coolerBox) coolerBox.checked = true;
     if (s.name && firstNameInput) firstNameInput.value = s.name;
     if (s.cc && phoneCC) phoneCC.value = s.cc;
     if (s.phone && phoneInput) phoneInput.value = s.phone;
@@ -896,6 +906,7 @@ if (orderForm) {
   });
   if (phoneCC) phoneCC.addEventListener("change", updateSubmitState);
   if (cutleryBox) cutleryBox.addEventListener("change", recalc);
+  if (coolerBox) coolerBox.addEventListener("change", recalc);
   if (giftBoxBox) giftBoxBox.addEventListener("change", recalc);
 
   /* Re-check the saved time now that syncSlot/fillTimes has rendered the
@@ -1067,6 +1078,29 @@ if (orderForm) {
       }
     }
 
+    /* Cooler bags: hidden for gift boxes; the label follows the cart
+       (7 tiramisù = 2 bags). */
+    if (coolerOpt) {
+      const bags = cartCoolerBags();
+      coolerOpt.hidden = boxOn;
+      coolerOpt.classList.toggle("on", !!(coolerBox && coolerBox.checked));
+      document.getElementById("coolerName").textContent =
+        bags > 1 ? `🧊 ${bags} cooler bags` : "🧊 Cooler bag";
+      document.getElementById("coolerHint").textContent = "+" + money(bags * COOLER_EUR);
+      if (coolerOn() && cartUnits() > 0) {
+        const coolerLine = bags * COOLER_EUR;
+        total += coolerLine;
+        const li = document.createElement("li");
+        li.className = "cutlery-line";
+        const left = document.createElement("span");
+        left.innerHTML = `Cooler bag <small>${bags} × €2.50</small>`;
+        const right = document.createElement("span");
+        right.textContent = "+" + money(coolerLine);
+        li.append(left, right);
+        summaryLines.appendChild(li);
+      }
+    }
+
     /* Gift box line — flat €7, with the topping kit listed from the flavours. */
     if (boxOn) {
       total += GIFT_BOX_EUR;
@@ -1183,6 +1217,7 @@ if (orderForm) {
       phone: contactPhone(),
       cutlery: cutleryOn(),
       giftBox: giftBoxOn(),
+      coolerBag: coolerOn(),
     };
     setCheckoutError("");
     setBusy(true);
@@ -1455,6 +1490,11 @@ if (orderForm) {
       if (tyCutRow && data.cutlery) tyCutRow.hidden = false;
       const tyBoxRow = document.getElementById("tyGiftBoxRow");
       if (tyBoxRow && data.giftBox) tyBoxRow.hidden = false;
+      const tyCoolerRow = document.getElementById("tyCoolerRow");
+      if (tyCoolerRow && data.coolerBags) {
+        tyCoolerRow.hidden = false;
+        setText("tyCooler", `🧊 ${data.coolerBags} cooler bag${data.coolerBags === 1 ? "" : "s"}`);
+      }
       /* Loyalty card progress / a free-Classic code just earned (when the order
          has already been logged by the time this page loads). */
       const tyLoyalty = document.getElementById("tyLoyalty");

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=153" />
+  <link rel="stylesheet" href="styles.css?v=154" />
   <style>
     body { background: var(--cream); }
     .pay { max-width: 460px; margin: 0 auto; padding: 1.6rem 16px 3rem; }
@@ -142,6 +142,7 @@
         var li = d.lines.map(function (l) { return "<li><b>" + l.qty + " ×</b>" + esc(l.name) + "</li>"; });
         if (d.cutlery) li.push("<li><b>🍴</b>Cutlery</li>");
         if (d.giftBox) li.push("<li><b>🎁</b>Gift box</li>");
+        if (d.coolerBags) li.push("<li><b>🧊</b>" + d.coolerBags + " cooler bag" + (d.coolerBags === 1 ? "" : "s") + "</li>");
         $("payLines").innerHTML = li.join("");
         $("payWhen").innerHTML = "📅 " + esc(d.when) + "<br>📍 " + esc(d.where) + (d.time ? " · " + esc(d.time) : "");
         $("payTotal").textContent = euro(d.total);
