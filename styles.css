@@ -1315,6 +1315,26 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
 .hm-tile { background: var(--white); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow-sm); }
 .hm-tile img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
 .hm-pic { position: relative; }
+.hm-tile > a, .hm-pic > a { display: block; }
+.hm-tile h3 a { color: inherit; text-decoration: none; }
+/* Flavour pages (built by tools/build-flavours.py) */
+.fp { max-width: 620px; margin: 0 auto; padding: 1.4rem 16px 3rem; }
+.fp-top { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 1rem; align-items: center; margin: 0 0 1rem; }
+.fp-pic { position: relative; }
+.fp-pic img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; border-radius: var(--radius); }
+.fp-pic .fl-new { right: -8px; bottom: -8px; }
+.fp h1 { font-family: var(--serif); font-weight: 600; font-size: 2.3rem; margin: 0 0 0.3rem; color: var(--espresso); }
+.fp-size { margin: 0.35rem 0 0; font-weight: 700; color: var(--caramel-dk); }
+.fp-size small { display: block; font-weight: 500; color: var(--muted); font-size: 0.9rem; }
+.fp-desc { color: var(--cocoa); line-height: 1.6; font-size: 1.05rem; margin: 0 0 1.1rem; }
+.fp-order { display: flex; width: 100%; justify-content: center; margin: 0 0 1.4rem; }
+.fp-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 1.1rem 1.2rem; margin: 0 0 1rem; scroll-margin-top: 90px; }
+.fp-card h1, .fp-card h2 { font-family: var(--serif); font-weight: 600; font-size: 1.3rem; margin: 0 0 0.4rem; color: var(--espresso); }
+.fp-card p { margin: 0; color: var(--cocoa); line-height: 1.55; }
+.fp-al { margin-top: 0.7rem !important; padding-top: 0.7rem; border-top: 1px solid var(--line); }
+.fp-keep { margin-top: 0.7rem !important; font-size: 0.85rem; color: var(--muted) !important; }
+.fp-more { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin: 1.4rem 0 0; }
+.fp-more a { padding: 0.45rem 0.95rem; border-radius: 999px; background: var(--white); box-shadow: var(--shadow-sm); color: var(--cocoa); font-weight: 700; font-size: 0.9rem; text-decoration: none; }
 .ol2 .p-pic { position: relative; }
 .fl-new { position: absolute; right: 8px; bottom: 8px; width: 2.9rem; height: 2.9rem; border-radius: 50%; background: var(--caramel); color: var(--espresso); font-family: var(--serif); font-weight: 700; font-size: 0.92rem; display: flex; align-items: center; justify-content: center; transform: rotate(-10deg); }
 .hm-tile-b { padding: 0.75rem 0.9rem 0.9rem; }
