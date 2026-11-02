@@ -1158,6 +1158,8 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
 .ol2 .product .p-price { display: inline; font-weight: 700; color: var(--muted); font-size: 0.88rem; }
 .ol2 .product .p-serves { display: inline; font-size: 0.82rem; }
 .ol2 .product .p-serves:not(:empty)::before { content: " · "; }
+.ol2 .p-info { display: block; margin-top: 0.15rem; font-size: 0.8rem; font-weight: 700; color: var(--muted); text-decoration: underline; }
+.ol2 .p-info:hover { color: var(--espresso); }
 .ol2 .size-seg { display: flex; margin-top: 0.5rem; background: var(--mascarpone); border: 0; padding: 3px; }
 .ol2 .size-seg button { flex: 1; padding: 0.35rem 0; border-radius: 999px; font-size: 0.76rem; }
 .ol2 .size-seg button.on { background: var(--white); color: var(--espresso); box-shadow: 0 1px 4px rgba(58,39,27,0.12); }
