@@ -1344,7 +1344,6 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
 .fp-size { margin: 0.35rem 0 0; font-weight: 700; color: var(--caramel-dk); }
 .fp-size small { display: block; font-weight: 500; color: var(--muted); font-size: 0.9rem; }
 .fp-desc { color: var(--cocoa); line-height: 1.6; font-size: 1.05rem; margin: 0 0 1.1rem; }
-.fp-order { display: flex; width: 100%; justify-content: center; margin: 0 0 1.4rem; }
 .fp-card { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 1.1rem 1.2rem; margin: 0 0 1rem; scroll-margin-top: 90px; }
 .fp-card h1, .fp-card h2 { font-family: var(--serif); font-weight: 600; font-size: 1.3rem; margin: 0 0 0.4rem; color: var(--espresso); }
 .fp-card p { margin: 0; color: var(--cocoa); line-height: 1.55; }

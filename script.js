@@ -867,13 +867,6 @@ if (orderForm) {
      the first paint so slot/date/qty are already in place. The time radios are
      rendered by fillTimes (below), so we re-check the saved time afterwards. */
   const restored = restoreState();
-  /* Flavour pages link here with ?add=<id>: one 230 ml pot, unless it's already in the order. */
-  const addId = new URLSearchParams(location.search).get("add");
-  if (addId) {
-    const addP = products.find((p) => p.idSingle === addId);
-    if (addP && qtyOf(addP) === 0) addP.input.value = 1;
-    history.replaceState(null, "", location.pathname);
-  }
   loadContact(); // prefill name/phone for returning customers (empties only)
 
   if (dateInput && dateList) {
