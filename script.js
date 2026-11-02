@@ -79,9 +79,9 @@ if (orderForm) {
   const money = (n) => CURRENCY + n.toFixed(2);
 
   /* Two sizes per flavour, chosen by the card's toggle. 230 ml = 1 portion,
-     1 L = 4 (drives capacity + recipe). The 1 L pot costs 4× and comes with
+     1 L = 3 (drives capacity + recipe). The 1 L pot costs 4× and comes with
      5 cutlery sets. Size lives on the card's data-size ("single" | "large"). */
-  const LARGE_PORTIONS = 4;
+  const LARGE_PORTIONS = 3;
   const CUTLERY_SETS_LARGE = 5;
   const SERVES = {
     single: "",
@@ -130,7 +130,7 @@ if (orderForm) {
   const giftBoxLock = document.getElementById("giftBoxLock");
   /* Disposable spoon + napkin, priced per pot. */
   const CUTLERY_EUR = 0.2;
-  /* Optional cooler bags — one per 4 tiramisù (a 1 L pot counts as 4), €2.50 each. */
+  /* Optional cooler bags — one per 4 230 ml pots (a 1 L pot fills one), €2.50 each. */
   const coolerOpt = document.getElementById("coolerOpt");
   const coolerBox = document.getElementById("coolerBag");
   const COOLER_EUR = 2.5;
@@ -180,14 +180,14 @@ if (orderForm) {
      day's remaining or the per-order max). Drives the cap explanation. */
   let blockedAdd = false;
 
-  /* Most we'll take in one order, in portion-equivalents (a 1 L pot = 4) —
+  /* Most we'll take in one order, in portion-equivalents (a 1 L pot = 3) —
      bigger jobs go through WhatsApp. */
   const MAX_ORDER = 25;
   /* Physical pots in the cart (optionally ignoring one input being edited). */
   const cartQty = (except) =>
     products.reduce((s, p) => s + (p.input === except ? 0 : qtyOf(p)), 0);
-  /* Portion-equivalents — a 1 L pot counts as 4. Capacity + the per-order cap
-     are measured in PE, so a large pot eats four of the day's slots. */
+  /* Portion-equivalents — a 1 L pot counts as 3. Capacity + the per-order cap
+     are measured in PE, so a large pot eats three of the day's slots. */
   const cartUnits = (except) =>
     products.reduce(
       (s, p) => s + (p.input === except ? 0 : qtyOf(p) * prodPortions(p)),
@@ -199,7 +199,9 @@ if (orderForm) {
   /* Cutlery sets across the cart — 1 per single pot, 5 per 1 L pot. */
   const cartCutlerySets = () =>
     products.reduce((s, p) => s + qtyOf(p) * prodSets(p), 0);
-  const cartCoolerBags = () => Math.max(1, Math.ceil(cartUnits() / COOLER_HOLDS));
+  /* By space, not portions: a 1 L pot fills a whole bag. */
+  const cartCoolerBags = () =>
+    Math.max(1, Math.ceil(cartSingles() / COOLER_HOLDS) + (cartQty() - cartSingles()));
 
   /* ---- Collection: weekdays only, LEAD_DAYS notice, location depends on slot ----
      Mobile date/time pickers ignore min/max, so we validate on change too. */
@@ -315,7 +317,7 @@ if (orderForm) {
   }
   /* Trim the cart (in PE) so it never exceeds `limit` (used when the day changes
      to one with less room). Reduces from the last flavour upward; each large pot
-     removed frees four PE. */
+     removed frees three PE. */
   function clampCart() {
     let over = cartUnits() - orderLimit().limit;
     if (over <= 0) return false;
@@ -953,7 +955,7 @@ if (orderForm) {
   };
 
   /* Quantity steppers. Room is measured in PE, so one more of a flavour is only
-     addable when its portions (1 for a single, 4 for a 1 L) fit what's left. */
+     addable when its portions (1 for a single, 3 for a 1 L) fit what's left. */
   document.querySelectorAll("[data-qty]").forEach((qty) => {
     const input = qty.querySelector("input");
     const prod = products.find((pr) => pr.input === input);
