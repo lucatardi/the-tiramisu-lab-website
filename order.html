@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=154" />
+  <link rel="stylesheet" href="styles.css?v=155" />
 </head>
 <body>
 
@@ -129,6 +129,23 @@
                 <button type="button" data-step="-1" aria-label="Decrease Nutella">−</button>
                 <input type="number" name="qty_nutella" value="0" min="0" max="99" inputmode="numeric" readonly tabindex="-1" aria-label="Nutella quantity" />
                 <button type="button" data-step="1" aria-label="Increase Nutella">+</button>
+              </div>
+            </div>
+            <div class="product" data-name="KitKat" data-id-single="kitkat" data-id-large="kitkat_l" data-price-single="7.5" data-price-large="30">
+              <span class="p-pic"><img class="p-thumb" src="images/kitkat.jpg" alt="" loading="lazy" /><span class="fl-new" data-new-until="2026-12-15">New</span></span>
+              <div class="p-mid">
+                <div class="p-name">KitKat</div>
+                <div class="p-price"><span data-price>€7.50</span></div>
+                <div class="p-serves" data-serves></div>
+                <div class="size-seg" role="group" aria-label="KitKat size">
+                  <button type="button" data-size="single" class="on">230 ml</button>
+                  <button type="button" data-size="large">1 L</button>
+                </div>
+              </div>
+              <div class="qty" data-qty>
+                <button type="button" data-step="-1" aria-label="Decrease KitKat">−</button>
+                <input type="number" name="qty_kitkat" value="0" min="0" max="99" inputmode="numeric" readonly tabindex="-1" aria-label="KitKat quantity" />
+                <button type="button" data-step="1" aria-label="Increase KitKat">+</button>
               </div>
             </div>
             </div>
@@ -281,6 +298,6 @@
   </div>
 
 
-  <script src="script.js?v=154"></script>
+  <script src="script.js?v=155"></script>
 </body>
 </html>

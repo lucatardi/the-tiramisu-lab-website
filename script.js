@@ -144,6 +144,7 @@ if (orderForm) {
     Pistachio: "crushed pistachio",
     Biscoff: "Biscoff crumb",
     Nutella: "crushed hazelnut",
+    KitKat: "KitKat crumble",
   };
   /* Gift box: evening collection only (boxes can't be carried into the Office),
      singles only (a 1 L pot won't fit the window box), and a whole order of
@@ -1539,3 +1540,8 @@ if (orderForm) {
 
 /* Reviews are now hardcoded in index.html, each linked to Google to verify —
    so there's no live fetch here anymore. */
+
+/* "New" stamps switch themselves off on the date in data-new-until. */
+document.querySelectorAll("[data-new-until]").forEach((el) => {
+  if (new Date().toISOString().slice(0, 10) > el.dataset.newUntil) el.remove();
+});

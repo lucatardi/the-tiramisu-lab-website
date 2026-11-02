@@ -1311,9 +1311,12 @@ button.daychip:focus-visible { outline: 2px solid var(--caramel); outline-offset
 .hm-sec h2 { margin-bottom: 1.3rem; }
 .hm-anchor { position: absolute; top: 0; }
 
-.hm-flavours { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; align-items: start; }
+.hm-flavours { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1rem; align-items: start; }
 .hm-tile { background: var(--white); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow-sm); }
 .hm-tile img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
+.hm-pic { position: relative; }
+.ol2 .p-pic { position: relative; }
+.fl-new { position: absolute; right: 8px; bottom: 8px; width: 2.9rem; height: 2.9rem; border-radius: 50%; background: var(--caramel); color: var(--espresso); font-family: var(--serif); font-weight: 700; font-size: 0.92rem; display: flex; align-items: center; justify-content: center; transform: rotate(-10deg); }
 .hm-tile-b { padding: 0.75rem 0.9rem 0.9rem; }
 .hm-tile h3 { margin: 0; font-size: 1.35rem; }
 .hm-top { margin: 0.1rem 0 0; font-size: 0.85rem; color: var(--muted); }
