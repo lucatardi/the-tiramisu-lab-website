@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,900&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=156" />
+  <link rel="stylesheet" href="styles.css?v=157" />
 </head>
 <body>
 
@@ -72,79 +72,31 @@
     <div class="wrap">
       <h2>Five flavours</h2>
       <div class="hm-flavours">
-        <article class="hm-tile">
-          <a href="classic.html"><img src="images/classic.jpg" alt="Classic tiramisu dusted with cocoa" loading="lazy" /></a>
-          <div class="hm-tile-b">
-            <h3><a href="classic.html">Classic</a></h3>
-            <p class="hm-top">Cocoa dusted</p>
-            <div class="hm-row">
-              <details class="hm-ing"><summary>Full info</summary>
-                <p>Coffee-soaked homemade savoiardi biscuits layered with homemade mascarpone cream, finished with a dusting of cocoa.</p>
-                <p><b>Ingredients:</b> Double cream, eggs, sugar, milk, flour, cornflour, coffee, cocoa</p>
-                <p><b>Allergens:</b> Milk, egg, gluten (wheat). Made in a kitchen that also handles nuts.</p>
-              </details>
-            </div>
-          </div>
-        </article>
-        <article class="hm-tile">
-          <a href="pistachio.html"><img src="images/pistachio.jpg" alt="Pistachio tiramisu topped with crushed pistachio" loading="lazy" /></a>
-          <div class="hm-tile-b">
-            <h3><a href="pistachio.html">Pistachio</a></h3>
-            <p class="hm-top">Crushed pistachio</p>
-            <div class="hm-row">
-              <details class="hm-ing"><summary>Full info</summary>
-                <p>Coffee-soaked homemade savoiardi biscuits layered with homemade mascarpone cream mixed with pistachio cream, topped with crushed pistachio.</p>
-                <p><b>Ingredients:</b> Double cream, eggs, sugar, milk, flour, cornflour, coffee, pistachio cream, crushed pistachio</p>
-                <p><b>Allergens:</b> Milk, egg, gluten (wheat), pistachio (nuts). Made in a kitchen that also handles nuts.</p>
-              </details>
-            </div>
-          </div>
-        </article>
-        <article class="hm-tile">
-          <a href="biscoff.html"><img src="images/biscoff.jpg" alt="Biscoff tiramisu topped with crushed Lotus biscuits" loading="lazy" /></a>
-          <div class="hm-tile-b">
-            <h3><a href="biscoff.html">Biscoff</a></h3>
-            <p class="hm-top">Lotus crumb</p>
-            <div class="hm-row">
-              <details class="hm-ing"><summary>Full info</summary>
-                <p>Coffee-soaked homemade savoiardi biscuits layered with homemade mascarpone cream mixed with Biscoff spread, topped with crushed Lotus biscuit.</p>
-                <p><b>Ingredients:</b> Double cream, eggs, sugar, milk, flour, cornflour, coffee, Biscoff cream, crushed Lotus biscuit</p>
-                <p><b>Allergens:</b> Milk, egg, gluten (wheat), soya. Made in a kitchen that also handles nuts.</p>
-              </details>
-            </div>
-          </div>
-        </article>
-        <article class="hm-tile">
-          <a href="nutella.html"><img src="images/nutella.jpg" alt="Nutella tiramisu topped with crushed hazelnuts" loading="lazy" /></a>
-          <div class="hm-tile-b">
-            <h3><a href="nutella.html">Nutella</a></h3>
-            <p class="hm-top">Crushed hazelnut</p>
-            <div class="hm-row">
-              <details class="hm-ing"><summary>Full info</summary>
-                <p>Coffee-soaked homemade savoiardi biscuits layered with homemade mascarpone cream mixed with Nutella, topped with crushed hazelnuts.</p>
-                <p><b>Ingredients:</b> Double cream, eggs, sugar, milk, flour, cornflour, coffee, Nutella, crushed hazelnuts</p>
-                <p><b>Allergens:</b> Milk, egg, gluten (wheat), hazelnut (nuts), soya. Made in a kitchen that also handles nuts.</p>
-              </details>
-            </div>
-          </div>
-        </article>
-        <article class="hm-tile">
-          <div class="hm-pic">
-            <a href="kitkat.html"><img src="images/kitkat.jpg" alt="KitKat tiramisu topped with KitKat crumble" loading="lazy" /></a>
-            <span class="fl-new" data-new-until="2026-12-15">New</span>
-          </div>
-          <div class="hm-tile-b">
-            <h3><a href="kitkat.html">KitKat</a></h3>
-            <p class="hm-top">KitKat crumble</p>
-            <div class="hm-row">
-              <details class="hm-ing"><summary>Full info</summary>
-                <p>Coffee-soaked homemade savoiardi biscuits layered with homemade mascarpone cream mixed with white chocolate spread and cocoa, topped with KitKat crumble.</p>
-                <p><b>Ingredients:</b> Double cream, eggs, sugar, milk, flour, cornflour, coffee, white chocolate spread, KitKat crumble, cocoa</p>
-                <p><b>Allergens:</b> Milk, egg, gluten (wheat). May contain nuts and soya.</p>
-              </details>
-            </div>
-          </div>
-        </article>
+        <a class="hm-fl" href="classic.html">
+          <span class="hm-fl-pic"><img src="images/classic.jpg" alt="Classic tiramisu dusted with cocoa" loading="lazy" /></span>
+          <div class="hm-fl-t"><h3>Classic</h3><small>Cocoa dusted</small></div>
+          <span class="hm-more">Full info</span>
+        </a>
+        <a class="hm-fl" href="pistachio.html">
+          <span class="hm-fl-pic"><img src="images/pistachio.jpg" alt="Pistachio tiramisu topped with crushed pistachio" loading="lazy" /></span>
+          <div class="hm-fl-t"><h3>Pistachio</h3><small>Crushed pistachio</small></div>
+          <span class="hm-more">Full info</span>
+        </a>
+        <a class="hm-fl" href="biscoff.html">
+          <span class="hm-fl-pic"><img src="images/biscoff.jpg" alt="Biscoff tiramisu topped with crushed Lotus biscuits" loading="lazy" /></span>
+          <div class="hm-fl-t"><h3>Biscoff</h3><small>Lotus crumb</small></div>
+          <span class="hm-more">Full info</span>
+        </a>
+        <a class="hm-fl" href="nutella.html">
+          <span class="hm-fl-pic"><img src="images/nutella.jpg" alt="Nutella tiramisu topped with crushed hazelnuts" loading="lazy" /></span>
+          <div class="hm-fl-t"><h3>Nutella</h3><small>Crushed hazelnut</small></div>
+          <span class="hm-more">Full info</span>
+        </a>
+        <a class="hm-fl" href="kitkat.html">
+          <span class="hm-fl-pic"><img src="images/kitkat.jpg" alt="KitKat tiramisu topped with KitKat crumble" loading="lazy" /><span class="fl-new" data-new-until="2026-12-15">New</span></span>
+          <div class="hm-fl-t"><h3>KitKat</h3><small>KitKat crumble</small></div>
+          <span class="hm-more">Full info</span>
+        </a>
       </div>
     </div>
   </section>
@@ -254,6 +206,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=156"></script>
+  <script src="script.js?v=157"></script>
 </body>
 </html>
