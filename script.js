@@ -136,16 +136,9 @@ if (orderForm) {
   const COOLER_EUR = 2.5;
   const COOLER_HOLDS = 4;
   /* Gift box: flat €7, only for a whole order of one of these sizes. Includes
-     cutlery + a topping kit (the sachets that match the flavours chosen). */
+     cutlery. */
   const GIFT_BOX_SIZES = [5, 6, 12];
   const GIFT_BOX_EUR = 7;
-  const TOPPINGS = {
-    Classic: "cocoa",
-    Pistachio: "crushed pistachio",
-    Biscoff: "Biscoff crumb",
-    Nutella: "crushed hazelnut",
-    KitKat: "KitKat crumble",
-  };
   /* Gift box: evening collection only (boxes can't be carried into the Office),
      singles only (a 1 L pot won't fit the window box), and a whole order of
      exactly 5/6/12 single pots. */
@@ -167,15 +160,6 @@ if (orderForm) {
     !!(cutleryBox && cutleryBox.checked && !isToaster() && !giftBoxOn());
   /* A gift box doesn't go in a cooler bag. */
   const coolerOn = () => !!(coolerBox && coolerBox.checked && !giftBoxOn());
-  /* Distinct topping sachets for the flavours in the cart, e.g. "cocoa, pistachio". */
-  const boxToppings = (items) => {
-    const seen = [];
-    items.forEach((i) => {
-      const t = TOPPINGS[i.name];
-      if (t && seen.indexOf(t) === -1) seen.push(t);
-    });
-    return seen.join(", ");
-  };
   /* True only right after a "+" tap that couldn't add (order already at the
      day's remaining or the per-order max). Drives the cap explanation. */
   let blockedAdd = false;
@@ -1104,16 +1088,13 @@ if (orderForm) {
       }
     }
 
-    /* Gift box line — flat €7, with the topping kit listed from the flavours. */
+    /* Gift box line — flat €7. */
     if (boxOn) {
       total += GIFT_BOX_EUR;
-      const tops = boxToppings(items);
       const li = document.createElement("li");
       li.className = "giftbox-line";
       const left = document.createElement("span");
-      left.innerHTML = `Gift box <small>cutlery + topping kit${
-        tops ? " · " + tops : ""
-      }</small>`;
+      left.innerHTML = `Gift box <small>with cutlery</small>`;
       const right = document.createElement("span");
       right.textContent = "+" + money(GIFT_BOX_EUR);
       li.append(left, right);
